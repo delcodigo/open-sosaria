@@ -3,11 +3,31 @@
 #include "engine.h"
 #include "shader.h"
 #include "texture.h"
+#include "config.h"
 
 GLFWwindow *window = NULL;
 unsigned int shaderProgram = 0;
 GLuint fontTexture = 0;
 Camera camera;
+
+static void engine_screenResizeCallback(GLFWwindow *window, int width, int height) {
+  (void) window;
+  int scaleX = width / OS_SCREEN_WIDTH;
+  int scaleY = height / OS_SCREEN_HEIGHT;
+
+  int scale = scaleX < scaleY ? scaleX : scaleY;
+  if (scale < 1){
+    scale = 1;
+  }
+
+  int viewportWidth = OS_SCREEN_WIDTH * scale;
+  int viewportHeight = OS_SCREEN_HEIGHT * scale;
+
+  int offsetX = (width - viewportWidth) / 2;
+  int offsetY = (height - viewportHeight) / 2;
+
+  glViewport(offsetX, offsetY, viewportWidth, viewportHeight);
+}
 
 int engine_init() {
   if (!glfwInit()) {
@@ -18,7 +38,7 @@ int engine_init() {
   glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
   glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
 
-  window = glfwCreateWindow(280, 192, "Open Sosaria", NULL, NULL);
+  window = glfwCreateWindow(OS_SCREEN_WIDTH, OS_SCREEN_HEIGHT, "Open Sosaria", NULL, NULL);
   if (!window) {
     fprintf(stderr, "Failed to create window\n");
     glfwTerminate();
@@ -26,6 +46,7 @@ int engine_init() {
   }
 
   glfwMakeContextCurrent(window);
+  glfwSetFramebufferSizeCallback(window, engine_screenResizeCallback);
   glfwSwapInterval(1);
 
   if (!gladLoadGL()) {
@@ -40,8 +61,8 @@ int engine_init() {
   shaderProgram = shader_create_program();
   glUseProgram(shaderProgram);
 
-  camera_createOrthogonal(&camera, 280, 192, 0.1f, 100.0f);
-  camera_setPosition3f(&camera, 140.0f, 96.0f, 10.0f);
+  camera_createOrthogonal(&camera, OS_SCREEN_WIDTH, OS_SCREEN_HEIGHT, 0.1f, 100.0f);
+  camera_setPosition3f(&camera, OS_SCREEN_WIDTH / 2.0f, OS_SCREEN_HEIGHT / 2.0f, 10.0f);
 
   return 1;
 }
