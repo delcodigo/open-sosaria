@@ -4,18 +4,20 @@
 
 static const char *vertex_shader_source =
     "#version 120\n"
-    "attribute vec3 aColor;\n"
-    "varying vec3 vColor;\n"
+    "attribute vec3 aVertex;\n"
+    "attribute vec2 aTexCoord;\n"
+    "varying vec2 vTexCoord;\n"
     "void main() {\n"
-    "    gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;\n"
-    "    vColor = aColor;\n"
+    "    gl_Position = gl_ModelViewProjectionMatrix * vec4(aVertex, 1.0);\n"
+    "    vTexCoord = aTexCoord;\n"
     "}\n";
 
 static const char *fragment_shader_source =
     "#version 120\n"
-    "varying vec3 vColor;\n"
+    "uniform sampler2D uTexture;\n"
+    "varying vec2 vTexCoord;\n"
     "void main() {\n"
-    "    gl_FragColor = vec4(vColor, 1.0);\n"
+    "    gl_FragColor = texture2D(uTexture, vTexCoord);\n"
     "}\n";
 
 static unsigned int shader_compile(unsigned int type, const char *source) {
@@ -42,8 +44,8 @@ unsigned int shader_create_program(void) {
   unsigned int program = glCreateProgram();
   glAttachShader(program, vertex_shader);
   glAttachShader(program, fragment_shader);
-  glBindAttribLocation(program, 0, "gl_Vertex");
-  glBindAttribLocation(program, 1, "aColor");
+  glBindAttribLocation(program, 0, "aVertex");
+  glBindAttribLocation(program, 1, "aTexCoord");
   glLinkProgram(program);
 
   int success = 0;

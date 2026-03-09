@@ -1,6 +1,7 @@
 # Build artifacts
 build/
-bin/
+bin/open-sosaria
+bin/open-sosaria.exe
 *.o
 *.a
 *.so
