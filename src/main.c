@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include "maths/matrix4.h"
 #include "engine/engine.h"
 #include <GLFW/glfw3.h>
 
@@ -16,10 +17,10 @@ int main(void)
   }
 
   float vertices[] = {
-    -1.0f, -0.5f, 0.0f,  0.0f, 1.0f,
-     1.0f, -0.5f, 0.0f,  1.0f, 1.0f,
-    -1.0f,  0.5f, 0.0f,  0.0f, 0.0f,
-     1.0f,  0.5f, 0.0f,  1.0f, 0.0f
+     0.0f, 0.05f, 0.0f,  0.0f, 1.0f,
+     128.0f, 0.0f, 0.0f,  1.0f, 1.0f,
+     0.0f,  64.0f, 0.0f,  0.0f, 0.0f,
+     128.0f,  64.0f, 0.0f,  1.0f, 0.0f
   };
 
   unsigned int indices[] = {
@@ -49,6 +50,9 @@ int main(void)
   glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
   glBindVertexArray(0);
 
+  float matrix[16];
+  matrix4_setIdentity(matrix);
+
   while (!glfwWindowShouldClose(window)) {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -57,6 +61,9 @@ int main(void)
 
     glBindTexture(GL_TEXTURE_2D, fontTexture);
     glUniform1i(glGetUniformLocation(shaderProgram, "uTexture"), 0);
+
+    glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "uModel"), 1, GL_FALSE, matrix);
+    glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "uViewProjection"), 1, GL_FALSE, camera_getViewProjectionMatrix(&camera));
 
     glDrawElements(GL_TRIANGLES, sizeof(indices) / sizeof(indices[0]), GL_UNSIGNED_INT, 0);
 

@@ -6,9 +6,11 @@ static const char *vertex_shader_source =
     "#version 120\n"
     "attribute vec3 aVertex;\n"
     "attribute vec2 aTexCoord;\n"
+    "uniform mat4 uModel;\n"
+    "uniform mat4 uViewProjection;\n"
     "varying vec2 vTexCoord;\n"
     "void main() {\n"
-    "    gl_Position = gl_ModelViewProjectionMatrix * vec4(aVertex, 1.0);\n"
+    "    gl_Position = uViewProjection * uModel * vec4(aVertex, 1.0);\n"
     "    vTexCoord = aTexCoord;\n"
     "}\n";
 

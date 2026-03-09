@@ -7,6 +7,7 @@
 GLFWwindow *window = NULL;
 unsigned int shaderProgram = 0;
 GLuint fontTexture = 0;
+Camera camera;
 
 int engine_init() {
   if (!glfwInit()) {
@@ -34,10 +35,13 @@ int engine_init() {
     return 0;
   }
 
-  glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+  glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
   shaderProgram = shader_create_program();
   glUseProgram(shaderProgram);
+
+  camera_createOrthogonal(&camera, 280, 192, 0.1f, 100.0f);
+  camera_setPosition3f(&camera, 140.0f, 96.0f, 10.0f);
 
   return 1;
 }
