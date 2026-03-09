@@ -4,6 +4,7 @@
 #include "shader.h"
 #include "texture.h"
 #include "config.h"
+#include "memory.h"
 
 GLFWwindow *window = NULL;
 unsigned int shaderProgram = 0;
