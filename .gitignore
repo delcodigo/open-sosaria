@@ -1,0 +1,33 @@
+# Build artifacts
+build/
+bin/
+*.o
+*.a
+*.so
+*.dylib
+*.dll
+
+# Executables
+open-sosaria
+open-sosaria.exe
+
+# IDE and Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# OS-specific
+Thumbs.db
+.DS_Store
+
+# Debug files
+*.dSYM/
+*.su
+*.gch
+*.pch
+
+# Valgrind
+vgcore.*
