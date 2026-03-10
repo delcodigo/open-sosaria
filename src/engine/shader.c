@@ -22,6 +22,10 @@ static const char *fragment_shader_source =
     "    gl_FragColor = texture2D(uTexture, vTexCoord);\n"
     "}\n";
 
+
+int uModelLocation = -1;
+int uViewProjectionLocation = -1;
+
 static unsigned int shader_compile(unsigned int type, const char *source) {
   unsigned int shader = glCreateShader(type);
   glShaderSource(shader, 1, &source, NULL);
@@ -61,6 +65,9 @@ unsigned int shader_create_program(void) {
 
   glDeleteShader(vertex_shader);
   glDeleteShader(fragment_shader);
+
+  uModelLocation = glGetUniformLocation(program, "uModel");
+  uViewProjectionLocation = glGetUniformLocation(program, "uViewProjection");
 
   return program;
 }

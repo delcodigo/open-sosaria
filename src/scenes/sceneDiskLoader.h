@@ -15,6 +15,8 @@ typedef struct {
 typedef struct {
   // HGR splash screens (280x192)
   UltimaImage titleScreen;
+  UltimaImage townScreen;
+  UltimaImage castleScreen;
 
   bool loaded;
 } UltimaAssets;

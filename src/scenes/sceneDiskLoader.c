@@ -507,22 +507,23 @@ static int sceneDiskLoader_verifyUltimaDisks() {
 void sceneDiskLoader_extractUltimaAssets() {
   memset(&ultimaAssets, 0, sizeof(UltimaAssets));
 
-  FILE *f1 = fopen("disk1.dsk", "rb");
-  FILE *f2 = fopen("disk2.dsk", "rb");
-
   uint8_t *disk1 = (uint8_t *)malloc(DISK_SIZE);
   uint8_t *disk2 = (uint8_t *)malloc(DISK_SIZE);
 
-  if (!disk1 || !disk2) {
+  if (!disk1) { return; }
+  if (!disk2) {
     free(disk1);
-    free(disk2);
-    fclose(f1);
-    fclose(f2);
     return;
   }
 
-  fclose(f1);
-  fclose(f2);
+  FILE *file1 = fopen("disk1.dsk", "rb");
+  FILE *file2 = fopen("disk2.dsk", "rb");
+
+  fread(disk1, 1, DISK_SIZE, file1);
+  fread(disk2, 1, DISK_SIZE, file2);
+  fclose(file1);
+  fclose(file2);
+
 
   Buffer *titleBuffer = sceneDiskLoader_readDos33FileByName(disk1, "PIC.ULTIMATUM");
   if (titleBuffer && titleBuffer->data) {
@@ -532,6 +533,26 @@ void sceneDiskLoader_extractUltimaAssets() {
     }
     free(titleBuffer->data);
     free(titleBuffer);
+  }
+
+  Buffer *townBuffer = sceneDiskLoader_readDos33FileByName(disk2, "TWN.PIC");
+  if (townBuffer && townBuffer->data) {
+    // Decode HGR image
+    if (!sceneDiskLoader_decodeHGRImage(townBuffer->data, townBuffer->size, &ultimaAssets.townScreen)) {
+      sceneDiskLoader_freeImage(&ultimaAssets.townScreen);
+    }
+    free(townBuffer->data);
+    free(townBuffer);
+  }
+
+  Buffer *castleBuffer = sceneDiskLoader_readDos33FileByName(disk2, "CAS.PIC");
+  if (castleBuffer && castleBuffer->data) {
+    // Decode HGR image
+    if (!sceneDiskLoader_decodeHGRImage(castleBuffer->data, castleBuffer->size, &ultimaAssets.castleScreen)) {
+      sceneDiskLoader_freeImage(&ultimaAssets.castleScreen);
+    }
+    free(castleBuffer->data);
+    free(castleBuffer);
   }
 
   free(disk1);
@@ -567,6 +588,10 @@ void sceneDiskLoader_freeTextures() {
   if (ultimaAssets.loaded) {
     texture_free(ultimaAssets.titleScreen.textureId);
     ultimaAssets.titleScreen.textureId = 0;
+    texture_free(ultimaAssets.townScreen.textureId);
+    ultimaAssets.townScreen.textureId = 0;
+    texture_free(ultimaAssets.castleScreen.textureId);
+    ultimaAssets.castleScreen.textureId = 0;
   }
 }
 

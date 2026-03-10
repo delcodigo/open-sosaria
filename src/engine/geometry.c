@@ -1,3 +1,4 @@
+#include "engine/shader.h"
 #include "geometry.h"
 #include "config.h"
 #include "maths/matrix4.h"
@@ -36,17 +37,14 @@ void geometry_setSprite(Geometry *geometry, float width, float height) {
 
 void geometry_render(const Geometry *geometry, GLuint textureId, float *transformMatrix, float *viewMatrix) {
   if (!geometry) { return; }
-  
+
   glBindVertexArray(geometry->VAO);
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, geometry->EBO);
 
+  glActiveTexture(GL_TEXTURE0);
   glBindTexture(GL_TEXTURE_2D, textureId);
-  glUniform1i(glGetUniformLocation(shaderProgram, "uTexture"), 0);
 
-  matrix4_setIdentity(transformMatrix);
-  
-  glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "uModel"), 1, GL_FALSE, transformMatrix);
-  glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "uViewProjection"), 1, GL_FALSE, viewMatrix);
+  glUniformMatrix4fv(uModelLocation, 1, GL_FALSE, transformMatrix);
+  glUniformMatrix4fv(uViewProjectionLocation, 1, GL_FALSE, viewMatrix);
 
   glDrawElements(GL_TRIANGLES, geometry->indexCount, GL_UNSIGNED_INT, 0);
 }
