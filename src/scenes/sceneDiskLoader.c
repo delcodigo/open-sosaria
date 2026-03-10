@@ -18,6 +18,8 @@
 
 static Text diskMsg;
 static char diskMsgText[41] = {0};
+char ultimaStrings[1000][41];
+static int ultimaStringCount = 0;
 UltimaAssets ultimaAssets = {0};
 float loaderTime = 0.0f;
 
@@ -369,6 +371,57 @@ static bool sceneDiskLoader_decodeHGRImage(const uint8_t *dataRaw, uint32_t size
   return true;
 }
 
+static void emitQuotedStringsFromAppleBasicLine(const unsigned char *lineData, size_t lineLength) {
+  size_t i = 0;
+  bool shouldAppend = false;
+
+  while (i<lineLength) {
+    if (lineData[i] == '"') {
+      size_t start = i + 1;
+      size_t end = start;
+
+      while (end < lineLength && lineData[end] != '"') {
+        end++;
+      }
+
+      if (end >= lineLength) { return; }
+
+      size_t length = end - start;
+      if (length > 0 && length < 41) {
+        if (shouldAppend) {
+          size_t existingLength = strlen(ultimaStrings[ultimaStringCount]);
+          if (existingLength + length < 41) {
+            strncat(ultimaStrings[ultimaStringCount], (const char *)(lineData + start), length);
+            ultimaStrings[ultimaStringCount][existingLength + length] = '\0';
+            printf("Appended to string: [%d] '%s'\n", ultimaStringCount, ultimaStrings[ultimaStringCount]);
+            shouldAppend = false;
+            ultimaStringCount++;
+            i = end + 1;
+            continue;
+          }
+        } else {
+          memcpy(ultimaStrings[ultimaStringCount], lineData + start, length);
+          ultimaStrings[ultimaStringCount][length] = '\0';
+        }
+
+
+        if (lineData[end + 1] == 200) { // '+' concatenation operator
+          shouldAppend = true;
+        } else {
+          ultimaStringCount++;
+          shouldAppend = false;
+          printf("Extracted string: [%d] '%s'\n", ultimaStringCount - 1, ultimaStrings[ultimaStringCount - 1]);
+        }
+      }
+
+      i = end + 1;
+      continue;
+    }
+    
+    i++;
+  }
+}
+
 static int sceneDiskLoader_verifyUltimaDisks() {
   if (!file_exists("disk1.dsk")) {
     strcpy(diskMsgText, "'disk1.dsk' not found!");
@@ -494,7 +547,7 @@ static int sceneDiskLoader_verifyUltimaDisks() {
     }
   }
 
-  strcpy(diskMsgText, "--ULTIMA--");
+  strcpy(diskMsgText, "--OPEN SOSARIA--");
   text_create(&diskMsg, diskMsgText);
   free(disk1);
   free(disk2);
@@ -553,6 +606,39 @@ void sceneDiskLoader_extractUltimaAssets() {
     }
     free(castleBuffer->data);
     free(castleBuffer);
+  }
+
+  // Read Strings
+  memset(ultimaStrings, 0, sizeof(ultimaStrings));
+
+  // Main Menu
+  Buffer *mainMenuBuffer = sceneDiskLoader_readDos33FileByName(disk1, "INIT DISPLAY");
+  if (mainMenuBuffer && mainMenuBuffer->data) {
+    size_t pos = 0;
+    while (pos + 4 <= mainMenuBuffer->size) {
+      uint16_t nextAddr = (uint16_t)(mainMenuBuffer->data[pos] | (mainMenuBuffer->data[pos + 1] << 8));
+      pos += 4;
+
+      size_t start = pos;
+      while (pos < mainMenuBuffer->size && mainMenuBuffer->data[pos] != 0) {
+        pos++;
+      }
+
+      if (pos > start) {
+        emitQuotedStringsFromAppleBasicLine(mainMenuBuffer->data + start, pos - start);
+      }
+
+      if (pos < mainMenuBuffer->size && mainMenuBuffer->data[pos] == 0) {
+        pos++;
+      }
+
+      if (nextAddr == 0) {
+        break;
+      }
+    }
+
+    free(mainMenuBuffer->data);
+    free(mainMenuBuffer);
   }
 
   free(disk1);
