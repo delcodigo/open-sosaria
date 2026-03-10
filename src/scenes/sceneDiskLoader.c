@@ -425,13 +425,13 @@ static void emitQuotedStringsFromAppleBasicLine(const unsigned char *lineData, s
 static int sceneDiskLoader_verifyUltimaDisks() {
   if (!file_exists("disk1.dsk")) {
     strcpy(diskMsgText, "'disk1.dsk' not found!");
-    text_create(&diskMsg, diskMsgText);
+    text_create(&diskMsg, diskMsgText, false);
     return 0;
   }
 
   if (!file_exists("disk2.dsk")) {
     strcpy(diskMsgText, "'disk2.dsk' not found!");
-    text_create(&diskMsg, diskMsgText);
+    text_create(&diskMsg, diskMsgText, false);
     return 0;
   }
 
@@ -440,7 +440,7 @@ static int sceneDiskLoader_verifyUltimaDisks() {
 
   if (!disk1 || !disk2) {
     strcpy(diskMsgText, "Failed to allocate memory for disks!");
-    text_create(&diskMsg, diskMsgText);
+    text_create(&diskMsg, diskMsgText, false);
     free(disk1);
     free(disk2);
     return 0;
@@ -461,7 +461,7 @@ static int sceneDiskLoader_verifyUltimaDisks() {
 
   if (!disk1Files || !disk2Files) {
     strcpy(diskMsgText, "Failed to read disk catalogs!");
-    text_create(&diskMsg, diskMsgText);
+    text_create(&diskMsg, diskMsgText, false);
     free(disk1);
     free(disk2);
     free(disk1Files);
@@ -507,7 +507,7 @@ static int sceneDiskLoader_verifyUltimaDisks() {
 
     if (!file) {
       snprintf(diskMsgText, sizeof(diskMsgText), "File '%s' missing on disk 1!", requiredDisk1[i].name);
-      text_create(&diskMsg, diskMsgText);
+      text_create(&diskMsg, diskMsgText, false);
       free(disk1);
       free(disk2);
       free(disk1Files);
@@ -515,7 +515,7 @@ static int sceneDiskLoader_verifyUltimaDisks() {
       return 0;
     } else if (file->size != requiredDisk1[i].expectedSize) {
       snprintf(diskMsgText, sizeof(diskMsgText), "'%s' on disk 1 is incorrect!", requiredDisk1[i].name);
-      text_create(&diskMsg, diskMsgText);
+      text_create(&diskMsg, diskMsgText, false);
       free(disk1);
       free(disk2);
       free(disk1Files);
@@ -530,7 +530,7 @@ static int sceneDiskLoader_verifyUltimaDisks() {
 
     if (!file) {
       snprintf(diskMsgText, sizeof(diskMsgText), "File '%s' missing on disk 2!", requiredDisk2[i].name);
-      text_create(&diskMsg, diskMsgText);
+      text_create(&diskMsg, diskMsgText, false);
       free(disk1);
       free(disk2);
       free(disk1Files);
@@ -538,7 +538,7 @@ static int sceneDiskLoader_verifyUltimaDisks() {
       return 0;
     } else if (file->size != requiredDisk2[i].expectedSize) {
       snprintf(diskMsgText, sizeof(diskMsgText), "'%s' on disk 2 is incorrect!", requiredDisk2[i].name);
-      text_create(&diskMsg, diskMsgText);
+      text_create(&diskMsg, diskMsgText, false);
       free(disk1);
       free(disk2);
       free(disk1Files);
@@ -548,7 +548,7 @@ static int sceneDiskLoader_verifyUltimaDisks() {
   }
 
   strcpy(diskMsgText, "--OPEN SOSARIA--");
-  text_create(&diskMsg, diskMsgText);
+  text_create(&diskMsg, diskMsgText, false);
   free(disk1);
   free(disk2);
   free(disk1Files);

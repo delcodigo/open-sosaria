@@ -76,7 +76,7 @@ int engine_loadFont() {
     return 0;
   }
 
-  unsigned int size = 128 * 64 * 4;
+  unsigned int size = 128 * 128 * 4;
   unsigned char *fontData = (unsigned char*) malloc(size);
 
   if (!fontData) {
@@ -94,7 +94,7 @@ int engine_loadFont() {
     return 0;
   }
 
-  fontTexture = texture_load(128, 64, fontData);
+  fontTexture = texture_load(128, 128, fontData);
   free((void*)fontData);
 
   return 1;

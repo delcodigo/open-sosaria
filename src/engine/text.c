@@ -6,7 +6,7 @@
 
 static float transformMatrix[16];
 
-static void text_addGlyphs(const char *text, float *vertices, unsigned int *indices) {
+static void text_addGlyphs(const char *text, float *vertices, unsigned int *indices, bool isInverted) {
   int length = strlen(text);
 
   int vertexOffset = 0;
@@ -14,6 +14,8 @@ static void text_addGlyphs(const char *text, float *vertices, unsigned int *indi
 
   float x1 = 0;
   float y1 = 0;
+
+  float yOff = isInverted ? 0.5f : 0.0f;
 
   for (int i=0;i<length;i++) {
     char c = text[i] - OS_FONT_OFFSET;
@@ -23,9 +25,9 @@ static void text_addGlyphs(const char *text, float *vertices, unsigned int *indi
     float x2 = x1 + OS_FONT_GLYPH_WIDTH;
     float y2 = y1 - OS_FONT_GLYPH_HEIGHT;
     float tx1 = (float)(col * OS_FONT_GLYPH_WIDTH) / OS_FONT_WIDTH;
-    float ty1 = (float)(row * OS_FONT_GLYPH_HEIGHT) / OS_FONT_HEIGHT;
+    float ty1 = (float)(row * OS_FONT_GLYPH_HEIGHT) / OS_FONT_HEIGHT + yOff;
     float tx2 = (float)((col + 1) * OS_FONT_GLYPH_WIDTH) / OS_FONT_WIDTH;
-    float ty2 = (float)((row + 1) * OS_FONT_GLYPH_HEIGHT) / OS_FONT_HEIGHT;
+    float ty2 = (float)((row + 1) * OS_FONT_GLYPH_HEIGHT) / OS_FONT_HEIGHT + yOff;
 
     vertices[vertexOffset++] = x1;
     vertices[vertexOffset++] = y1;
@@ -62,11 +64,11 @@ static void text_addGlyphs(const char *text, float *vertices, unsigned int *indi
   }
 }
 
-void text_update(Text *textGeometry, const char* text) {
+void text_update(Text *textGeometry, const char* text, bool isInverted) {
   memset(textGeometry->vertices, 0, textGeometry->size);
   memset(textGeometry->indices, 0, textGeometry->length * OS_QUAD_INDEX_SIZE * sizeof(unsigned int));
 
-  text_addGlyphs(text, textGeometry->vertices, textGeometry->indices);
+  text_addGlyphs(text, textGeometry->vertices, textGeometry->indices, isInverted);
 
   glBindBuffer(GL_ARRAY_BUFFER, textGeometry->geometry.VBO);
   glBufferData(GL_ARRAY_BUFFER, textGeometry->size, textGeometry->vertices, GL_STATIC_DRAW);
@@ -77,7 +79,7 @@ void text_update(Text *textGeometry, const char* text) {
   textGeometry->geometry.indexCount = textGeometry->length * OS_QUAD_INDEX_SIZE;
 }
 
-void text_create(Text *textGeometry, const char* text) {
+void text_create(Text *textGeometry, const char* text, bool isInverted) {
   Geometry *geometry = &textGeometry->geometry;
 
   glGenVertexArrays(1, &geometry->VAO);
@@ -89,7 +91,7 @@ void text_create(Text *textGeometry, const char* text) {
   textGeometry->vertices = (float*) malloc(textGeometry->size);
   textGeometry->indices = (unsigned int*) malloc(textGeometry->length * OS_QUAD_INDEX_SIZE * sizeof(unsigned int));
 
-  text_addGlyphs(text, textGeometry->vertices, textGeometry->indices);
+  text_addGlyphs(text, textGeometry->vertices, textGeometry->indices, isInverted);
 
   glBindVertexArray(geometry->VAO);
   glBindBuffer(GL_ARRAY_BUFFER, geometry->VBO);

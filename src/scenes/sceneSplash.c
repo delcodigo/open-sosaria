@@ -4,9 +4,11 @@
 #include "config.h"
 #include "sceneDiskLoader.h"
 #include "maths/matrix4.h"
+#include "sceneMainMenu.h"
 
 Geometry splashGeometry;
 float transformMatrix[16];
+float timeToNextScene = 3.0f;
 
 void sceneSplash_init() {
   geometry_setSprite(&splashGeometry, OS_SCREEN_WIDTH, OS_SCREEN_HEIGHT);
@@ -14,8 +16,12 @@ void sceneSplash_init() {
 }
 
 void sceneSplash_update(float deltaTime) {
-  (void) deltaTime;
   geometry_render(&splashGeometry, ultimaAssets.titleScreen.textureId, transformMatrix, camera_getViewProjectionMatrix(&camera));
+
+  timeToNextScene -= deltaTime;
+  if (timeToNextScene <= 0.0f) {
+    scene_load(&sceneMainMenu);
+  }
 }
 
 void sceneSplash_free() {
