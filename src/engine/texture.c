@@ -16,6 +16,6 @@ GLuint texture_load(unsigned int width, unsigned int height, const unsigned char
   return texture;
 }
 
-void texture_destroy(GLuint texture) {
+void texture_free(GLuint texture) {
   glDeleteTextures(1, &texture);
 }

@@ -1,12 +1,27 @@
 #ifndef OS_SCENE_DISK_LOADER_H
 #define OS_SCENE_DISK_LOADER_H
 
+#include <stdbool.h>
 #include "engine/scene.h"
+#include <GLFW/glfw3.h>
 
-void sceneDiskLoader_init();
-void sceneDiskLoader_update();
-void sceneDiskLoader_free();
+typedef struct {
+  unsigned char *data;
+  unsigned int width;
+  unsigned int height;
+  GLuint textureId;
+} UltimaImage;
+
+typedef struct {
+  // HGR splash screens (280x192)
+  UltimaImage titleScreen;
+
+  bool loaded;
+} UltimaAssets;
+
+void sceneDiskLoader_freeTextures();
 
 extern Scene sceneDiskLoader;
+extern UltimaAssets ultimaAssets;
 
 #endif

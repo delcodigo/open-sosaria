@@ -124,9 +124,7 @@ void text_render(Text *textGeometry, float x, float y) {
 }
 
 void text_free(Text *textGeometry) {
-  glDeleteBuffers(1, &textGeometry->geometry.VBO);
-  glDeleteBuffers(1, &textGeometry->geometry.EBO);
-  glDeleteVertexArrays(1, &textGeometry->geometry.VAO);
+  geometry_free(&textGeometry->geometry);
   free(textGeometry->vertices);
   free(textGeometry->indices);
 }

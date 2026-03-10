@@ -38,6 +38,7 @@ int engine_init() {
 
   glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
   glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
+  glfwWindowHint(GLFW_MAXIMIZED, GLFW_TRUE);
 
   window = glfwCreateWindow(OS_SCREEN_WIDTH, OS_SCREEN_HEIGHT, "Open Sosaria", NULL, NULL);
   if (!window) {
@@ -100,7 +101,7 @@ int engine_loadFont() {
 }
 
 void engine_cleanup() {
-  texture_destroy(fontTexture);
+  texture_free(fontTexture);
   glDeleteProgram(shaderProgram);
   glfwDestroyWindow(window);
   glfwTerminate();

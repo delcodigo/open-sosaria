@@ -4,6 +4,6 @@
 #include <GLFW/glfw3.h>
 
 GLuint texture_load(unsigned int width, unsigned int height, const unsigned char* data);
-void texture_destroy(GLuint texture);
+void texture_free(GLuint texture);
 
 #endif

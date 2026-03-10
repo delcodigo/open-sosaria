@@ -9,8 +9,6 @@
 #include "scenes/sceneDiskLoader.h"
 #include <GLFW/glfw3.h>
 
-static Scene *scene = NULL;
-
 int main(void)
 {
   if (!engine_init()) {
@@ -22,20 +20,29 @@ int main(void)
     return EXIT_FAILURE;
   }
 
-  scene = &sceneDiskLoader;
-  scene->scene_init();
+  scene_load(&sceneDiskLoader);
 
+  float lastTime = 0.0;
   while (!glfwWindowShouldClose(window)) {
+    float currentTime = (float) glfwGetTime();
+    float deltaTime = currentTime - lastTime;
+    lastTime = currentTime;
+
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    scene->scene_update();
+    if (currentScene.scene_update) {
+      currentScene.scene_update(deltaTime);
+    }
 
     glfwSwapBuffers(window);
     glfwPollEvents();
   }
 
-  scene->scene_free();
+  if (currentScene.scene_free) {
+    currentScene.scene_free();
+  }
   engine_cleanup();
+  sceneDiskLoader_freeTextures();
 
   printLeftPointers();
 

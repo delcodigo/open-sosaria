@@ -75,6 +75,16 @@ make clean        # Clean build artifacts
 ./bin/open-sosaria
 ```
 
-## Status
+## Current Implementation
 
-Current state is foundational engine scaffolding only. No game logic or Apple II disk integration has been implemented yet.
+The engine currently includes:
+
+- **Disk Verification:** Validates that `disk1.dsk` and `disk2.dsk` exist and contain the required Apple II Ultima files with correct sizes
+- **Disk Loader Scene:** Displays status messages during the boot process (file verification or error messages)
+- **Asset Extraction:** Reads and parses DOS 3.3 disk catalogs and file structures from the Apple II disks
+- **Title Splash Screen:** Extracts and renders the title screen picture (`PIC.ULTIMATUM`) from the disk images
+- **Rendering Pipeline:** OpenGL-based 2D graphics rendering via GLFW
+
+## Next Steps
+
+Game logic, sprite rendering, movement controls, and Apple II game mechanics are planned for future development.

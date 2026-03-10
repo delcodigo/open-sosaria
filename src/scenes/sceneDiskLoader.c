@@ -1,11 +1,15 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "sceneDiskLoader.h"
+#include <stdint.h>
 #include "engine/text.h"
+#include "engine/texture.h"
+#include "sceneDiskLoader.h"
+#include "maths/matrix4.h"
 #include "utils.h"
 #include "memory.h"
 #include "config.h"
+#include "sceneSplash.h"
 
 #define DISK_SIZE 35 * 16 * 256
 #define DOS_TRACKS 35
@@ -14,25 +18,27 @@
 
 static Text diskMsg;
 static char diskMsgText[41] = {0};
+UltimaAssets ultimaAssets = {0};
+float loaderTime = 0.0f;
 
 typedef struct {
-  unsigned char *data;
-  unsigned int size;
+  uint8_t *data;
+  uint32_t size;
 } Buffer;
 
 typedef struct {
   char name[31];
-  unsigned char type;
-  unsigned int size;
+  uint8_t type;
+  uint32_t size;
 } DosFile;
 
 typedef struct {
   const char *name;
-  unsigned int expectedSize;
+  uint32_t expectedSize;
   int disk;
 } FileRequirement;
 
-unsigned char *sceneDiskLoader_getDos33Sector(unsigned char *disk, int track, int sector) {
+uint8_t *sceneDiskLoader_getDos33Sector(uint8_t *disk, int track, int sector) {
   if (track < 0 || track >= DOS_TRACKS || sector < 0 || sector >= DOS_SECTORS) {
     return NULL;
   }
@@ -45,12 +51,12 @@ unsigned char *sceneDiskLoader_getDos33Sector(unsigned char *disk, int track, in
   return disk + offset;
 }
 
-char *sceneDiskLoader_decodeDosFilename(unsigned char *nameBytes) {
+char *sceneDiskLoader_decodeDosFilename(uint8_t *nameBytes) {
   static char name[31];
   memset(name, 0, sizeof(name));
 
   for (int i=0;i<30;i++) {
-    unsigned char byte = nameBytes[i];
+    uint8_t byte = nameBytes[i];
     char c = (byte & 0x7f) ? (char)(byte & 0x7f) : ' ';
     name[i] = (c >= 32 && c <= 126) ? c : ' ';
   }
@@ -64,11 +70,11 @@ char *sceneDiskLoader_decodeDosFilename(unsigned char *nameBytes) {
   return name;
 }
 
-Buffer *sceneDiskLoader_readDos33FileFromTsList(unsigned char *disk, int tsTrack, int tsSector, unsigned int maxSectors) {
-  unsigned char *data = (unsigned char *) malloc(maxSectors * DOS_SECTOR_SIZE);
+Buffer *sceneDiskLoader_readDos33FileFromTsList(uint8_t *disk, int tsTrack, int tsSector, uint32_t maxSectors) {
+  uint8_t *data = (uint8_t *) malloc(maxSectors * DOS_SECTOR_SIZE);
   if (!data) { return NULL; }
 
-  unsigned int total = 0;
+  uint32_t total = 0;
   int visited[DOS_TRACKS][DOS_SECTORS];
   memset(visited, 0, sizeof(visited));
 
@@ -79,18 +85,18 @@ Buffer *sceneDiskLoader_readDos33FileFromTsList(unsigned char *disk, int tsTrack
     if (visited[track][sector]) { break; }
     visited[track][sector] = 1;
 
-    unsigned char *ts = sceneDiskLoader_getDos33Sector(disk, track, sector);
+    uint8_t *ts = sceneDiskLoader_getDos33Sector(disk, track, sector);
     if (!ts) { break; }
 
     int nextTrack = ts[1];
     int nextSector = ts[2];
 
     for (int o=0x0c;o<0x100 && total<maxSectors;o+=2) {
-      unsigned char dt = ts[o];
-      unsigned char ds = ts[o+1];
+      uint8_t dt = ts[o];
+      uint8_t ds = ts[o+1];
       if (dt == 0) { break; }
 
-      unsigned char *sectorData = sceneDiskLoader_getDos33Sector(disk, dt, ds);
+      uint8_t *sectorData = sceneDiskLoader_getDos33Sector(disk, dt, ds);
       if (!sectorData) { continue; }
 
       memcpy(data + total * DOS_SECTOR_SIZE, sectorData, DOS_SECTOR_SIZE);
@@ -113,10 +119,56 @@ Buffer *sceneDiskLoader_readDos33FileFromTsList(unsigned char *disk, int tsTrack
   return buffer;
 }
 
-static DosFile *sceneDiskLoader_readDos33Catalog(unsigned char *disk, int *outCount) {
+static Buffer *sceneDiskLoader_readDos33FileByName(uint8_t *disk, const char *filename) {
+  if (!disk || !filename) { return NULL; }
+
+  uint8_t *vtoc = sceneDiskLoader_getDos33Sector(disk, 17, 0);
+  if (!vtoc) { return NULL; }
+
+  int catTrack = vtoc[1];
+  int catSector = vtoc[2];
+  int visited[DOS_TRACKS][DOS_SECTORS];
+  memset(visited, 0, sizeof(visited));
+
+  while (catTrack != 0) {
+    if (catTrack < 0 || catTrack >= DOS_TRACKS || catSector < 0 || catSector >= DOS_SECTORS) {
+      break;
+    }
+
+    if (visited[catTrack][catSector]) { break; }
+    visited[catTrack][catSector] = 1;
+
+    uint8_t *catalogSector = sceneDiskLoader_getDos33Sector(disk, catTrack, catSector);
+    if (!catalogSector) { break; }
+
+    for (int i=0;i<7;i++) {
+      int entryOffset = 0x0b + i *35;
+      uint8_t tsTrack = catalogSector[entryOffset];
+      uint8_t tsSector = catalogSector[entryOffset + 1];
+      uint8_t *nameBytes = catalogSector + entryOffset + 3;
+      uint16_t lenSectors = catalogSector[entryOffset + 33] | (catalogSector[entryOffset + 34] << 8);
+
+      if (!nameBytes[0] || tsTrack == 0 || tsTrack == 0xff) { continue; }
+
+      char *decodedName = sceneDiskLoader_decodeDosFilename(nameBytes);
+      if (!decodedName || strlen(decodedName) == 0) { continue; }
+
+      if (strcmp(decodedName, filename) == 0) {
+        return sceneDiskLoader_readDos33FileFromTsList(disk, tsTrack, tsSector, lenSectors ? lenSectors : 65535);
+      }
+    }
+
+    catTrack = catalogSector[1];
+    catSector = catalogSector[2];
+  }
+
+  return NULL;
+}
+
+static DosFile *sceneDiskLoader_readDos33Catalog(uint8_t *disk, int *outCount) {
   if (!disk) { return NULL; }
 
-  unsigned char *vtoc = sceneDiskLoader_getDos33Sector(disk, 17, 0);
+  uint8_t *vtoc = sceneDiskLoader_getDos33Sector(disk, 17, 0);
   if (!vtoc) { return NULL; }
 
   DosFile *file = (DosFile *) malloc(sizeof(DosFile) * 200);
@@ -133,16 +185,16 @@ static DosFile *sceneDiskLoader_readDos33Catalog(unsigned char *disk, int *outCo
     if (visited[catTrack][catSector]) { break; }
     visited[catTrack][catSector] = 1;
 
-    unsigned char *catalogSector = sceneDiskLoader_getDos33Sector(disk, catTrack, catSector);
+    uint8_t *catalogSector = sceneDiskLoader_getDos33Sector(disk, catTrack, catSector);
     if (!catalogSector) { break; }
 
     for (int i=0;i<7;i++) {
       int entryOffset = 0x0b + i *35;
-      unsigned char tsTrack = catalogSector[entryOffset];
-      unsigned char tsSector = catalogSector[entryOffset + 1];
-      unsigned char fileType = catalogSector[entryOffset + 2] & 0x7f;
-      unsigned char *nameBytes = catalogSector + entryOffset + 3;
-      unsigned short lenSectors = catalogSector[entryOffset + 33] | (catalogSector[entryOffset + 34] << 8);
+      uint8_t tsTrack = catalogSector[entryOffset];
+      uint8_t tsSector = catalogSector[entryOffset + 1];
+      uint8_t fileType = catalogSector[entryOffset + 2] & 0x7f;
+      uint8_t *nameBytes = catalogSector + entryOffset + 3;
+      uint16_t lenSectors = catalogSector[entryOffset + 33] | (catalogSector[entryOffset + 34] << 8);
 
       if (!nameBytes[0] || tsTrack == 0 || tsTrack == 0xff) { continue; }
 
@@ -179,6 +231,144 @@ static DosFile *sceneDiskLoader_findFileByName(DosFile *files, int count, const 
   return NULL;
 }
 
+static const uint8_t *sceneDiskLoader_maybeStripBloadHeader(const uint8_t *data, uint32_t size, uint32_t *outSize) {
+  if (!data || !outSize) { return NULL; }
+
+  if (size < 8) {
+    *outSize = size;
+    return data;
+  }
+
+  uint16_t bodyLength = (uint16_t)(data[2] | (data[3] << 8));
+  if (bodyLength > 0 && (uint32_t)bodyLength + 4 <= size) {
+    *outSize = bodyLength;
+    return data + 4;
+  }
+
+  *outSize = size;
+  return data;
+}
+
+static UltimaImage sceneDiskLoader_createImage(uint32_t width, uint32_t height, uint8_t bg_r, uint8_t bg_g, uint8_t bg_b) {
+  UltimaImage img;
+  img.width = width;
+  img.height = height;
+  img.data = (uint8_t *) malloc(width * height * 4);
+
+  if (img.data) {
+    for (uint32_t i=0;i<width * height;i++) {
+      img.data[i*4 + 0] = bg_r;
+      img.data[i*4 + 1] = bg_g;
+      img.data[i*4 + 2] = bg_b;
+      img.data[i*4 + 3] = 255;
+    }
+  }
+
+  return img;
+}
+
+static void sceneDiskLoader_freeImage(UltimaImage *img) {
+  if (img && img->data) {
+    free(img->data);
+    img->data = NULL;
+    img->width = 0;
+    img->height = 0;
+  }
+}
+
+static void sceneDiskLoader_setPixel(UltimaImage *img, int x, int y, uint8_t r, uint8_t g, uint8_t b) {
+  if (!img || !img->data) { return; }
+  if (x < 0 || (uint32_t)x >= img->width || y < 0 || (uint32_t)y >= img->height) { return; }
+
+  uint32_t index = (y * img->width + x) * 4;
+  img->data[index + 0] = r;
+  img->data[index + 1] = g;
+  img->data[index + 2] = b;
+  img->data[index + 3] = 255;
+}
+
+static bool sceneDiskLoader_decodeHGRImage(const uint8_t *dataRaw, uint32_t sizeRaw, UltimaImage *outImage) {
+  if (!dataRaw || !outImage) { return false; }
+
+  uint32_t size = 0;
+  const uint8_t *data = sceneDiskLoader_maybeStripBloadHeader(dataRaw, sizeRaw, &size);
+  if (!data || size < 8184) { return false; }
+
+  const int originalWidth = 280;
+  const int originalHeight = 192;
+
+  *outImage = sceneDiskLoader_createImage(originalWidth, originalHeight, 0, 0, 0);
+  if (!outImage->data) { return false; }
+
+  // Decode HGR with approximate colors
+  for (int y=0;y<originalHeight;y++) {
+    int rowBase = ((y & 0x07) * 0x400) + (((y >> 3) & 0x07) * 0x80) + ((y >> 6) * 0x28);
+
+    // first pass: unpack whole scanline
+    uint8_t bits[280] = {0};
+    uint8_t phase[280] = {0};
+
+    for (int xb = 0; xb < 40; xb++) {
+        int addr = rowBase + xb;
+        if (addr >= (int)size) continue;
+
+        uint8_t byte = data[addr];
+        uint8_t ph = (byte >> 7) & 1;
+
+        for (int bit = 0; bit < 7; bit++) {
+          int x = xb * 7 + bit;
+          bits[x] = (byte >> bit) & 1;
+          phase[x] = ph;
+        }
+    }
+
+    // second pass: decode with neighbors
+    for (int x = 0; x < 280; x++) {
+        int left = (x > 0) ? bits[x - 1] : 0;
+        int current = bits[x];
+        int right = (x < 279) ? bits[x + 1] : 0;
+
+        uint8_t r = 0, g = 0, b = 0;
+
+        if (!current) {
+          // black
+          r = g = b = 0;
+        } else if (left || right) {
+          // adjacent lit pixels trend toward white
+          r = g = b = 255;
+        } else {
+          // isolated pixel -> artifact color
+          int odd = x & 1;
+          int ph = phase[x];
+
+          // phase shifts the palette
+          // ph=0: odd/even -> green/purple
+          // ph=1: odd/even -> orange/blue
+          if (ph == 0) {
+            if (odd) {
+              r = 48; g = 200; b = 64; // green
+            } else {
+              r = 200; g = 64; b = 255; // purple
+            }
+          } else {
+            if (odd) {
+              r = 255; g = 144; b = 48; // orange
+            } else {
+              r = 64; g = 136; b = 255; // blue
+            }
+          }
+        }
+
+        sceneDiskLoader_setPixel(outImage, x, y, r, g, b);
+    }
+  }
+
+  outImage->textureId = texture_load(outImage->width, outImage->height, outImage->data);
+  sceneDiskLoader_freeImage(outImage);
+
+  return true;
+}
+
 static int sceneDiskLoader_verifyUltimaDisks() {
   if (!file_exists("disk1.dsk")) {
     strcpy(diskMsgText, "'disk1.dsk' not found!");
@@ -192,8 +382,8 @@ static int sceneDiskLoader_verifyUltimaDisks() {
     return 0;
   }
 
-  unsigned char *disk1 = (unsigned char *)malloc(DISK_SIZE);
-  unsigned char *disk2 = (unsigned char *)malloc(DISK_SIZE);
+  uint8_t *disk1 = (uint8_t *)malloc(DISK_SIZE);
+  uint8_t *disk2 = (uint8_t *)malloc(DISK_SIZE);
 
   if (!disk1 || !disk2) {
     strcpy(diskMsgText, "Failed to allocate memory for disks!");
@@ -304,7 +494,7 @@ static int sceneDiskLoader_verifyUltimaDisks() {
     }
   }
 
-  strcpy(diskMsgText, "ULTIMA Disks Verified!");
+  strcpy(diskMsgText, "--ULTIMA--");
   text_create(&diskMsg, diskMsgText);
   free(disk1);
   free(disk2);
@@ -314,17 +504,70 @@ static int sceneDiskLoader_verifyUltimaDisks() {
   return 1;
 }
 
-void sceneDiskLoader_init() {
-  sceneDiskLoader_verifyUltimaDisks();
+void sceneDiskLoader_extractUltimaAssets() {
+  memset(&ultimaAssets, 0, sizeof(UltimaAssets));
+
+  FILE *f1 = fopen("disk1.dsk", "rb");
+  FILE *f2 = fopen("disk2.dsk", "rb");
+
+  uint8_t *disk1 = (uint8_t *)malloc(DISK_SIZE);
+  uint8_t *disk2 = (uint8_t *)malloc(DISK_SIZE);
+
+  if (!disk1 || !disk2) {
+    free(disk1);
+    free(disk2);
+    fclose(f1);
+    fclose(f2);
+    return;
+  }
+
+  fclose(f1);
+  fclose(f2);
+
+  Buffer *titleBuffer = sceneDiskLoader_readDos33FileByName(disk1, "PIC.ULTIMATUM");
+  if (titleBuffer && titleBuffer->data) {
+    // Decode HGR image
+    if (!sceneDiskLoader_decodeHGRImage(titleBuffer->data, titleBuffer->size, &ultimaAssets.titleScreen)) {
+      sceneDiskLoader_freeImage(&ultimaAssets.titleScreen);
+    }
+    free(titleBuffer->data);
+    free(titleBuffer);
+  }
+
+  free(disk1);
+  free(disk2);
+
+  ultimaAssets.loaded = true;
 }
 
-void sceneDiskLoader_update() {
+void sceneDiskLoader_init() {
+  sceneDiskLoader_verifyUltimaDisks();
+  sceneDiskLoader_extractUltimaAssets();
+
+  loaderTime = 2.0f; // Show the loader for 2 seconds before proceeding
+}
+
+void sceneDiskLoader_update(float deltaTime) {
   int x = (OS_SCREEN_WIDTH - (strlen(diskMsgText) * OS_FONT_GLYPH_WIDTH)) / 2;
   text_render(&diskMsg, x, OS_SCREEN_HEIGHT / 2);
+
+  if (loaderTime > 0.0f && ultimaAssets.loaded) {
+    loaderTime -= deltaTime;
+    if (loaderTime <= 0.0f) {
+      scene_load(&sceneSplash);
+    }
+  }
 }
 
 void sceneDiskLoader_free() {
   text_free(&diskMsg);
+}
+
+void sceneDiskLoader_freeTextures() {
+  if (ultimaAssets.loaded) {
+    texture_free(ultimaAssets.titleScreen.textureId);
+    ultimaAssets.titleScreen.textureId = 0;
+  }
 }
 
 Scene sceneDiskLoader = {
