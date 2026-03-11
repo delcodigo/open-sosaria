@@ -15,7 +15,10 @@ static Textfield menuInputField = {
   .active = false,
   .text = {0},
   .cursorPosition = 0,
-  .maxLength = 2
+  .maxLength = 2,
+  .isDirty = false,
+  .isNumberOnly = true,
+  .isSubmitted = false
 };
 
 static void sceneMainMenu_init() {

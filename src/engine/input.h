@@ -9,10 +9,14 @@ typedef struct {
   char text[41];
   int cursorPosition;
   int maxLength;
+  bool isDirty;
+  bool isSubmitted;
+  bool isNumberOnly;
 } Textfield;
 
 extern Textfield *inputTextfield;
 
 void input_charCallback(GLFWwindow* window, unsigned int codepoint);
+void input_keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
 
 #endif

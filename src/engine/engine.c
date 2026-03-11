@@ -53,6 +53,7 @@ int engine_init() {
   glfwSwapInterval(1);
   
   glfwSetCharCallback(window, input_charCallback);
+  glfwSetKeyCallback(window, input_keyCallback);
 
   if (!gladLoadGL()) {
     fprintf(stderr, "Failed to load OpenGL functions\n");
