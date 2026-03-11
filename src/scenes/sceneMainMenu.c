@@ -1,14 +1,22 @@
+#include <string.h>
 #include "sceneMainMenu.h"
 #include "engine/text.h"
+#include "engine/input.h"
+#include "entities/uiCursor.h"
 #include "sceneDiskLoader.h"
+#include "sceneCharacterGenerator.h"
 
 static Text titleTextGeometry[4];
 static Text copyrightTextGeometry[2];
 static Text optionsTextGeometry[2];
 static Text choiceTextGeometry;
-static Text cursorTextGeometry;
-static float cursorBlinkTime = 0.0f;
-static bool cursorVisible = true;
+
+static Textfield menuInputField = {
+  .active = false,
+  .text = {0},
+  .cursorPosition = 0,
+  .maxLength = 2
+};
 
 static void sceneMainMenu_init() {
   text_create(&titleTextGeometry[0], ultimaStrings[0], true);
@@ -24,8 +32,12 @@ static void sceneMainMenu_init() {
 
   text_create(&choiceTextGeometry, ultimaStrings[9], false);
 
-  char cursorStr[2] = { 127, '\0' };
-  text_create(&cursorTextGeometry, cursorStr, false);
+  uiCursor_init();
+
+  menuInputField.active = true;
+  memset(menuInputField.text, 0, sizeof(menuInputField.text));
+  menuInputField.cursorPosition = 0;
+  inputTextfield = &menuInputField;
 }
 
 static void sceneMainMenu_update(float deltaTime) {
@@ -42,14 +54,12 @@ static void sceneMainMenu_update(float deltaTime) {
 
   text_render(&choiceTextGeometry, 119, 16);
 
-  if (cursorVisible) {
-    text_render(&cursorTextGeometry, 168, 16);
-  }
+  uiCursor_update(deltaTime, 168, 16);
 
-  cursorBlinkTime += deltaTime;
-  if (cursorBlinkTime >= 0.33f) {
-    cursorBlinkTime = 0.0f;
-    cursorVisible = !cursorVisible;
+  if (menuInputField.text[0] == '1') {
+    menuInputField.active = false;
+    scene_load(&sceneCharacterGenerator);
+  } else if (menuInputField.text[0] == '2') {
   }
 }
 
@@ -66,7 +76,7 @@ static void sceneMainMenu_free() {
   text_free(&optionsTextGeometry[1]);
 
   text_free(&choiceTextGeometry);
-  text_free(&cursorTextGeometry);
+  uiCursor_free();
 }
 
 Scene sceneMainMenu = {

@@ -371,7 +371,15 @@ static bool sceneDiskLoader_decodeHGRImage(const uint8_t *dataRaw, uint32_t size
   return true;
 }
 
-static void emitQuotedStringsFromAppleBasicLine(const unsigned char *lineData, size_t lineLength) {
+static void sceneDiskLoader_addToUltimaStrings(const char *str, int length) {
+  if (ultimaStringCount < 1000) {
+    strncpy(ultimaStrings[ultimaStringCount], str, length);
+    printf("Added to strings: [%d] '%s'\n", ultimaStringCount, ultimaStrings[ultimaStringCount]);
+    ultimaStringCount++;
+  }
+}
+
+static void sceneDiskLoader_emitQuotedStringsFromAppleBasicLine(const unsigned char *lineData, size_t lineLength) {
   size_t i = 0;
   bool shouldAppend = false;
 
@@ -625,7 +633,7 @@ void sceneDiskLoader_extractUltimaAssets() {
       }
 
       if (pos > start) {
-        emitQuotedStringsFromAppleBasicLine(mainMenuBuffer->data + start, pos - start);
+        sceneDiskLoader_emitQuotedStringsFromAppleBasicLine(mainMenuBuffer->data + start, pos - start);
       }
 
       if (pos < mainMenuBuffer->size && mainMenuBuffer->data[pos] == 0) {
@@ -639,6 +647,67 @@ void sceneDiskLoader_extractUltimaAssets() {
 
     free(mainMenuBuffer->data);
     free(mainMenuBuffer);
+  }
+
+  // BEVERY
+  Buffer *beveryBuffer = sceneDiskLoader_readDos33FileByName(disk2, "BEVERY");
+  if (beveryBuffer && beveryBuffer->data) {
+    size_t offset = 4;
+
+    char stat[16] = {0};
+    memcpy(stat, beveryBuffer->data + offset + 0x1C67, 15);
+    sceneDiskLoader_addToUltimaStrings(stat, strlen(stat));
+
+    memcpy(stat, beveryBuffer->data + offset + 0x1C58, 15);
+    sceneDiskLoader_addToUltimaStrings(stat, strlen(stat));
+
+    memcpy(stat, beveryBuffer->data + offset + 0x1C49, 15);
+    sceneDiskLoader_addToUltimaStrings(stat, strlen(stat));
+
+    memcpy(stat, beveryBuffer->data + offset + 0x1C3A, 15);
+    sceneDiskLoader_addToUltimaStrings(stat, strlen(stat));
+
+    memcpy(stat, beveryBuffer->data + offset + 0x1C2B, 15);
+    sceneDiskLoader_addToUltimaStrings(stat, strlen(stat));
+
+    memcpy(stat, beveryBuffer->data + offset + 0x1C1C, 15);
+    sceneDiskLoader_addToUltimaStrings(stat, strlen(stat));
+
+    char class[5] = {0};
+    memcpy(class, beveryBuffer->data + offset + 0x1DFB, 4);
+    sceneDiskLoader_addToUltimaStrings(class, strlen(class));
+
+    memcpy(class, beveryBuffer->data + offset + 0x1DF7, 4);
+    sceneDiskLoader_addToUltimaStrings(class, strlen(class));
+
+    char race[7] = {0};
+    memcpy(race, beveryBuffer->data + offset + 0x13CF, 5);
+    sceneDiskLoader_addToUltimaStrings(race, 5);
+
+    memcpy(race, beveryBuffer->data + offset + 0x13CC, 3);
+    sceneDiskLoader_addToUltimaStrings(race, 3);
+
+    memcpy(race, beveryBuffer->data + offset + 0x13C7, 5);
+    sceneDiskLoader_addToUltimaStrings(race, 5);
+
+    memcpy(race, beveryBuffer->data + offset + 0x13C1, 6);
+    sceneDiskLoader_addToUltimaStrings(race, 6);
+
+    char type[8] = {0};
+    memcpy(type, beveryBuffer->data + offset + 0x13AD, 7);
+    sceneDiskLoader_addToUltimaStrings(type, 7);
+
+    memcpy(type, beveryBuffer->data + offset + 0x13A7, 6);
+    sceneDiskLoader_addToUltimaStrings(type, 6);
+
+    memcpy(type, beveryBuffer->data + offset + 0x13A1, 6);
+    sceneDiskLoader_addToUltimaStrings(type, 6);
+
+    memcpy(type, beveryBuffer->data + offset + 0x139C, 5);
+    sceneDiskLoader_addToUltimaStrings(type, 5);
+
+    free(beveryBuffer->data);
+    free(beveryBuffer);
   }
 
   free(disk1);

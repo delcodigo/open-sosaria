@@ -5,6 +5,7 @@
 #include "texture.h"
 #include "config.h"
 #include "memory.h"
+#include "input.h"
 
 GLFWwindow *window = NULL;
 unsigned int shaderProgram = 0;
@@ -50,6 +51,8 @@ int engine_init() {
   glfwMakeContextCurrent(window);
   glfwSetFramebufferSizeCallback(window, engine_screenResizeCallback);
   glfwSwapInterval(1);
+  
+  glfwSetCharCallback(window, input_charCallback);
 
   if (!gladLoadGL()) {
     fprintf(stderr, "Failed to load OpenGL functions\n");

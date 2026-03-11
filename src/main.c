@@ -24,6 +24,8 @@ int main(void)
 
   float lastTime = 0.0;
   while (!glfwWindowShouldClose(window)) {
+    glfwPollEvents();
+    
     float currentTime = (float) glfwGetTime();
     float deltaTime = currentTime - lastTime;
     lastTime = currentTime;
@@ -35,7 +37,6 @@ int main(void)
     }
 
     glfwSwapBuffers(window);
-    glfwPollEvents();
   }
 
   if (currentScene.scene_free) {
