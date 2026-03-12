@@ -84,6 +84,7 @@ The engine currently includes:
 - **Asset Extraction:** Reads and parses DOS 3.3 disk catalogs and file structures from the Apple II disks
 - **Title Splash Screen:** Extracts and renders the title screen picture (`PIC.ULTIMATUM`) from the disk images
 - **Character Generator:** Character creation and saving is working
+- **Overworld Rendering:** Overworld map rendering is working with a temporary flying camera
 - **Rendering Pipeline:** OpenGL-based 2D graphics rendering via GLFW
 
 ## Next Steps

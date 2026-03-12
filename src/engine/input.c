@@ -1,6 +1,7 @@
 #include "input.h"
 
 Textfield *inputTextfield = NULL;
+SosariaInput input = {0};
 
 void input_charCallback(GLFWwindow* window, unsigned int codepoint) {
   (void) window;
@@ -42,5 +43,22 @@ void input_keyCallback(GLFWwindow* window, int key, int scancode, int action, in
         inputTextfield->isSubmitted = true;
       }
     }
+  }
+
+  int isDown = action != GLFW_RELEASE;
+
+  switch (key) {
+    case GLFW_KEY_UP:
+      input.up = isDown;
+      break;
+    case GLFW_KEY_DOWN:
+      input.down = isDown;
+      break;
+    case GLFW_KEY_LEFT:
+      input.left = isDown;
+      break;
+    case GLFW_KEY_RIGHT:
+      input.right = isDown;
+      break;
   }
 }

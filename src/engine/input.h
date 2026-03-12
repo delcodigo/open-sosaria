@@ -14,7 +14,15 @@ typedef struct {
   bool isNumberOnly;
 } Textfield;
 
+typedef struct {
+  int up;
+  int down;
+  int left;
+  int right;
+} SosariaInput;
+
 extern Textfield *inputTextfield;
+extern SosariaInput input;
 
 void input_charCallback(GLFWwindow* window, unsigned int codepoint);
 void input_keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
