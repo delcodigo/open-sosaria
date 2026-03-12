@@ -18,6 +18,8 @@ typedef struct {
   UltimaImage townScreen;
   UltimaImage castleScreen;
 
+  UltimaImage overworldTiles;
+
   bool loaded;
 } UltimaAssets;
 

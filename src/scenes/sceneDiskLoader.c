@@ -430,6 +430,85 @@ static void sceneDiskLoader_emitQuotedStringsFromAppleBasicLine(const unsigned c
   }
 }
 
+static void sceneDiskLoader_hgrColorForPixel(bool on, bool hi, bool parityEven, bool adjacentOn, uint8_t *r, uint8_t *g, uint8_t *b) {
+  if (!on) {
+    *r = 0; *g = 0; *b = 0;
+  } else if (adjacentOn) {
+    *r = 245; *g = 245; *b = 245;
+  } else if (hi) {
+    if (parityEven) {
+      *r = 70; *g = 150; *b = 255;
+    } else {
+      *r = 255; *g = 150; *b = 70;
+    }
+  } else {
+    if (parityEven) {
+      *r = 190; *g = 80; *b = 255;
+    } else {
+      *r = 80; *g = 220; *b = 80;
+    }
+  }
+}
+
+static void sceneDiskLoader_decodeUltShapesTiles(const uint8_t *dataRaw, uint32_t sizeRaw, UltimaImage *outImage) {
+  if (!dataRaw || !outImage) { return; }
+
+  uint32_t size = 0;
+  const uint8_t *data = sceneDiskLoader_maybeStripBloadHeader(dataRaw, sizeRaw, &size);
+  if (!data || size < 0x210) { return; }
+
+  const int bankA = 0x100;
+  const int bankB = 0x000;
+  const int pageA = size - bankA < 256 ? size - bankA : 256;
+  const int pageB = size - bankB < 256 ? size - bankB : 256;
+  const int tileCount = (pageA < pageB ? pageA : pageB) / 16;
+
+  if (tileCount <= 0) { return; }
+
+  const int tileW = 14;
+  const int tileH = 16;
+  const int tilesPerRow = tileCount < 8 ? tileCount : 8;
+  const int rows = (tileCount + tilesPerRow - 1) / tilesPerRow;
+  const int originalWidth = tilesPerRow * tileW;
+  const int originalHeight = rows * tileH;
+
+  *outImage = sceneDiskLoader_createImage(originalWidth, originalHeight, 0, 0, 0);
+  if (!outImage->data) { return; }
+
+  for (int t=0;t<tileCount;t++) {
+    int tx = t % tilesPerRow;
+    int ty = t / tilesPerRow;
+    int ox = tx * tileW;
+    int oy = ty * tileH;
+
+    for (int y=0;y<tileH;y++) {
+      uint8_t b1 = (bankA + t * 16 + y < (int)size) ? data[bankA + t * 16 + y] : 0;
+      uint8_t b2 = (bankB + t * 16 + y < (int)size) ? data[bankB + t * 16 + y] : 0;
+
+      bool on[14] = {0};
+      bool hi[14] = {0};
+
+      for (int i=0;i<7;i++) {
+        on[i] = ((b1 >> i) & 1) != 0;
+        hi[i] = (b1 & 0x80) != 0;
+        on[7 + i] = ((b2 >> i) & 1) != 0;
+        hi[7 + i] = (b2 & 0x80) != 0;
+      }
+
+      for (int x=0;x<tileW;x++) {
+        bool adj = (x>0 && on[x-1]) || (x<13 && on[x+1]);
+        uint8_t r = 0, g = 0, b = 0;
+        sceneDiskLoader_hgrColorForPixel(on[x], hi[x], (x & 1) == 0, adj, &r, &g, &b);
+
+        sceneDiskLoader_setPixel(outImage, ox + x, oy + y, r, g, b);
+      }
+    }
+  }
+
+  outImage->textureId = texture_load(outImage->width, outImage->height, outImage->data);
+  sceneDiskLoader_freeImage(outImage);
+}
+
 static int sceneDiskLoader_verifyUltimaDisks() {
   if (!file_exists("disk1.dsk")) {
     strcpy(diskMsgText, "'disk1.dsk' not found!");
@@ -616,6 +695,14 @@ void sceneDiskLoader_extractUltimaAssets() {
     free(castleBuffer);
   }
 
+  // Extract overworld tiles
+  Buffer *ultShapesBuffer = sceneDiskLoader_readDos33FileByName(disk1, "ULTSHAPES");
+  if (ultShapesBuffer && ultShapesBuffer->data) {
+    sceneDiskLoader_decodeUltShapesTiles(ultShapesBuffer->data, ultShapesBuffer->size, &ultimaAssets.overworldTiles);
+    free(ultShapesBuffer->data);
+    free(ultShapesBuffer);
+  }
+
   // Read Strings
   memset(ultimaStrings, 0, sizeof(ultimaStrings));
 
@@ -747,6 +834,8 @@ void sceneDiskLoader_freeTextures() {
     ultimaAssets.townScreen.textureId = 0;
     texture_free(ultimaAssets.castleScreen.textureId);
     ultimaAssets.castleScreen.textureId = 0;
+    texture_free(ultimaAssets.overworldTiles.textureId);
+    ultimaAssets.overworldTiles.textureId = 0;
   }
 }
 
