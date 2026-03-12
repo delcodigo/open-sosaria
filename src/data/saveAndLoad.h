@@ -1,6 +1,7 @@
 #ifndef OS_SAVEANDLOAD_H
 #define OS_SAVEANDLOAD_H
 
+#include <stdbool.h>
 #include "player.h"
 
 typedef struct {
@@ -11,6 +12,7 @@ typedef struct {
 
 extern SaveData savedGame;
 
+bool loadGame();
 void saveGame();
 
 #endif

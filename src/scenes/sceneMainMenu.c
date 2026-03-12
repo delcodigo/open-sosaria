@@ -1,15 +1,19 @@
 #include <string.h>
 #include "sceneMainMenu.h"
+#include "data/saveAndLoad.h"
 #include "engine/text.h"
 #include "engine/input.h"
 #include "entities/uiCursor.h"
 #include "sceneDiskLoader.h"
 #include "sceneCharacterGenerator.h"
+#include "sceneOverworld.h"
 
 static Text titleTextGeometry[4];
 static Text copyrightTextGeometry[2];
 static Text optionsTextGeometry[2];
 static Text choiceTextGeometry;
+static Text noSavedGameTextGeometry;
+static bool displayNoSavedGameMessage = false;
 
 static Textfield menuInputField = {
   .active = false,
@@ -35,6 +39,8 @@ static void sceneMainMenu_init() {
 
   text_create(&choiceTextGeometry, ultimaStrings[9], false);
 
+  text_create(&noSavedGameTextGeometry, "NO SAVED GAME FOUND", false);
+
   uiCursor_init();
 
   menuInputField.active = true;
@@ -43,7 +49,25 @@ static void sceneMainMenu_init() {
   inputTextfield = &menuInputField;
 }
 
+static void sceneMainMenu_resetInputText(bool isNumberOnly) {
+  menuInputField.isDirty = false;
+  menuInputField.cursorPosition = 0;
+  menuInputField.isNumberOnly = isNumberOnly;
+  memset(menuInputField.text, 0, sizeof(menuInputField.text));
+
+}
+
 static void sceneMainMenu_update(float deltaTime) {
+  if (displayNoSavedGameMessage) {
+    text_render(&noSavedGameTextGeometry, 74, 96);
+    if (menuInputField.isDirty) {
+      displayNoSavedGameMessage = false;
+      sceneMainMenu_resetInputText(true);
+    }
+
+    return;
+  }
+
   text_render(&titleTextGeometry[0], 91, 177);
   text_render(&titleTextGeometry[1], 91, 161);
   text_render(&titleTextGeometry[2], 91, 145);
@@ -63,6 +87,13 @@ static void sceneMainMenu_update(float deltaTime) {
     menuInputField.active = false;
     scene_load(&sceneCharacterGenerator);
   } else if (menuInputField.text[0] == '2') {
+    if (!loadGame()) {
+      displayNoSavedGameMessage = true;
+      sceneMainMenu_resetInputText(false);
+    } else {
+      menuInputField.active = false;
+      scene_load(&sceneOverworld);
+    }
   }
 }
 
@@ -79,6 +110,7 @@ static void sceneMainMenu_free() {
   text_free(&optionsTextGeometry[1]);
 
   text_free(&choiceTextGeometry);
+  text_free(&noSavedGameTextGeometry);
   uiCursor_free();
 }
 
