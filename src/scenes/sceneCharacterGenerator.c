@@ -6,6 +6,7 @@
 #include "engine/input.h"
 #include "entities/uiCursor.h"
 #include "data/player.h"
+#include "data/saveAndLoad.h"
 #include "sceneDiskLoader.h"
 #include "sceneSplash.h"
 #include "config.h"
@@ -260,6 +261,7 @@ static void sceneCharacterGenerator_statsUpdate(float deltaTime) {
       }
     } else if (step == 9) {
       if (statTextfield.text[0] == 'y' || statTextfield.text[0] == 'Y') {
+        saveGame();
         scene_load(&sceneSplash);
       } else {
         sceneCharacterGenerator_free();
