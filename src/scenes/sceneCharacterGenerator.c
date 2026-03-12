@@ -7,6 +7,7 @@
 #include "entities/uiCursor.h"
 #include "data/player.h"
 #include "sceneDiskLoader.h"
+#include "sceneSplash.h"
 #include "config.h"
 
 static Text titleTextGeometry;
@@ -20,6 +21,9 @@ static Text classTypeTextGeometry[2];
 static Text raceTextGeometry[4];
 static Text typeTextGeometry[4];
 static Text pointsLeftNumberTextGeometry;
+static Text selectedRaceTextGeometry;
+static Text selectedTypeTextGeometry;
+static Text nameInputTextGeometry;
 static int pointsLeft = 0;
 static int cursorX = 0;
 static int cursorY = 0;
@@ -36,12 +40,31 @@ static Textfield statTextfield = {
 };
 static Text statValueTextGeometry;
 
+static int raceBonus[4][6] = {
+  {0, 0, 0, 0, 0, 5},
+  {0, 5, 0, 0, 0, 0},
+  {5, 0, 0, 0, 0, 0},
+  {-5, 0, 0, 0, 10, 0}
+};
+
+static int typeBonus[4][6] = {
+  {10, 10, 0, 0, 0, 0},
+  {0, 0, 0, 0, 10, 0},
+  {0, 0, 0, 0, 0, 10},
+  {0, 10, 0, 0, 0, 0}
+};
+
+static void sceneCharacterGenerator_free();
+
 static void sceneCharacterGenerator_init() {
   text_create(&titleTextGeometry, ultimaStrings[27], false);
   text_create(&pointsLeftTextGeometry, ultimaStrings[28], false);
   text_create(&nameTextGeometry, ultimaStrings[29], false);
   text_create(&satisfactoryTextGeometry, ultimaStrings[30], false);
   text_create(&racesAndTypesTextGeometry, ultimaStrings[31], false);
+  text_create(&selectedRaceTextGeometry, "       \0", false);
+  text_create(&selectedTypeTextGeometry, "       \0", false);
+  text_create(&nameInputTextGeometry, "                \0", false);
 
   for (int i=0;i<6;i++) {
     text_create(&statsTextGeometry[i], ultimaStrings[86 + i], false);
@@ -76,6 +99,9 @@ static void sceneCharacterGenerator_init() {
 
   step = 0;
   statTextfield.active = true;
+  statTextfield.isNumberOnly = true;
+  statTextfield.maxLength = 3;
+  statTextfield.isSubmitted = false;
   memset(statTextfield.text, 0, sizeof(statTextfield.text));
   statTextfield.cursorPosition = 0;
   statTextfield.isDirty = false;
@@ -86,6 +112,16 @@ static void sceneCharacterGenerator_init() {
 
   cursorX = 182;
   cursorY = 145;
+}
+
+static void sceneCharacterGenerator_updateStats() {
+  for (int i=0;i<6;i++) {
+    char statValueStr[3] = {0};
+    int statValue = *(&player.strength + i);
+
+    snprintf(statValueStr, sizeof(statValueStr), "%d", statValue);
+    text_update(&statsValueTextGeometry[i], statValueStr, false);
+  }
 }
 
 static void sceneCharacterGenerator_submitStatValue(const char *value) {
@@ -120,20 +156,35 @@ static void sceneCharacterGenerator_submitStatValue(const char *value) {
     strncpy(statValueStr, statTextfield.text, sizeof(statValueStr) - 1);
     text_update(&statValueTextGeometry, statValueStr, false);
 
-    switch (step) {
-      case 0: player.strength = intValue; break;
-      case 1: player.agility = intValue; break;
-      case 2: player.stamina = intValue; break;
-      case 3: player.charisma = intValue; break;
-      case 4: player.wisdom = intValue; break;
-      case 5: player.intelligence = intValue; break;
-    }
+    *(&player.strength + step - 1) = intValue;
   }
 
   if (step == 6) {
+    sceneCharacterGenerator_updateStats();
     cursorX = 133;
     cursorY = 89;
   }
+}
+
+static void sceneCharacterGenerator_setPlayerName(const char *name) {
+  char initialChar = name[0];
+  
+  if ((initialChar < 65 || initialChar > 90) && (initialChar < 97 || initialChar > 122)) {
+    statTextfield.text[0] = '\0';
+    statTextfield.cursorPosition = 0;
+    statTextfield.isDirty = true;
+    text_update(&nameInputTextGeometry, "                \0", false);
+    return;
+  }
+
+  strncpy(player.name, name, sizeof(player.name) - 1);
+  text_update(&nameInputTextGeometry, player.name, false);
+
+  cursorX = 203;
+  cursorY = 57;
+  step = 9;
+  statTextfield.text[0] = '\0';
+  statTextfield.cursorPosition = 0;
 }
 
 static void sceneCharacterGenerator_statsUpdate(float deltaTime) {
@@ -145,21 +196,75 @@ static void sceneCharacterGenerator_statsUpdate(float deltaTime) {
   uiCursor_update(deltaTime, cursorX, cursorY);
 
   if (statTextfield.isDirty) {
-    statTextfield.isDirty = false;
-    char statValueStr[3] = {0};
-    strncpy(statValueStr, statTextfield.text, sizeof(statValueStr) - 1);
-    text_update(&statValueTextGeometry, statValueStr, false);
-
     if (step >= 0 && step < 6) {
-      cursorX = 182;
-    } else if (step >= 6 && step < 9) {
-      cursorX = 133;
-    }
+      statTextfield.isDirty = false;
+      char statValueStr[3] = {0};
+      strncpy(statValueStr, statTextfield.text, sizeof(statValueStr) - 1);
+      text_update(&statValueTextGeometry, statValueStr, false);
 
-    cursorX += strlen(statTextfield.text) * OS_FONT_GLYPH_WIDTH;
+      if (step >= 0 && step < 6) {
+        cursorX = 182;
+      } else if (step >= 6 && step < 9) {
+        cursorX = 133;
+      }
 
-    if (statTextfield.isSubmitted) {
-      sceneCharacterGenerator_submitStatValue(statValueStr);
+      cursorX += strlen(statTextfield.text) * OS_FONT_GLYPH_WIDTH;
+
+      if (statTextfield.isSubmitted) {
+        sceneCharacterGenerator_submitStatValue(statValueStr);
+      }
+    } else if (step >= 6 && step < 8) {
+      int value = atoi(statTextfield.text);
+      statTextfield.text[0] = '\0';
+      statTextfield.cursorPosition = 0;
+
+      if (value >= 1 && value <= 4) {
+        if (step == 6) {
+          player.race = value;
+          text_update(&selectedRaceTextGeometry, ultimaStrings[94 + value - 1], false);
+          step += 1;
+          cursorY -= 8;
+          int *statPtr = &player.strength;
+          for (int i = 0; i < 6; i++) {
+            *statPtr += raceBonus[value - 1][i];
+            statPtr++;
+          }
+          sceneCharacterGenerator_updateStats();
+        } else if (step == 7) {
+          player.type = value;
+          text_update(&selectedTypeTextGeometry, ultimaStrings[98 + value - 1], false);
+          step += 1;
+          cursorY -= 8;
+          statTextfield.isNumberOnly = false;
+          statTextfield.maxLength = 16;
+          int *statPtr = &player.strength;
+          for (int i = 0; i < 6; i++) {
+            *statPtr += typeBonus[value - 1][i];
+            statPtr++;
+          }
+          sceneCharacterGenerator_updateStats();
+        }
+      }
+
+      statTextfield.text[0] = '\0';
+      statTextfield.cursorPosition = 0;
+    } else if (step == 8) {
+      strncpy(player.name, statTextfield.text, sizeof(player.name) - 1);
+      text_update(&nameInputTextGeometry, player.name, false);
+      statTextfield.isDirty = false;
+      cursorX = 133 + strlen(player.name) * OS_FONT_GLYPH_WIDTH;
+
+      if (statTextfield.isSubmitted) {
+        sceneCharacterGenerator_setPlayerName(statTextfield.text);
+        statTextfield.isSubmitted = false;
+      }
+    } else if (step == 9) {
+      if (statTextfield.text[0] == 'y' || statTextfield.text[0] == 'Y') {
+        scene_load(&sceneSplash);
+      } else {
+        sceneCharacterGenerator_free();
+        sceneCharacterGenerator_init();
+      }
     }
   }
 }
@@ -173,6 +278,9 @@ static void sceneCharacterGenerator_update(float deltaTime) {
   text_render(&nameTextGeometry, 98, 73);
   text_render(&satisfactoryTextGeometry, 70, 57);
   text_render(&racesAndTypesTextGeometry, 77, 41);
+  text_render(&selectedRaceTextGeometry, 133, 89);
+  text_render(&selectedTypeTextGeometry, 133, 81);
+  text_render(&nameInputTextGeometry, 133, 73);
 
   for (int i=0;i<6;i++) {
     text_render(&statsTextGeometry[i], 77, 145 - i * 8);
@@ -198,6 +306,9 @@ static void sceneCharacterGenerator_free() {
   text_free(&nameTextGeometry);
   text_free(&satisfactoryTextGeometry);
   text_free(&racesAndTypesTextGeometry);
+  text_free(&selectedRaceTextGeometry);
+  text_free(&selectedTypeTextGeometry);
+  text_free(&nameInputTextGeometry);
 
   for (int i=0;i<6;i++) {
     text_free(&statsTextGeometry[i]);

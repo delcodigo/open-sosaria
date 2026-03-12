@@ -80,11 +80,12 @@ make clean        # Clean build artifacts
 The engine currently includes:
 
 - **Disk Verification:** Validates that `disk1.dsk` and `disk2.dsk` exist and contain the required Apple II Ultima files with correct sizes
-- **Disk Loader Scene:** Displays status messages during the boot process (file verification or error messages)
+- **Disk Loader Scene (Partial):** Core disk loading flow is working and displays status messages during boot (file verification and error messages)
 - **Asset Extraction:** Reads and parses DOS 3.3 disk catalogs and file structures from the Apple II disks
 - **Title Splash Screen:** Extracts and renders the title screen picture (`PIC.ULTIMATUM`) from the disk images
+- **Character Generator:** Character creation flow is working
 - **Rendering Pipeline:** OpenGL-based 2D graphics rendering via GLFW
 
 ## Next Steps
 
-Game logic, sprite rendering, movement controls, and Apple II game mechanics are planned for future development.
+Character save persistence is not implemented yet. Game logic, sprite rendering, movement controls, and Apple II game mechanics are planned for future development.

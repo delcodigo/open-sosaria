@@ -8,11 +8,12 @@
 
 Geometry splashGeometry;
 float transformMatrix[16];
-float timeToNextScene = 3.0f;
+float timeToNextScene = 0;
 
 void sceneSplash_init() {
   geometry_setSprite(&splashGeometry, OS_SCREEN_WIDTH, OS_SCREEN_HEIGHT);
   matrix4_setIdentity(transformMatrix);
+  timeToNextScene = 3.0f;
 }
 
 void sceneSplash_update(float deltaTime) {
