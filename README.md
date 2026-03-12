@@ -85,8 +85,9 @@ The engine currently includes:
 - **Title Splash Screen:** Extracts and renders the title screen picture (`PIC.ULTIMATUM`) from the disk images
 - **Character Generator:** Character creation and saving is working
 - **Overworld Rendering:** Overworld map rendering is working with a temporary flying camera
+- **Overworld Player Controller:** Player movement and collision in the overworld are working
 - **Rendering Pipeline:** OpenGL-based 2D graphics rendering via GLFW
 
 ## Next Steps
 
-Game logic, sprite rendering, movement controls, and Apple II game mechanics are planned for future development.
+Game logic, additional sprite rendering work, and Apple II game mechanics are planned for future development.
