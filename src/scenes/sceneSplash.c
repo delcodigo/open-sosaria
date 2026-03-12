@@ -11,7 +11,7 @@ float transformMatrix[16];
 float timeToNextScene = 0;
 
 void sceneSplash_init() {
-  geometry_setSprite(&splashGeometry, OS_SCREEN_WIDTH, OS_SCREEN_HEIGHT);
+  geometry_setSprite(&splashGeometry, OS_SCREEN_WIDTH, OS_SCREEN_HEIGHT, 0, 0, 1, 1);
   matrix4_setIdentity(transformMatrix);
   timeToNextScene = 3.0f;
 }

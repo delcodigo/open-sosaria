@@ -62,6 +62,8 @@ int engine_init() {
     return 0;
   }
 
+  glEnable(GL_DEPTH_TEST);
+
   glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
   shaderProgram = shader_create_program();

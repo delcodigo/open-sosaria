@@ -11,6 +11,11 @@ typedef struct {
   int race;
   int type;
   char name[16];
+  int gold;
+  int food;
+  int health;
+  int tx;
+  int ty;
 } Player;
 
 extern Player player;

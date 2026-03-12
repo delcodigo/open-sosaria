@@ -188,6 +188,16 @@ static void sceneCharacterGenerator_setPlayerName(const char *name) {
   statTextfield.cursorPosition = 0;
 }
 
+static void sceneCharacterGenerator_finishPlayerCreation() {
+  player.gold = 100;
+  player.food = 100;
+  player.health = 100;
+  player.tx = 40;
+  player.ty = 40;
+  saveGame();
+  scene_load(&sceneSplash);
+}
+
 static void sceneCharacterGenerator_statsUpdate(float deltaTime) {
   if (step >= 0 && step < 6) {
     text_render(&statValueTextGeometry, 182, cursorY);
@@ -261,8 +271,7 @@ static void sceneCharacterGenerator_statsUpdate(float deltaTime) {
       }
     } else if (step == 9) {
       if (statTextfield.text[0] == 'y' || statTextfield.text[0] == 'Y') {
-        saveGame();
-        scene_load(&sceneSplash);
+        sceneCharacterGenerator_finishPlayerCreation();
       } else {
         sceneCharacterGenerator_free();
         sceneCharacterGenerator_init();

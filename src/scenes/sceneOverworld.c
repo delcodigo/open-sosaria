@@ -4,35 +4,18 @@
 #include "sceneOverworld.h"
 #include "sceneDiskLoader.h"
 #include "entities/worldMap.h"
+#include "entities/playerOverworld.h"
 #include "engine/input.h"
 
 static void sceneOverworld_init() {
   worldMap_init();
-}
-
-float position[2] = {0.0f, 0.0f};
-static void sceneOverworld_updateFlyingCamera() {
-  float speed = 4.0f;
-  if (input.up) {
-    position[1] -= speed;
-  }
-  if (input.down) {
-    position[1] += speed;
-  }
-  if (input.left) {
-    position[0] -= speed;
-  }
-  if (input.right) {
-    position[0] += speed;
-  }
-
-  camera_setPosition3f(&camera, position[0], -position[1], 10);
+  playerOverworld_init();
 }
 
 static void sceneOverworld_update(float deltaTime) {
   (void) deltaTime;
 
-  sceneOverworld_updateFlyingCamera();
+  playerOverworld_update(deltaTime);  
   float *viewMatrix = camera_getViewProjectionMatrix(&camera);
   
   worldMap_update(viewMatrix);
@@ -40,6 +23,7 @@ static void sceneOverworld_update(float deltaTime) {
 
 static void sceneOverworld_free() {
   worldMap_free();
+  playerOverworld_free();
 }
 
 Scene sceneOverworld = {
