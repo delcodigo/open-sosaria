@@ -68,20 +68,20 @@ static void sceneMainMenu_update(float deltaTime) {
     return;
   }
 
-  text_render(&titleTextGeometry[0], 91, 177);
-  text_render(&titleTextGeometry[1], 91, 161);
-  text_render(&titleTextGeometry[2], 91, 145);
-  text_render(&titleTextGeometry[3], 91, 129);
+  text_render(&titleTextGeometry[0], 91, 8);
+  text_render(&titleTextGeometry[1], 91, 24);
+  text_render(&titleTextGeometry[2], 91, 40);
+  text_render(&titleTextGeometry[3], 91, 56);
 
-  text_render(&copyrightTextGeometry[0], 0, 105);
-  text_render(&copyrightTextGeometry[1], 0, 97);
+  text_render(&copyrightTextGeometry[0], 0, 80);
+  text_render(&copyrightTextGeometry[1], 0, 88);
 
-  text_render(&optionsTextGeometry[0], 0, 57);
-  text_render(&optionsTextGeometry[1], 0, 41);
+  text_render(&optionsTextGeometry[0], 0, 128);
+  text_render(&optionsTextGeometry[1], 0, 144);
 
-  text_render(&choiceTextGeometry, 119, 16);
+  text_render(&choiceTextGeometry, 119, 168);
 
-  uiCursor_update(deltaTime, 168, 16);
+  uiCursor_update(deltaTime, 168, 168);
 
   if (menuInputField.text[0] == '1') {
     menuInputField.active = false;

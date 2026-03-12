@@ -117,7 +117,7 @@ void text_render(Text *textGeometry, float x, float y) {
   glUniform1i(glGetUniformLocation(shaderProgram, "uTexture"), 0);
 
   matrix4_setIdentity(transformMatrix);
-  matrix4_setPosition(transformMatrix, x, y, 0);
+  matrix4_setPosition(transformMatrix, x, OS_SCREEN_HEIGHT - y, 0);
   
   glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "uModel"), 1, GL_FALSE, transformMatrix);
   glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "uViewProjection"), 1, GL_FALSE, camera_getViewProjectionMatrix(&camera));

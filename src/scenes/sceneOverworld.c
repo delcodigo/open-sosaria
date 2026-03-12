@@ -3,23 +3,22 @@
 #include "maths/matrix4.h"
 #include "sceneOverworld.h"
 #include "sceneDiskLoader.h"
-
-static Geometry overworldGeometry;
-static float transformMatrix[16];
+#include "entities/worldMap.h"
 
 static void sceneOverworld_init() {
-  geometry_setSprite(&overworldGeometry, 112, 32);
-  matrix4_setIdentity(transformMatrix);
-  matrix4_setPosition(transformMatrix, 0, 32, 0);
+  worldMap_init();
 }
 
 static void sceneOverworld_update(float deltaTime) {
   (void) deltaTime;
 
-  geometry_render(&overworldGeometry, ultimaAssets.overworldTiles.textureId, transformMatrix, camera_getViewProjectionMatrix(&camera));
+  float *viewMatrix = camera_getViewProjectionMatrix(&camera);
+  
+  worldMap_update(viewMatrix);
 }
 
 static void sceneOverworld_free() {
+  worldMap_free();
 }
 
 Scene sceneOverworld = {

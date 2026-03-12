@@ -507,6 +507,23 @@ static void sceneDiskLoader_decodeUltShapesTiles(const uint8_t *dataRaw, uint32_
 
   outImage->textureId = texture_load(outImage->width, outImage->height, outImage->data);
   sceneDiskLoader_freeImage(outImage);
+  outImage->width = originalWidth;
+  outImage->height = originalHeight;
+}
+
+static void sceneDiskLoader_decodeBterraMap(const uint8_t *dataRaw, uint32_t sizeRaw, uint8_t map[OS_BTERRA_MAP_WIDTH][OS_BTERRA_MAP_HEIGHT]) {
+  if (!dataRaw || !map) { return; }
+
+  uint32_t size = 0;
+  const uint8_t *data = sceneDiskLoader_maybeStripBloadHeader(dataRaw, sizeRaw, &size);
+  if (!data || size < OS_BTERRA_MAP_WIDTH * OS_BTERRA_MAP_HEIGHT) { return; }
+
+  for (int y=0;y<OS_BTERRA_MAP_HEIGHT;y++) {
+    for (int x=0;x<OS_BTERRA_MAP_WIDTH;x++) {
+      int idx = y * OS_BTERRA_MAP_WIDTH + x;
+      map[y][x] = (uint8_t)((data[idx] >> 4) & 0x0F);
+    }
+  }
 }
 
 static int sceneDiskLoader_verifyUltimaDisks() {
@@ -701,6 +718,18 @@ void sceneDiskLoader_extractUltimaAssets() {
     sceneDiskLoader_decodeUltShapesTiles(ultShapesBuffer->data, ultShapesBuffer->size, &ultimaAssets.overworldTiles);
     free(ultShapesBuffer->data);
     free(ultShapesBuffer);
+  }
+
+  // Extract Bterra maps
+  for (int i=0;i<OS_BTERRA_COUNT;i++) {
+    char name[16];
+    snprintf(name, sizeof(name), "BTERRA%d", i);
+    Buffer *btBuffer = sceneDiskLoader_readDos33FileByName(disk2, name);
+    if (btBuffer && btBuffer->data) {
+      sceneDiskLoader_decodeBterraMap(btBuffer->data, btBuffer->size, ultimaAssets.bterraMaps[i]);
+      free(btBuffer->data);
+      free(btBuffer);
+    }
   }
 
   // Read Strings

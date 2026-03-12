@@ -112,7 +112,7 @@ static void sceneCharacterGenerator_init() {
   inputTextfield = &statTextfield;
 
   cursorX = 182;
-  cursorY = 145;
+  cursorY = 40;
 }
 
 static void sceneCharacterGenerator_updateStats() {
@@ -150,7 +150,7 @@ static void sceneCharacterGenerator_submitStatValue(const char *value) {
     statTextfield.cursorPosition = 0;
     statTextfield.isDirty = true;
     cursorX = 182;
-    cursorY -= 8;
+    cursorY += 8;
     step += 1;
 
     char statValueStr[3] = {0};
@@ -163,7 +163,7 @@ static void sceneCharacterGenerator_submitStatValue(const char *value) {
   if (step == 6) {
     sceneCharacterGenerator_updateStats();
     cursorX = 133;
-    cursorY = 89;
+    cursorY = 96;
   }
 }
 
@@ -182,7 +182,7 @@ static void sceneCharacterGenerator_setPlayerName(const char *name) {
   text_update(&nameInputTextGeometry, player.name, false);
 
   cursorX = 203;
-  cursorY = 57;
+  cursorY = 128;
   step = 9;
   statTextfield.text[0] = '\0';
   statTextfield.cursorPosition = 0;
@@ -224,7 +224,7 @@ static void sceneCharacterGenerator_statsUpdate(float deltaTime) {
           player.race = value;
           text_update(&selectedRaceTextGeometry, ultimaStrings[94 + value - 1], false);
           step += 1;
-          cursorY -= 8;
+          cursorY += 8;
           int *statPtr = &player.strength;
           for (int i = 0; i < 6; i++) {
             *statPtr += raceBonus[value - 1][i];
@@ -235,7 +235,7 @@ static void sceneCharacterGenerator_statsUpdate(float deltaTime) {
           player.type = value;
           text_update(&selectedTypeTextGeometry, ultimaStrings[98 + value - 1], false);
           step += 1;
-          cursorY -= 8;
+          cursorY += 8;
           statTextfield.isNumberOnly = false;
           statTextfield.maxLength = 16;
           int *statPtr = &player.strength;
@@ -274,28 +274,28 @@ static void sceneCharacterGenerator_statsUpdate(float deltaTime) {
 static void sceneCharacterGenerator_update(float deltaTime) {
   (void) deltaTime;
 
-  text_render(&titleTextGeometry, 70, 177);
-  text_render(&pointsLeftTextGeometry, 42, 161);
-  text_render(&pointsLeftNumberTextGeometry, 224, 161);
-  text_render(&nameTextGeometry, 98, 73);
-  text_render(&satisfactoryTextGeometry, 70, 57);
-  text_render(&racesAndTypesTextGeometry, 77, 41);
-  text_render(&selectedRaceTextGeometry, 133, 89);
-  text_render(&selectedTypeTextGeometry, 133, 81);
-  text_render(&nameInputTextGeometry, 133, 73);
+  text_render(&titleTextGeometry, 70, 8);
+  text_render(&pointsLeftTextGeometry, 42, 24);
+  text_render(&pointsLeftNumberTextGeometry, 224, 24);
+  text_render(&nameTextGeometry, 98, 112);
+  text_render(&satisfactoryTextGeometry, 70, 128);
+  text_render(&racesAndTypesTextGeometry, 77, 144);
+  text_render(&selectedRaceTextGeometry, 133, 96);
+  text_render(&selectedTypeTextGeometry, 133, 104);
+  text_render(&nameInputTextGeometry, 133, 112);
 
   for (int i=0;i<6;i++) {
-    text_render(&statsTextGeometry[i], 77, 145 - i * 8);
-    text_render(&statsValueTextGeometry[i], 182, 145 - i * 8);
+    text_render(&statsTextGeometry[i], 77, 40 + i * 8);
+    text_render(&statsValueTextGeometry[i], 182, 40 + i * 8);
   }
 
   for (int i=0;i<2;i++) {
-    text_render(&classTypeTextGeometry[i], 98, 89 - i * 8);
+    text_render(&classTypeTextGeometry[i], 98, 96 + i * 8);
   }
 
   for (int i=0;i<4;i++) {
-    text_render(&raceTextGeometry[i], 70, 33 - i * 8);
-    text_render(&typeTextGeometry[i], 140, 33 - i * 8);
+    text_render(&raceTextGeometry[i], 70, 152 + i * 8);
+    text_render(&typeTextGeometry[i], 140, 152 + i * 8);
   }
 
   sceneCharacterGenerator_statsUpdate(deltaTime);

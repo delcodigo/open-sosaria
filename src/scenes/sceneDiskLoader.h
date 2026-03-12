@@ -3,6 +3,7 @@
 
 #include <stdbool.h>
 #include "engine/scene.h"
+#include "config.h"
 #include <GLFW/glfw3.h>
 
 typedef struct {
@@ -19,6 +20,7 @@ typedef struct {
   UltimaImage castleScreen;
 
   UltimaImage overworldTiles;
+  uint8_t bterraMaps[OS_BTERRA_COUNT][OS_BTERRA_MAP_WIDTH][OS_BTERRA_MAP_HEIGHT];
 
   bool loaded;
 } UltimaAssets;
