@@ -3,7 +3,7 @@
 #include "data/saveAndLoad.h"
 #include "engine/text.h"
 #include "engine/input.h"
-#include "entities/uiCursor.h"
+#include "entities/ui/uiCursor.h"
 #include "sceneDiskLoader.h"
 #include "sceneCharacterGenerator.h"
 #include "sceneOverworld.h"

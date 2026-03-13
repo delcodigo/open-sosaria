@@ -12,7 +12,7 @@ void uiCursor_init() {
 
 void uiCursor_update(float deltaTime, float x, float y) {
   if (cursorVisible) {
-    text_render(&cursorTextGeometry, x, y);
+    text_renderxyz(&cursorTextGeometry, x, y, 5);
   }
 
   cursorBlinkTime += deltaTime;

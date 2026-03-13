@@ -16,6 +16,7 @@ typedef struct {
   int health;
   int tx;
   int ty;
+  int experience;
 } Player;
 
 extern Player player;

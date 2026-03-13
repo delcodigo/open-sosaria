@@ -4,7 +4,7 @@
 #include "sceneCharacterGenerator.h"
 #include "engine/text.h"
 #include "engine/input.h"
-#include "entities/uiCursor.h"
+#include "entities/ui/uiCursor.h"
 #include "data/player.h"
 #include "data/saveAndLoad.h"
 #include "sceneDiskLoader.h"
@@ -194,15 +194,16 @@ static void sceneCharacterGenerator_finishPlayerCreation() {
   player.health = 100;
   player.tx = 40;
   player.ty = 40;
+  player.experience = 1;
   saveGame();
   scene_load(&sceneSplash);
 }
 
 static void sceneCharacterGenerator_statsUpdate(float deltaTime) {
   if (step >= 0 && step < 6) {
-    text_render(&statValueTextGeometry, 182, cursorY);
+    text_renderxyz(&statValueTextGeometry, 182, cursorY, 2);
   } else if (step >= 6 && step < 9) {
-    text_render(&statValueTextGeometry, 133, cursorY);
+    text_renderxyz(&statValueTextGeometry, 133, cursorY, 2);
   }
   uiCursor_update(deltaTime, cursorX, cursorY);
 

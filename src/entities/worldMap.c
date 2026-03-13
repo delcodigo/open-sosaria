@@ -27,7 +27,7 @@ void worldMap_init() {
         float tx2 = tx1 + (OS_TILE_WIDTH / (float)ultimaAssets.overworldTiles.width);
         float ty2 = ty1 + (OS_TILE_HEIGHT / (float)ultimaAssets.overworldTiles.height);
 
-        geometry_addQuad(vertices, verticesCount, indices, indicesCount, mapX + x * OS_TILE_WIDTH, mapY - y * OS_TILE_HEIGHT, OS_TILE_WIDTH, OS_TILE_HEIGHT, tx1, ty1, tx2, ty2);
+        geometry_addQuad(vertices, verticesCount, indices, indicesCount, mapX + x * OS_TILE_WIDTH, mapY + y * OS_TILE_HEIGHT, OS_TILE_WIDTH, OS_TILE_HEIGHT, tx1, ty1, tx2, ty2);
         verticesCount += 4;
         indicesCount += 6;
       }
@@ -36,7 +36,7 @@ void worldMap_init() {
     mapX += OS_BTERRA_MAP_WIDTH * OS_TILE_WIDTH;
     if (i == 1) {
       mapX = 0;
-      mapY -= OS_BTERRA_MAP_HEIGHT * OS_TILE_HEIGHT;
+      mapY += OS_BTERRA_MAP_HEIGHT * OS_TILE_HEIGHT;
     }
   }
 

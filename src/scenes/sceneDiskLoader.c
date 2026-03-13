@@ -826,6 +826,36 @@ void sceneDiskLoader_extractUltimaAssets() {
     free(beveryBuffer);
   }
 
+  // Out Move
+  Buffer *outMoveBuffer = sceneDiskLoader_readDos33FileByName(disk1, "OUT MOVE");
+  if (outMoveBuffer && outMoveBuffer->data) {
+    size_t pos = 0;
+    while (pos + 4 <= outMoveBuffer->size) {
+      uint16_t nextAddr = (uint16_t)(outMoveBuffer->data[pos] | (outMoveBuffer->data[pos + 1] << 8));
+      pos += 4;
+
+      size_t start = pos;
+      while (pos < outMoveBuffer->size && outMoveBuffer->data[pos] != 0) {
+        pos++;
+      }
+
+      if (pos > start) {
+        sceneDiskLoader_emitQuotedStringsFromAppleBasicLine(outMoveBuffer->data + start, pos - start);
+      }
+
+      if (pos < outMoveBuffer->size && outMoveBuffer->data[pos] == 0) {
+        pos++;
+      }
+
+      if (nextAddr == 0) {
+        break;
+      }
+    }
+
+    free(outMoveBuffer->data);
+    free(outMoveBuffer);
+  }
+
   free(disk1);
   free(disk2);
 

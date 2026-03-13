@@ -5,11 +5,13 @@
 #include "sceneDiskLoader.h"
 #include "entities/worldMap.h"
 #include "entities/playerOverworld.h"
+#include "entities/ui/uiConsole.h"
 #include "engine/input.h"
 
 static void sceneOverworld_init() {
   worldMap_init();
   playerOverworld_init();
+  uiConsole_init();
 }
 
 static void sceneOverworld_update(float deltaTime) {
@@ -19,11 +21,14 @@ static void sceneOverworld_update(float deltaTime) {
   float *viewMatrix = camera_getViewProjectionMatrix(&camera);
   
   worldMap_update(viewMatrix);
+
+  uiConsole_update();
 }
 
 static void sceneOverworld_free() {
   worldMap_free();
   playerOverworld_free();
+  uiConsole_free();
 }
 
 Scene sceneOverworld = {

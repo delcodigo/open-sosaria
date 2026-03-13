@@ -70,7 +70,7 @@ int engine_init() {
   glUseProgram(shaderProgram);
 
   camera_createOrthogonal(&camera, OS_SCREEN_WIDTH, OS_SCREEN_HEIGHT, 0.1f, 100.0f);
-  camera_setPosition3f(&camera, OS_SCREEN_WIDTH / 2.0f, OS_SCREEN_HEIGHT / 2.0f, 10.0f);
+  camera_setPosition3f(&camera, 0, 0, 10.0f);
 
   return 1;
 }

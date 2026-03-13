@@ -55,10 +55,10 @@ void matrix4_multiply(float *matrixA, float *matrixB) {
 }
 
 void matrix4_setOrthogonalProjection(float *matrix, float width, float height, float znear, float zfar) {
-  float l = -width / 2.0,
-        r = width / 2.0,
-        b = -height / 2.0,
-        t = height / 2.0,
+  float l = 0.0f,
+        r = width,
+        b = height,
+        t = 0.0f,
         
         A = 2.0 / (r - l),
         B = 2.0 / (t - b),

@@ -23,35 +23,35 @@ static void text_addGlyphs(const char *text, float *vertices, unsigned int *indi
     int col = c % (OS_FONT_WIDTH / OS_FONT_GLYPH_WIDTH);
 
     float x2 = x1 + OS_FONT_GLYPH_WIDTH;
-    float y2 = y1 - OS_FONT_GLYPH_HEIGHT;
+    float y2 = y1 + OS_FONT_GLYPH_HEIGHT;
     float tx1 = (float)(col * OS_FONT_GLYPH_WIDTH) / OS_FONT_WIDTH;
     float ty1 = (float)(row * OS_FONT_GLYPH_HEIGHT) / OS_FONT_HEIGHT + yOff;
     float tx2 = (float)((col + 1) * OS_FONT_GLYPH_WIDTH) / OS_FONT_WIDTH;
     float ty2 = (float)((row + 1) * OS_FONT_GLYPH_HEIGHT) / OS_FONT_HEIGHT + yOff;
 
     vertices[vertexOffset++] = x1;
-    vertices[vertexOffset++] = y1;
+    vertices[vertexOffset++] = y2;
     vertices[vertexOffset++] = 0.0f;
     vertices[vertexOffset++] = tx1;
-    vertices[vertexOffset++] = ty1;
+    vertices[vertexOffset++] = ty2;
 
     vertices[vertexOffset++] = x2;
-    vertices[vertexOffset++] = y1;
+    vertices[vertexOffset++] = y2;
     vertices[vertexOffset++] = 0.0f;
     vertices[vertexOffset++] = tx2;
-    vertices[vertexOffset++] = ty1;
+    vertices[vertexOffset++] = ty2;
 
     vertices[vertexOffset++] = x1;
-    vertices[vertexOffset++] = y2;
+    vertices[vertexOffset++] = y1;
     vertices[vertexOffset++] = 0.0f;
     vertices[vertexOffset++] = tx1;
-    vertices[vertexOffset++] = ty2;
+    vertices[vertexOffset++] = ty1;
 
     vertices[vertexOffset++] = x2;
-    vertices[vertexOffset++] = y2;
+    vertices[vertexOffset++] = y1;
     vertices[vertexOffset++] = 0.0f;
     vertices[vertexOffset++] = tx2;
-    vertices[vertexOffset++] = ty2;
+    vertices[vertexOffset++] = ty1;
 
     indices[indexOffset++] = i * 4 + 0;
     indices[indexOffset++] = i * 4 + 1;
@@ -108,7 +108,7 @@ void text_create(Text *textGeometry, const char* text, bool isInverted) {
   geometry->indexCount = textGeometry->length * OS_QUAD_INDEX_SIZE;
 }
 
-void text_render(Text *textGeometry, float x, float y) {
+void text_renderxyz(Text *textGeometry, float x, float y, float z) {
   Geometry *geometry = &textGeometry->geometry;
   glBindVertexArray(geometry->VAO);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, geometry->EBO);
@@ -117,12 +117,16 @@ void text_render(Text *textGeometry, float x, float y) {
   glUniform1i(glGetUniformLocation(shaderProgram, "uTexture"), 0);
 
   matrix4_setIdentity(transformMatrix);
-  matrix4_setPosition(transformMatrix, x, OS_SCREEN_HEIGHT - y, 0);
+  matrix4_setPosition(transformMatrix, x, y, z);
   
   glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "uModel"), 1, GL_FALSE, transformMatrix);
   glUniformMatrix4fv(glGetUniformLocation(shaderProgram, "uViewProjection"), 1, GL_FALSE, camera_getViewProjectionMatrix(&camera));
 
   glDrawElements(GL_TRIANGLES, geometry->indexCount, GL_UNSIGNED_INT, 0);
+}
+
+void text_render(Text *textGeometry, float x, float y) {
+  text_renderxyz(textGeometry, x, y, 0);
 }
 
 void text_free(Text *textGeometry) {
