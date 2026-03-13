@@ -56,6 +56,7 @@ bool playerOverworld_updateMovement(float deltaTime) {
     keyRepeatDelay = 0.1f;
 
     uiConsole_addMessage(movementCommand);
+    player_consumeFood();
 
     return true;
   }

@@ -33,7 +33,7 @@ void uiConsole_init() {
   char statStr[7] = {0};
   snprintf(statStr, sizeof(statStr), "%d", player.health);
   text_create(&stats[0], statStr, false);
-  snprintf(statStr, sizeof(statStr), "%d", player.food);
+  snprintf(statStr, sizeof(statStr), "%d", (int)player.food);
   text_create(&stats[1], statStr, false);
   snprintf(statStr, sizeof(statStr), "%d", player.experience);
   text_create(&stats[2], statStr, false);
@@ -56,6 +56,18 @@ void uiConsole_addMessage(const char *message) {
   strncpy(consoleLines[3], message, sizeof(consoleLines[3]));
   consoleLines[3][29] = '\0';
   text_update(&consoleText[3], consoleLines[3], false);
+}
+
+void uiConsole_updateStats() {
+  char statStr[7] = {0};
+  snprintf(statStr, sizeof(statStr), "%d", player.health);
+  text_update(&stats[0], statStr, false);
+  snprintf(statStr, sizeof(statStr), "%d", (int)player.food);
+  text_update(&stats[1], statStr, false);
+  snprintf(statStr, sizeof(statStr), "%d", player.experience);
+  text_update(&stats[2], statStr, false);
+  snprintf(statStr, sizeof(statStr), "%d", player.gold);
+  text_update(&stats[3], statStr, false);
 }
 
 void uiConsole_update() {

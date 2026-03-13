@@ -190,11 +190,13 @@ static void sceneCharacterGenerator_setPlayerName(const char *name) {
 
 static void sceneCharacterGenerator_finishPlayerCreation() {
   player.gold = 100;
-  player.food = 100;
+  player.food = 100.0f;
   player.health = 100;
   player.tx = 40;
   player.ty = 40;
   player.experience = 1;
+  player.time = 0.0f;
+  player.transport = 0;
   saveGame();
   scene_load(&sceneSplash);
 }

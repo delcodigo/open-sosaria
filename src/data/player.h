@@ -12,13 +12,17 @@ typedef struct {
   int type;
   char name[16];
   int gold;
-  int food;
+  float food;
   int health;
   int tx;
   int ty;
   int experience;
+  float time;
+  int transport;
 } Player;
 
 extern Player player;
+
+void player_consumeFood();
 
 #endif
