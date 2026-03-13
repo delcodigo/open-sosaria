@@ -19,6 +19,7 @@ typedef struct {
   int down;
   int left;
   int right;
+  int space;
 } SosariaInput;
 
 extern Textfield *inputTextfield;

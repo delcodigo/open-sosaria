@@ -19,12 +19,20 @@ void playerOverworld_init() {
   matrix4_setIdentity(transformationMatrix);
 }
 
-bool playerOverworld_updateMovement(float deltaTime) {
-  if (keyRepeatDelay > 0) {
-    keyRepeatDelay -= deltaTime;
-    return false;
+bool playerOverworld_updateWait() {
+  if (input.space) {
+    waitingTime = 0.0f;
+    char waitCommand[30] = {0};
+    snprintf(waitCommand, sizeof(waitCommand), "%.14s%.15s", ultimaStrings[114], ultimaStrings[115]);
+    uiConsole_replaceLastMessage(waitCommand);
+    keyRepeatDelay = 0.3f;
+    return true;
   }
-  
+
+  return false;
+}
+
+bool playerOverworld_updateMovement(float deltaTime) {
   int moveX = 0;
   int moveY = 0;
   char movementCommand[30] = {0};
@@ -48,15 +56,22 @@ bool playerOverworld_updateMovement(float deltaTime) {
     int world = tileIndex / (OS_BTERRA_MAP_WIDTH * OS_BTERRA_MAP_HEIGHT);
     int tile = ultimaAssets.bterraMaps[world][player.ty + moveY][player.tx + moveX];
 
-    if (tile == 0 || tile == 3) {
-      return false;
+    uiConsole_replaceLastMessage(movementCommand);
+
+    if (tile == 0) {
+      uiConsole_addMessage(ultimaStrings[138]);
+      keyRepeatDelay = 0.3f;
+      return true;
+    } else if (tile == 3) {
+      uiConsole_addMessage(ultimaStrings[139]);
+      keyRepeatDelay = 0.3f;
+      return true;
     }
 
     player.tx += moveX;
     player.ty += moveY;
     keyRepeatDelay = 0.1f;
 
-    uiConsole_replaceLastMessage(movementCommand);
     player_consumeFood();
 
     return true;
@@ -76,7 +91,16 @@ bool playerOverworld_updateMovement(float deltaTime) {
 
 bool playerOverworld_update(float deltaTime) {
   bool acted = false;
-  if (playerOverworld_updateMovement(deltaTime)) { acted = true; }
+
+  if (keyRepeatDelay <= 0) {
+    if (playerOverworld_updateWait()) { acted = true; } else
+    if (playerOverworld_updateMovement(deltaTime)) { acted = true; }
+  } else {
+    keyRepeatDelay -= deltaTime;
+    if (keyRepeatDelay < 0) {
+      keyRepeatDelay = 0;
+    }
+  }
   
   matrix4_setPosition(transformationMatrix, player.tx * OS_TILE_WIDTH, player.ty * OS_TILE_HEIGHT, 1);
   camera_setPosition3f(&camera, (player.tx + 1) * OS_TILE_WIDTH - OS_SCREEN_WIDTH / 2, (player.ty + 1) * OS_TILE_HEIGHT - OS_SCREEN_HEIGHT / 2, 10);

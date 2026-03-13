@@ -60,5 +60,8 @@ void input_keyCallback(GLFWwindow* window, int key, int scancode, int action, in
     case GLFW_KEY_RIGHT:
       input.right = isDown;
       break;
+    case GLFW_KEY_SPACE:
+      input.space = isDown;
+      break;
   }
 }
