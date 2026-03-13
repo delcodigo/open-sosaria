@@ -68,23 +68,23 @@ static void sceneCharacterGenerator_init() {
   text_create(&nameInputTextGeometry, "                \0", false);
 
   for (int i=0;i<6;i++) {
-    text_create(&statsTextGeometry[i], ultimaStrings[86 + i], false);
+    text_create(&statsTextGeometry[i], ultimaStrings[87 + i], false);
     text_create(&statsValueTextGeometry[i], (char[3]){' ', ' ', '\0'}, false);
   }
 
   for (int i=0;i<2;i++) {
-    text_create(&classTypeTextGeometry[i], ultimaStrings[92 + i], false);
+    text_create(&classTypeTextGeometry[i], ultimaStrings[94 + i], false);
   }
 
   for (int i=0;i<4;i++) {
     char line[10] = {0};
-    snprintf(line, sizeof(line), "%d-%.*s", i + 1, 7, ultimaStrings[94 + i]);
+    snprintf(line, sizeof(line), "%d-%.*s", i + 1, 7, ultimaStrings[96 + i]);
     text_create(&raceTextGeometry[i], line, false);
   }
 
   for (int i=0;i<4;i++) {
     char line[11] = {0};
-    snprintf(line, sizeof(line), "%d-%.*s", i + 1, 8, ultimaStrings[98 + i]);
+    snprintf(line, sizeof(line), "%d-%.*s", i + 1, 8, ultimaStrings[100 + i]);
     text_create(&typeTextGeometry[i], line, false);
   }
 
@@ -235,7 +235,7 @@ static void sceneCharacterGenerator_statsUpdate(float deltaTime) {
       if (value >= 1 && value <= 4) {
         if (step == 6) {
           player.race = value;
-          text_update(&selectedRaceTextGeometry, ultimaStrings[94 + value - 1], false);
+          text_update(&selectedRaceTextGeometry, ultimaStrings[96 + value - 1], false);
           step += 1;
           cursorY += 8;
           int *statPtr = &player.strength;
@@ -246,7 +246,7 @@ static void sceneCharacterGenerator_statsUpdate(float deltaTime) {
           sceneCharacterGenerator_updateStats();
         } else if (step == 7) {
           player.type = value;
-          text_update(&selectedTypeTextGeometry, ultimaStrings[98 + value - 1], false);
+          text_update(&selectedTypeTextGeometry, ultimaStrings[100 + value - 1], false);
           step += 1;
           cursorY += 8;
           statTextfield.isNumberOnly = false;

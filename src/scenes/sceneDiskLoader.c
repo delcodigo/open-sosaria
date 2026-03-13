@@ -771,6 +771,9 @@ void sceneDiskLoader_extractUltimaAssets() {
     size_t offset = 4;
 
     char stat[16] = {0};
+    memcpy(stat, beveryBuffer->data + offset + 0x1C76, 15);
+    sceneDiskLoader_addToUltimaStrings(stat, strlen(stat));
+
     memcpy(stat, beveryBuffer->data + offset + 0x1C67, 15);
     sceneDiskLoader_addToUltimaStrings(stat, strlen(stat));
 
@@ -787,6 +790,9 @@ void sceneDiskLoader_extractUltimaAssets() {
     sceneDiskLoader_addToUltimaStrings(stat, strlen(stat));
 
     memcpy(stat, beveryBuffer->data + offset + 0x1C1C, 15);
+    sceneDiskLoader_addToUltimaStrings(stat, strlen(stat));
+
+    memcpy(stat, beveryBuffer->data + offset + 0x1C0D, 15);
     sceneDiskLoader_addToUltimaStrings(stat, strlen(stat));
 
     char class[5] = {0};

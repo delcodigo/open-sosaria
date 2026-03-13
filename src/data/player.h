@@ -2,18 +2,18 @@
 #define OS_PLAYER_H
 
 typedef struct {
+  int health;
   int strength;
   int agility;
   int stamina;
   int charisma;
   int wisdom;
   int intelligence;
+  int gold;
   int race;
   int type;
   char name[16];
-  int gold;
   float food;
-  int health;
   int tx;
   int ty;
   int experience;

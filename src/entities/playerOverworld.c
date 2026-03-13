@@ -1,9 +1,11 @@
 #include <stdio.h>
+#include <string.h>
 #include "playerOverworld.h"
 #include "engine/geometry.h"
 #include "engine/camera.h"
 #include "engine/input.h"
 #include "ui/uiConsole.h"
+#include "ui/uiztats.h"
 #include "scenes/sceneDiskLoader.h"
 #include "maths/matrix4.h"
 #include "config.h"
@@ -23,7 +25,7 @@ bool playerOverworld_updateWait() {
   if (input.space) {
     waitingTime = 0.0f;
     char waitCommand[30] = {0};
-    snprintf(waitCommand, sizeof(waitCommand), "%.14s%.15s", ultimaStrings[114], ultimaStrings[115]);
+    snprintf(waitCommand, sizeof(waitCommand), "%.14s%.15s", ultimaStrings[116], ultimaStrings[117]);
     uiConsole_replaceLastMessage(waitCommand);
     keyRepeatDelay = 0.3f;
     return true;
@@ -39,16 +41,16 @@ bool playerOverworld_updateMovement(float deltaTime) {
 
   if (input.up) {
     moveY = -1;
-    snprintf(movementCommand, sizeof(movementCommand), "%.14s%.15s", ultimaStrings[114], ultimaStrings[133]);
+    snprintf(movementCommand, sizeof(movementCommand), "%.14s%.15s", ultimaStrings[116], ultimaStrings[135]);
   } else if (input.down) {
     moveY = 1;
-    snprintf(movementCommand, sizeof(movementCommand), "%.14s%.15s", ultimaStrings[114], ultimaStrings[134]);
+    snprintf(movementCommand, sizeof(movementCommand), "%.14s%.15s", ultimaStrings[116], ultimaStrings[136]);
   } else if (input.left) {
     moveX = -1;
-    snprintf(movementCommand, sizeof(movementCommand), "%.14s%.15s", ultimaStrings[114], ultimaStrings[136]);
+    snprintf(movementCommand, sizeof(movementCommand), "%.14s%.15s", ultimaStrings[116], ultimaStrings[138]);
   } else if (input.right) {
     moveX = 1;
-    snprintf(movementCommand, sizeof(movementCommand), "%.14s%.15s", ultimaStrings[114], ultimaStrings[135]);
+    snprintf(movementCommand, sizeof(movementCommand), "%.14s%.15s", ultimaStrings[116], ultimaStrings[137]);
   }
 
   if (moveX != 0 || moveY != 0) {
@@ -59,11 +61,11 @@ bool playerOverworld_updateMovement(float deltaTime) {
     uiConsole_replaceLastMessage(movementCommand);
 
     if (tile == 0) {
-      uiConsole_addMessage(ultimaStrings[138]);
+      uiConsole_addMessage(ultimaStrings[140]);
       keyRepeatDelay = 0.3f;
       return true;
     } else if (tile == 3) {
-      uiConsole_addMessage(ultimaStrings[139]);
+      uiConsole_addMessage(ultimaStrings[141]);
       keyRepeatDelay = 0.3f;
       return true;
     }
@@ -79,7 +81,7 @@ bool playerOverworld_updateMovement(float deltaTime) {
     waitingTime += deltaTime;
     if (waitingTime >= 5.0f) {
       waitingTime = 0.0f;
-      snprintf(movementCommand, sizeof(movementCommand), "%.14s%.15s", ultimaStrings[114], ultimaStrings[115]);
+      snprintf(movementCommand, sizeof(movementCommand), "%.14s%.15s", ultimaStrings[116], ultimaStrings[117]);
       uiConsole_replaceLastMessage(movementCommand);
       player_waitPenalty();
       return true;
@@ -89,10 +91,24 @@ bool playerOverworld_updateMovement(float deltaTime) {
   return false;
 }
 
+static bool playerOverworld_updateZtats() {
+  if (input.z == 1) {
+    input.z = 2;
+    uiZtats_init();
+    ztatsActive = true;
+    waitingTime = 0.0f;
+    memset(&input, 0, sizeof(input));
+    return true;
+  }
+
+  return false;
+}
+
 bool playerOverworld_update(float deltaTime) {
   bool acted = false;
 
   if (keyRepeatDelay <= 0) {
+    if (playerOverworld_updateZtats()) { acted = true; } else
     if (playerOverworld_updateWait()) { acted = true; } else
     if (playerOverworld_updateMovement(deltaTime)) { acted = true; }
   } else {

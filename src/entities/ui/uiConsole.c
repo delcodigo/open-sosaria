@@ -14,7 +14,7 @@ static Text statsLabels[4];
 static Text stats[4];
 static Text consoleText[4];
 static char consoleLines[4][30] = { 0 };
-static const unsigned char textureData[] = {0,0,0,(unsigned char)255};
+static const unsigned char textureData[] = {0,0,0,255};
 static GLuint blackPanelTextureId;
 static float transformMatrix[16];
 
@@ -25,10 +25,10 @@ void uiConsole_init() {
   matrix4_setIdentity(transformMatrix);
   matrix4_setPosition(transformMatrix, 0, OS_SCREEN_HEIGHT - OS_TILE_HEIGHT * 2, 2);
 
-  text_create(&statsLabels[0], ultimaStrings[106], false);
-  text_create(&statsLabels[1], ultimaStrings[108], false);
-  text_create(&statsLabels[2], ultimaStrings[110], false);
-  text_create(&statsLabels[3], ultimaStrings[112], false);
+  text_create(&statsLabels[0], ultimaStrings[108], false);
+  text_create(&statsLabels[1], ultimaStrings[110], false);
+  text_create(&statsLabels[2], ultimaStrings[112], false);
+  text_create(&statsLabels[3], ultimaStrings[114], false);
 
   char statStr[7] = {0};
   snprintf(statStr, sizeof(statStr), "%d", player.health);

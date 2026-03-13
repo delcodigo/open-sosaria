@@ -12,6 +12,7 @@ typedef struct {
   bool isDirty;
   bool isSubmitted;
   bool isNumberOnly;
+  bool isAnyKey;
 } Textfield;
 
 typedef struct {
@@ -20,6 +21,7 @@ typedef struct {
   int left;
   int right;
   int space;
+  int z;
 } SosariaInput;
 
 extern Textfield *inputTextfield;

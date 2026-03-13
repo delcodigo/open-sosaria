@@ -1,4 +1,5 @@
 #include "input.h"
+#include <string.h>
 
 Textfield *inputTextfield = NULL;
 SosariaInput input = {0};
@@ -31,6 +32,11 @@ void input_keyCallback(GLFWwindow* window, int key, int scancode, int action, in
   (void) scancode;
   (void) mods;
 
+  if (action == GLFW_PRESS && inputTextfield != NULL && inputTextfield->active && inputTextfield->isAnyKey) {
+    inputTextfield->isDirty = true;
+    inputTextfield->isSubmitted = true;
+  }
+
   if (action == GLFW_PRESS || action == GLFW_REPEAT) {
     if (key == GLFW_KEY_BACKSPACE) {
       if (inputTextfield != NULL && inputTextfield->active && inputTextfield->cursorPosition > 0) {
@@ -45,23 +51,48 @@ void input_keyCallback(GLFWwindow* window, int key, int scancode, int action, in
     }
   }
 
-  int isDown = action != GLFW_RELEASE;
-
   switch (key) {
     case GLFW_KEY_UP:
-      input.up = isDown;
+      if (action == GLFW_RELEASE) {
+        input.up = 0;
+      } else if (input.up == 0 && action == GLFW_PRESS) {
+        input.up = 1;
+      }
       break;
     case GLFW_KEY_DOWN:
-      input.down = isDown;
+      if (action == GLFW_RELEASE) {
+        input.down = 0;
+      } else if (input.down == 0 && action == GLFW_PRESS) {
+        input.down = 1;
+      }
       break;
     case GLFW_KEY_LEFT:
-      input.left = isDown;
+      if (action == GLFW_RELEASE) {
+        input.left = 0;
+      } else if (input.left == 0 && action == GLFW_PRESS) {
+        input.left = 1;
+      }
       break;
     case GLFW_KEY_RIGHT:
-      input.right = isDown;
+      if (action == GLFW_RELEASE) {
+        input.right = 0;
+      } else if (input.right == 0 && action == GLFW_PRESS) {
+        input.right = 1;
+      }
       break;
     case GLFW_KEY_SPACE:
-      input.space = isDown;
+      if (action == GLFW_RELEASE) {
+        input.space = 0;
+      } else if (input.space == 0 && action == GLFW_PRESS) {
+        input.space = 1;
+      }
+      break;
+    case GLFW_KEY_Z:
+      if (action == GLFW_RELEASE) {
+        input.z = 0;
+      } else if (input.z == 0 && action == GLFW_PRESS) {
+        input.z = 1;
+      }
       break;
   }
 }
