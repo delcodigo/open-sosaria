@@ -91,3 +91,7 @@ The engine currently includes:
 ## Next Steps
 
 Game logic, additional sprite rendering work, and Apple II game mechanics are planned for future development.
+
+## Research Notes
+
+Engine behavior findings and reinterpretation decisions are documented in [docs/engine-reinterpretation-notes.md](docs/engine-reinterpretation-notes.md).
