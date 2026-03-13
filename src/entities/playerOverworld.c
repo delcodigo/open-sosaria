@@ -1,7 +1,9 @@
+#include <stdio.h>
 #include "playerOverworld.h"
 #include "engine/geometry.h"
 #include "engine/camera.h"
 #include "engine/input.h"
+#include "ui/uiConsole.h"
 #include "scenes/sceneDiskLoader.h"
 #include "maths/matrix4.h"
 #include "config.h"
@@ -24,15 +26,20 @@ bool playerOverworld_updateMovement(float deltaTime) {
   
   int moveX = 0;
   int moveY = 0;
+  char movementCommand[30] = {0};
 
   if (input.up) {
     moveY = -1;
+    snprintf(movementCommand, sizeof(movementCommand), "%.14s%.15s", ultimaStrings[114], ultimaStrings[133]);
   } else if (input.down) {
     moveY = 1;
+    snprintf(movementCommand, sizeof(movementCommand), "%.14s%.15s", ultimaStrings[114], ultimaStrings[134]);
   } else if (input.left) {
     moveX = -1;
+    snprintf(movementCommand, sizeof(movementCommand), "%.14s%.15s", ultimaStrings[114], ultimaStrings[136]);
   } else if (input.right) {
     moveX = 1;
+    snprintf(movementCommand, sizeof(movementCommand), "%.14s%.15s", ultimaStrings[114], ultimaStrings[135]);
   }
 
   if (moveX != 0 || moveY != 0) {
@@ -47,6 +54,9 @@ bool playerOverworld_updateMovement(float deltaTime) {
     player.tx += moveX;
     player.ty += moveY;
     keyRepeatDelay = 0.1f;
+
+    uiConsole_addMessage(movementCommand);
+
     return true;
   }
 
