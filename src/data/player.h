@@ -24,5 +24,6 @@ typedef struct {
 extern Player player;
 
 void player_consumeFood();
+void player_waitPenalty();
 
 #endif

@@ -58,6 +58,12 @@ void uiConsole_addMessage(const char *message) {
   text_update(&consoleText[3], consoleLines[3], false);
 }
 
+void uiConsole_replaceLastMessage(const char *message) {
+  strncpy(consoleLines[3], message, sizeof(consoleLines[3]));
+  consoleLines[3][29] = '\0';
+  text_update(&consoleText[3], consoleLines[3], false);
+}
+
 void uiConsole_updateStats() {
   char statStr[7] = {0};
   snprintf(statStr, sizeof(statStr), "%d", player.health);

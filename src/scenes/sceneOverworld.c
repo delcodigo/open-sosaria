@@ -8,16 +8,26 @@
 #include "entities/ui/uiConsole.h"
 #include "engine/input.h"
 
+bool playerActed = false;
+
 static void sceneOverworld_init() {
   worldMap_init();
   playerOverworld_init();
   uiConsole_init();
+  uiConsole_addMessage(ultimaStrings[114]);
+  playerActed = false;
 }
 
 static void sceneOverworld_update(float deltaTime) {
-  (void) deltaTime;
+  if (playerActed) {
+    playerActed = false;
+    uiConsole_addMessage(ultimaStrings[114]);
+  }
 
-  playerOverworld_update(deltaTime);  
+  if (playerOverworld_update(deltaTime)) { 
+    playerActed = true; 
+  }
+
   float *viewMatrix = camera_getViewProjectionMatrix(&camera);
   
   worldMap_update(viewMatrix);

@@ -12,6 +12,7 @@ static Geometry playerOverworldGeometry;
 static float transformationMatrix[16];
 
 static float keyRepeatDelay = 0;
+static float waitingTime = 0.0f;
 
 void playerOverworld_init() {
   geometry_setSprite(&playerOverworldGeometry, OS_TILE_WIDTH, OS_TILE_HEIGHT, 0, 0.5f, 0.125f, 1.0f);
@@ -55,10 +56,19 @@ bool playerOverworld_updateMovement(float deltaTime) {
     player.ty += moveY;
     keyRepeatDelay = 0.1f;
 
-    uiConsole_addMessage(movementCommand);
+    uiConsole_replaceLastMessage(movementCommand);
     player_consumeFood();
 
     return true;
+  } else {
+    waitingTime += deltaTime;
+    if (waitingTime >= 5.0f) {
+      waitingTime = 0.0f;
+      snprintf(movementCommand, sizeof(movementCommand), "%.14s%.15s", ultimaStrings[114], ultimaStrings[115]);
+      uiConsole_replaceLastMessage(movementCommand);
+      player_waitPenalty();
+      return true;
+    }
   }
 
   return false;
