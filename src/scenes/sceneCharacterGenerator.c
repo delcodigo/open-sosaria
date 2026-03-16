@@ -68,23 +68,23 @@ static void sceneCharacterGenerator_init() {
   text_create(&nameInputTextGeometry, "                \0", false);
 
   for (int i=0;i<6;i++) {
-    text_create(&statsTextGeometry[i], ultimaStrings[87 + i], false);
+    text_create(&statsTextGeometry[i], ultimaStrings[323 + i], false);
     text_create(&statsValueTextGeometry[i], (char[3]){' ', ' ', '\0'}, false);
   }
 
   for (int i=0;i<2;i++) {
-    text_create(&classTypeTextGeometry[i], ultimaStrings[94 + i], false);
+    text_create(&classTypeTextGeometry[i], ultimaStrings[330 + i], false);
   }
 
   for (int i=0;i<4;i++) {
     char line[10] = {0};
-    snprintf(line, sizeof(line), "%d-%.*s", i + 1, 7, ultimaStrings[96 + i]);
+    snprintf(line, sizeof(line), "%d-%.*s", i + 1, 7, ultimaStrings[332 + i]);
     text_create(&raceTextGeometry[i], line, false);
   }
 
   for (int i=0;i<4;i++) {
     char line[11] = {0};
-    snprintf(line, sizeof(line), "%d-%.*s", i + 1, 8, ultimaStrings[100 + i]);
+    snprintf(line, sizeof(line), "%d-%.*s", i + 1, 8, ultimaStrings[336 + i]);
     text_create(&typeTextGeometry[i], line, false);
   }
 
@@ -196,7 +196,16 @@ static void sceneCharacterGenerator_finishPlayerCreation() {
   player.ty = 40;
   player.experience = 1;
   player.time = 0.0f;
-  player.transport = 0;
+  player.vehicle = 0;
+  player.armor = 1;
+  player.weapon = 1;
+  for (int i=1;i<5;i++) { player.armors[i] = 0; }
+  for (int i=0;i<6;i++) { player.vehicles[i] = 0; }
+  for (int i=0;i<15;i++) { player.weapons[i] = 0; }
+  for (int i=0;i<10;i++) { player.spells[i] = 0; }
+  for (int i=0;i<4;i++) { player.gems[i] = 0; }
+  player.armors[0] = 1;
+  player.weapons[0] = 2;
   saveGame();
   scene_load(&sceneSplash);
 }
@@ -235,7 +244,7 @@ static void sceneCharacterGenerator_statsUpdate(float deltaTime) {
       if (value >= 1 && value <= 4) {
         if (step == 6) {
           player.race = value;
-          text_update(&selectedRaceTextGeometry, ultimaStrings[96 + value - 1], false);
+          text_update(&selectedRaceTextGeometry, ultimaStrings[332 + value - 1], false);
           step += 1;
           cursorY += 8;
           int *statPtr = &player.strength;
@@ -246,7 +255,7 @@ static void sceneCharacterGenerator_statsUpdate(float deltaTime) {
           sceneCharacterGenerator_updateStats();
         } else if (step == 7) {
           player.type = value;
-          text_update(&selectedTypeTextGeometry, ultimaStrings[100 + value - 1], false);
+          text_update(&selectedTypeTextGeometry, ultimaStrings[336 + value - 1], false);
           step += 1;
           cursorY += 8;
           statTextfield.isNumberOnly = false;

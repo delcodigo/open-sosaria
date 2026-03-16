@@ -25,20 +25,20 @@ void uiConsole_init() {
   matrix4_setIdentity(transformMatrix);
   matrix4_setPosition(transformMatrix, 0, OS_SCREEN_HEIGHT - OS_TILE_HEIGHT * 2, 2);
 
-  text_create(&statsLabels[0], ultimaStrings[108], false);
-  text_create(&statsLabels[1], ultimaStrings[110], false);
-  text_create(&statsLabels[2], ultimaStrings[112], false);
-  text_create(&statsLabels[3], ultimaStrings[114], false);
+  text_create(&statsLabels[0], ultimaStrings[90], false);
+  text_create(&statsLabels[1], ultimaStrings[92], false);
+  text_create(&statsLabels[2], ultimaStrings[94], false);
+  text_create(&statsLabels[3], ultimaStrings[96], false);
 
   char statStr[7] = {0};
   snprintf(statStr, sizeof(statStr), "%d", player.health);
-  text_create(&stats[0], statStr, false);
+  text_create(&stats[0], player.health > 99999 ? "*****" : statStr, false);
   snprintf(statStr, sizeof(statStr), "%d", (int)player.food);
-  text_create(&stats[1], statStr, false);
+  text_create(&stats[1], (int)player.food > 99999 ? "*****" : statStr, false);
   snprintf(statStr, sizeof(statStr), "%d", player.experience);
-  text_create(&stats[2], statStr, false);
+  text_create(&stats[2], player.experience > 99999 ? "*****" : statStr, false);
   snprintf(statStr, sizeof(statStr), "%d", player.gold);
-  text_create(&stats[3], statStr, false);
+  text_create(&stats[3], player.gold > 99999 ? "*****" : statStr, false);
 
   for (int i=0;i<4;i++) {
     memset(consoleLines[i], ' ', sizeof(consoleLines[i]));
@@ -67,13 +67,13 @@ void uiConsole_replaceLastMessage(const char *message) {
 void uiConsole_updateStats() {
   char statStr[7] = {0};
   snprintf(statStr, sizeof(statStr), "%d", player.health);
-  text_update(&stats[0], statStr, false);
+  text_update(&stats[0], player.health > 99999 ? "*****" : statStr, false);
   snprintf(statStr, sizeof(statStr), "%d", (int)player.food);
-  text_update(&stats[1], statStr, false);
+  text_update(&stats[1], (int)player.food > 99999 ? "*****" : statStr, false);
   snprintf(statStr, sizeof(statStr), "%d", player.experience);
-  text_update(&stats[2], statStr, false);
+  text_update(&stats[2], player.experience > 99999 ? "*****" : statStr, false);
   snprintf(statStr, sizeof(statStr), "%d", player.gold);
-  text_update(&stats[3], statStr, false);
+  text_update(&stats[3], player.gold > 99999 ? "*****" : statStr, false);
 }
 
 void uiConsole_update() {

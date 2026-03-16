@@ -15,7 +15,7 @@ static void sceneOverworld_init() {
   worldMap_init();
   playerOverworld_init();
   uiConsole_init();
-  uiConsole_addMessage(ultimaStrings[116]);
+  uiConsole_addMessage(ultimaStrings[98]);
   playerActed = false;
 }
 
@@ -27,7 +27,7 @@ static void sceneOverworld_update(float deltaTime) {
 
   if (playerActed) {
     playerActed = false;
-    uiConsole_addMessage(ultimaStrings[116]);
+    uiConsole_addMessage(ultimaStrings[98]);
   }
 
   if (playerOverworld_update(deltaTime)) { 

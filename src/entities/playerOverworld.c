@@ -25,7 +25,7 @@ bool playerOverworld_updateWait() {
   if (input.space) {
     waitingTime = 0.0f;
     char waitCommand[30] = {0};
-    snprintf(waitCommand, sizeof(waitCommand), "%.14s%.15s", ultimaStrings[116], ultimaStrings[117]);
+    snprintf(waitCommand, sizeof(waitCommand), "%.14s%.15s", ultimaStrings[98], ultimaStrings[99]);
     uiConsole_replaceLastMessage(waitCommand);
     keyRepeatDelay = 0.3f;
     return true;
@@ -41,16 +41,16 @@ bool playerOverworld_updateMovement(float deltaTime) {
 
   if (input.up) {
     moveY = -1;
-    snprintf(movementCommand, sizeof(movementCommand), "%.14s%.15s", ultimaStrings[116], ultimaStrings[135]);
+    snprintf(movementCommand, sizeof(movementCommand), "%.14s%.15s", ultimaStrings[98], ultimaStrings[117]);
   } else if (input.down) {
     moveY = 1;
-    snprintf(movementCommand, sizeof(movementCommand), "%.14s%.15s", ultimaStrings[116], ultimaStrings[136]);
+    snprintf(movementCommand, sizeof(movementCommand), "%.14s%.15s", ultimaStrings[98], ultimaStrings[118]);
   } else if (input.left) {
     moveX = -1;
-    snprintf(movementCommand, sizeof(movementCommand), "%.14s%.15s", ultimaStrings[116], ultimaStrings[138]);
+    snprintf(movementCommand, sizeof(movementCommand), "%.14s%.15s", ultimaStrings[98], ultimaStrings[120]);
   } else if (input.right) {
     moveX = 1;
-    snprintf(movementCommand, sizeof(movementCommand), "%.14s%.15s", ultimaStrings[116], ultimaStrings[137]);
+    snprintf(movementCommand, sizeof(movementCommand), "%.14s%.15s", ultimaStrings[98], ultimaStrings[119]);
   }
 
   if (moveX != 0 || moveY != 0) {
@@ -61,11 +61,11 @@ bool playerOverworld_updateMovement(float deltaTime) {
     uiConsole_replaceLastMessage(movementCommand);
 
     if (tile == 0) {
-      uiConsole_addMessage(ultimaStrings[140]);
+      uiConsole_addMessage(ultimaStrings[122]);
       keyRepeatDelay = 0.3f;
       return true;
     } else if (tile == 3) {
-      uiConsole_addMessage(ultimaStrings[141]);
+      uiConsole_addMessage(ultimaStrings[123]);
       keyRepeatDelay = 0.3f;
       return true;
     }
@@ -81,7 +81,7 @@ bool playerOverworld_updateMovement(float deltaTime) {
     waitingTime += deltaTime;
     if (waitingTime >= 5.0f) {
       waitingTime = 0.0f;
-      snprintf(movementCommand, sizeof(movementCommand), "%.14s%.15s", ultimaStrings[116], ultimaStrings[117]);
+      snprintf(movementCommand, sizeof(movementCommand), "%.14s%.15s", ultimaStrings[98], ultimaStrings[99]);
       uiConsole_replaceLastMessage(movementCommand);
       player_waitPenalty();
       return true;

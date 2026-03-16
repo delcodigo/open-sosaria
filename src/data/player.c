@@ -4,8 +4,8 @@
 Player player = {0};
 
 void player_consumeFood() {
-  player.food -= (7.0f - player.transport) / 14.0f;
-  player.time += (7.0f - player.transport) / 7.0f;
+  player.food -= (7.0f - player.vehicle) / 14.0f;
+  player.time += (7.0f - player.vehicle) / 7.0f;
   uiConsole_updateStats();
 }
 

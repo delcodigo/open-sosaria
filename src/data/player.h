@@ -18,7 +18,14 @@ typedef struct {
   int ty;
   int experience;
   float time;
-  int transport;
+  int vehicle;
+  int armor;
+  int weapon;
+  int armors[5];
+  int vehicles[6];
+  int weapons[15];
+  int spells[10];
+  int gems[4];
 } Player;
 
 extern Player player;
