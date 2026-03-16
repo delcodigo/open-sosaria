@@ -4,6 +4,7 @@
 #include "engine/geometry.h"
 #include "engine/camera.h"
 #include "engine/input.h"
+#include "data/saveAndLoad.h"
 #include "ui/uiConsole.h"
 #include "ui/uiztats.h"
 #include "scenes/sceneDiskLoader.h"
@@ -104,12 +105,27 @@ static bool playerOverworld_updateZtats() {
   return false;
 }
 
+static bool playerOverworld_updateSave() {
+  if (input.q == 1) {
+    input.q = 2;
+    uiConsole_addMessage(ultimaStrings[190]);
+    waitingTime = 0.0f;
+    memset(&input, 0, sizeof(input));
+    saveGame();
+    uiConsole_addMessage(ultimaStrings[197]);
+    return true;
+  }
+
+  return false;
+}
+
 bool playerOverworld_update(float deltaTime) {
   bool acted = false;
 
   if (keyRepeatDelay <= 0) {
     if (playerOverworld_updateZtats()) { acted = true; } else
     if (playerOverworld_updateWait()) { acted = true; } else
+    if (playerOverworld_updateSave()) { acted = true; } else 
     if (playerOverworld_updateMovement(deltaTime)) { acted = true; }
   } else {
     keyRepeatDelay -= deltaTime;

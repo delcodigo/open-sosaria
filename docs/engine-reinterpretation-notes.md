@@ -137,6 +137,15 @@ $$
 
 - The overworld map is divided into **4 chunks**: `bterra0`, `bterra1`, `bterra2`, `bterra3`.
 
+## Save/Load Map Snapshot Behavior
+
+- On save/load, the original behavior persists the current **64x64 map tile buffer**.
+- This is important because vehicles (for example, horses) are encoded directly in map tiles instead of separate entities.
+- Tile encoding uses nibbles:
+	- **Lower nibble**: tile backup.
+	- **Upper nibble**: vehicle value.
+- While this is an interesting compact approach, in this engine reinterpretation vehicles are stored in a more traditional **entity list**.
+
 ## Notes
 
 These findings are based on reinterpretation and observed behavior, and should be refined further as additional engine details are validated.

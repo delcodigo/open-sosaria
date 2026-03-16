@@ -97,5 +97,12 @@ void input_keyCallback(GLFWwindow* window, int key, int scancode, int action, in
         input.z = 1;
       }
       break;
+    case GLFW_KEY_Q:
+      if (action == GLFW_RELEASE) {
+        input.q = 0;
+      } else if (input.q == 0 && action == GLFW_PRESS) {
+        input.q = 1;
+      }
+      break;
   }
 }
