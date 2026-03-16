@@ -40,6 +40,99 @@ $$
 - Experience starts at **1**.
 - Initial player position is **(40, 40)**.
 
+## Inventory Items
+
+- There are **5** armors:
+	- LEATHER ARMOR
+	- CHAIN MAIL
+	- PLATE MAIL
+	- VACUUM SUIT
+	- REFLECT SUIT
+- There are **6** vehicles:
+	- HORSE
+	- CART
+	- RAFT
+	- FRIGATE
+	- AIR CAR
+	- SHUTTLE
+- There are **15** weapons:
+	- DAGGER
+	- MACE
+	- AXE
+	- ROPE & SPIKES
+	- SWORD
+	- GREAT SWORD
+	- BOW & ARROWS
+	- AMULET
+	- WAND
+	- STAFF
+	- TRIANGLE
+	- PISTOL
+	- LIGHT SWORD
+	- PHAZOR
+	- BLASTER
+- There are **11** spells:
+	- PRAY
+	- OPEN
+	- UNLOCK
+	- PROJECTILE
+	- STEAL
+	- LADDER DOWN
+	- LADDER UP
+	- BLINK
+	- CREATE
+	- DESTROY
+	- KILL
+- There are **4** gems:
+	- RED GEM
+	- GREEN GEM
+	- BLUE GEM
+	- WHITE GEM
+
+## Overworld Spell Restrictions
+
+- Only **3** spells are usable on the overworld: **pray**, **projectile**, and **kill**.
+
+### Original `cast_spell` Behavior Findings
+
+- Casting starts by prompting with `CAST <spell name>`.
+- Spell inventory validation is skipped for **PRAY** (index 0), but applied to other spells.
+- A spell charge is consumed immediately after validation, before spell-specific resolution.
+- Spells other than **PRAY**, **PROJECTILE**, and **KILL** fail with a "dungeon spell only" message.
+
+#### PRAY
+
+- PRAY performs one of **3** random outcomes.
+- Outcome 1 priority:
+	- Remove monster if one is present.
+	- Otherwise, if gold is greater than 20, reduce gold by 20.
+	- If health is below 10, set health to 10 and print `SHAZAM!!!!`.
+	- Else if food is below 10, set food to 10 and print `SHAZAM!!!!`.
+	- Otherwise print `HMMM?...NO EFFECT??`.
+- Outcome 2 priority:
+	- If health is below 10, set health to 10 and print `SHAZAM!!!!`.
+	- Else if food is below 10, set food to 10 and print `SHAZAM!!!!`.
+	- Otherwise print `HMMM?...NO EFFECT??`.
+- Outcome 3:
+	- If food is below 10, set food to 10 and print `SHAZAM!!!!`.
+	- Otherwise print `HMMM?...NO EFFECT??`.
+
+#### PROJECTILE
+
+- Requires a valid target; otherwise prints `NO TARGET!`.
+- Damage is computed as half of intelligence, with an additional bonus when the equipped weapon index is between 8 and 11.
+- The result is applied as direct monster HP reduction.
+
+#### KILL
+
+- Requires a valid target; otherwise prints `NO TARGET!`.
+- Sets monster health to a killed state immediately.
+
+## Bottom Console Stat Overflow
+
+- If any stat shown in the bottom console exceeds **99999**, it is rendered as **`*****`**.
+- The original numeric value is shown again automatically once it falls back below **100000**.
+
 ## Overworld
 
 - The overworld map is divided into **4 chunks**: `bterra0`, `bterra1`, `bterra2`, `bterra3`.

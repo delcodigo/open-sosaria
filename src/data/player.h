@@ -24,7 +24,7 @@ typedef struct {
   int armors[5];
   int vehicles[6];
   int weapons[15];
-  int spells[10];
+  int spells[11];
   int gems[4];
 } Player;
 

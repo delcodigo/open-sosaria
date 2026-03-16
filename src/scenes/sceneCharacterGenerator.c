@@ -202,7 +202,7 @@ static void sceneCharacterGenerator_finishPlayerCreation() {
   for (int i=1;i<5;i++) { player.armors[i] = 0; }
   for (int i=0;i<6;i++) { player.vehicles[i] = 0; }
   for (int i=0;i<15;i++) { player.weapons[i] = 0; }
-  for (int i=0;i<10;i++) { player.spells[i] = 0; }
+  for (int i=0;i<11;i++) { player.spells[i] = 0; }
   for (int i=0;i<4;i++) { player.gems[i] = 0; }
   player.armors[0] = 1;
   player.weapons[0] = 2;
