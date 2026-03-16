@@ -9,25 +9,42 @@
 #include "engine/texture.h"
 #include "engine/input.h"
 
+#define UI_ZTATS_VISIBLE_LINES 19
+
 static const unsigned char textureData[4] = {0,0,0,255};
 static Geometry backgroundPanel;
 static Text titleText;
 static Text levelClassRaceText;
 static Text statLabels[8];
 static Text continueText;
-static Text armorText[5];
-static Text vehiclesText[6];
-static Text weaponsText[15];
-static Text spellsText[10];
-static Text gemsText[4];
+static Text armorText[OS_ARMORS_COUNT];
+static Text vehiclesText[OS_VEHICLES_COUNT];
+static Text weaponsText[OS_WEAPONS_COUNT];
+static Text spellsText[OS_SPELLS_COUNT];
+static Text gemsText[OS_GEMS_COUNT];
 static GLuint backgroundTextureId;
 static float transformMatrix[16];
 static Textfield continueInput = {0};
 static int freezeInput = 0;
+static int scroll = 0;
 
 bool ztatsActive = false;
 
 void uiZtats_free();
+
+static void uiZtats_buildTextGeometries(int itemsCount, bool isPadded, int stringIndex, Text *textArray, int *playerItems) {
+  for (int i=0;i<itemsCount;i++) {
+    char label[22] = {0};
+    if (isPadded) {
+      int padLength = 15 - strlen(ultimaStrings[stringIndex + i]);
+      snprintf(label, sizeof(label), "%.15s%*s%d", ultimaStrings[stringIndex + i], padLength, "", *(playerItems + i));
+    } else {
+      snprintf(label, sizeof(label), "%.15s%d", ultimaStrings[stringIndex + i], *(playerItems + i));
+    }
+
+    text_create(&textArray[i], label, false);
+  }
+}
 
 void uiZtats_init() {
   matrix4_setIdentity(transformMatrix);
@@ -39,7 +56,7 @@ void uiZtats_init() {
   snprintf(titleLine, sizeof(titleLine), "%.10s%.10s%.15s", ultimaStrings[242], ultimaStrings[243], player.name);
   text_create(&titleText, titleLine, false);
 
-  text_create(&continueText, ultimaStrings[251], false);
+  text_create(&continueText, "UP/DOWN: SCROLL. ANY KEY: CONTINUE--", false);
 
   memset(titleLine, '\0', sizeof(titleLine));
   char level[12] = {0};
@@ -47,45 +64,12 @@ void uiZtats_init() {
   snprintf(titleLine, sizeof(titleLine), "%.10s%.4s %.10s %.10s", ultimaStrings[244], level, ultimaStrings[332 + player.race - 1], ultimaStrings[336 + player.type - 1]);
   text_create(&levelClassRaceText, titleLine, false);
 
-  for (int i=0;i<8;i++) {
-    char statLabel[22] = {0};
-    snprintf(statLabel, sizeof(statLabel), "%.15s%d", ultimaStrings[322 + i], *(&player.health + i));
-    text_create(&statLabels[i], statLabel, false);
-  }
-
-  for (int i=0;i<5;i++) {
-    char armorLabel[22] = {0};
-    int padLength = 15 - strlen(ultimaStrings[341 + i]);
-    snprintf(armorLabel, sizeof(armorLabel), "%.15s%*s%d", ultimaStrings[341 + i], padLength, "", player.armors[i]);
-    text_create(&armorText[i], armorLabel, false);
-  }
-
-  for (int i=0;i<6;i++) {
-    char vehiclesLabel[22] = {0};
-    int padLength = 15 - strlen(ultimaStrings[347 + i]);
-    snprintf(vehiclesLabel, sizeof(vehiclesLabel), "%.15s%*s%d", ultimaStrings[347 + i], padLength, "", player.vehicles[i]);
-    text_create(&vehiclesText[i], vehiclesLabel, false);
-  }
-
-  for (int i=0;i<15;i++) {
-    char weaponsLabel[22] = {0};
-    int padLength = 15 - strlen(ultimaStrings[353 + i]);
-    snprintf(weaponsLabel, sizeof(weaponsLabel), "%.15s%*s%d", ultimaStrings[353 + i], padLength, "", player.weapons[i]);
-    text_create(&weaponsText[i], weaponsLabel, false);
-  }
-
-  for (int i=0;i<10;i++) {
-    char spellsLabel[22] = {0};
-    int padLength = 15 - strlen(ultimaStrings[368 + i]);
-    snprintf(spellsLabel, sizeof(spellsLabel), "%.15s%*s%d", ultimaStrings[368 + i], padLength, "", player.spells[i]);
-    text_create(&spellsText[i], spellsLabel, false);
-  }
-
-  for (int i=0;i<4;i++) {
-    char gemsLabel[22] = {0};
-    snprintf(gemsLabel, sizeof(gemsLabel), "%.15s%d", ultimaStrings[247 + i], player.gems[i]);
-    text_create(&gemsText[i], gemsLabel, false);
-  }
+  uiZtats_buildTextGeometries(8, false, 322, statLabels, &player.health);
+  uiZtats_buildTextGeometries(OS_ARMORS_COUNT, true, 341, armorText, player.armors);
+  uiZtats_buildTextGeometries(OS_VEHICLES_COUNT, true, 347, vehiclesText, player.vehicles);
+  uiZtats_buildTextGeometries(OS_WEAPONS_COUNT, true, 353, weaponsText, player.weapons);
+  uiZtats_buildTextGeometries(OS_SPELLS_COUNT, true, 368, spellsText, player.spells);
+  uiZtats_buildTextGeometries(OS_GEMS_COUNT, false, 247, gemsText, player.gems);
 
   uiCursor_init();
 
@@ -97,6 +81,18 @@ void uiZtats_init() {
   inputTextfield->isAnyKey = true;
 
   freezeInput = 10;
+  scroll = 0;
+}
+
+static void uiZtats_renderLabels(int itemsCount, Text *texts, int *playerItems, int cx, int cy, int *maxLeftLines, int *yOffset) {
+  for (int i=0;i<itemsCount;i++) {
+    if (*(playerItems + i) > 0) {
+      *maxLeftLines += 1;
+      if (*yOffset < 24 || *yOffset >= OS_SCREEN_HEIGHT - 16) { *yOffset += 8; continue; }
+      text_renderxyz(&texts[i], cx, cy + *yOffset, 9);
+      *yOffset += 8;
+    }
+  }
 }
 
 void uiZtats_update(float deltaTime) {
@@ -110,51 +106,25 @@ void uiZtats_update(float deltaTime) {
   text_renderxyz(&titleText, cx, cy, 9);
   text_renderxyz(&levelClassRaceText, cx, cy + 8, 9);
 
-  for (int i=0;i<8;i++) {
-    text_renderxyz(&statLabels[i], cx, cy + 24 + i * 8, 9);
-  }
+  int yOffset = 24 - scroll * 8;
+  int maxLeftLines = 0;
 
-  int yOffset = cy + 88;
+  uiZtats_renderLabels(8, statLabels, &player.health, cx, cy, &maxLeftLines, &yOffset);
 
-  for (int i=0;i<5;i++) {
-    if (player.armors[i] > 0) {
-      text_renderxyz(&armorText[i], cx, yOffset, 9);
-      yOffset += 8;
-    }
-  }
+  yOffset = 88 - scroll * 8;
 
-  for (int i=0;i<6;i++) {
-    if (player.vehicles[i] > 0) {
-      text_renderxyz(&vehiclesText[i], cx, yOffset, 9);
-      yOffset += 8;
-    }
-  }
+  uiZtats_renderLabels(OS_ARMORS_COUNT, armorText, player.armors, cx, cy, &maxLeftLines, &yOffset);
+  uiZtats_renderLabels(OS_VEHICLES_COUNT, vehiclesText, player.vehicles, cx, cy, &maxLeftLines, &yOffset);
+  uiZtats_renderLabels(OS_GEMS_COUNT, gemsText, player.gems, cx, cy, &maxLeftLines, &yOffset);
 
-  for (int i=0;i<4;i++) {
-    if (player.gems[i] > 0){
-      text_renderxyz(&gemsText[i], cx, yOffset, 9);
-      yOffset += 8;
-    }
-  }
+  yOffset = 24 - scroll * 8;
+  int maxRightLines = 0;
 
-  yOffset = cy + 24;
-
-  for (int i=0;i<15;i++) {
-    if (player.weapons[i] > 0) {
-      text_renderxyz(&weaponsText[i], cx + 147, yOffset, 9);
-      yOffset += 8;
-    }
-  }
-
-  for (int i=0;i<10;i++) {
-    if (player.spells[i] > 0) {
-      text_renderxyz(&spellsText[i], cx + 147, yOffset, 9);
-      yOffset += 8;
-    }
-  }
+  uiZtats_renderLabels(OS_WEAPONS_COUNT, weaponsText, player.weapons, cx + 147, cy, &maxRightLines, &yOffset);
+  uiZtats_renderLabels(OS_SPELLS_COUNT, spellsText, player.spells, cx + 147, cy, &maxRightLines, &yOffset);
 
   text_renderxyz(&continueText, cx, cy + OS_SCREEN_HEIGHT - OS_FONT_GLYPH_HEIGHT, 9);
-  uiCursor_update(deltaTime, cx + 70, cy + OS_SCREEN_HEIGHT - OS_FONT_GLYPH_HEIGHT);
+  uiCursor_update(deltaTime, cx + 252, cy + OS_SCREEN_HEIGHT - OS_FONT_GLYPH_HEIGHT);
 
   if (freezeInput > 0) {
     freezeInput--;
@@ -165,6 +135,17 @@ void uiZtats_update(float deltaTime) {
   }
 
   if (inputTextfield->isDirty) {
+    int maxLines = maxLeftLines > maxRightLines ? maxLeftLines : maxRightLines;
+    if (inputTextfield->lastKey == GLFW_KEY_DOWN || inputTextfield->lastKey == GLFW_KEY_UP) {
+      if (maxLines >= UI_ZTATS_VISIBLE_LINES){
+        scroll += inputTextfield->lastKey == GLFW_KEY_DOWN ? 1 : -1;
+        if (scroll < 0) { scroll = 0; }
+        if (scroll > maxLines - UI_ZTATS_VISIBLE_LINES) { scroll = maxLines - UI_ZTATS_VISIBLE_LINES; }
+      }
+      inputTextfield->isDirty = false;
+      return;
+    }
+
     ztatsActive = false;
     input.z = input.z == 1 ? 2 : 0;
     uiZtats_free();
@@ -172,38 +153,30 @@ void uiZtats_update(float deltaTime) {
   }
 }
 
+static void uiZtats_freeTexts(int itemsCount, Text *items) {
+  for (int i=0;i<itemsCount;i++) {
+    text_free(&items[i]);
+  }
+}
+
 void uiZtats_free() {
   geometry_free(&backgroundPanel);
   text_free(&titleText);
   text_free(&levelClassRaceText);
-  for (int i=0;i<8;i++) {
-    text_free(&statLabels[i]);
-  }
+  uiZtats_freeTexts(8, statLabels);
   text_free(&continueText);
   uiCursor_free();
 
-  for (int i=0;i<5;i++) {
-    text_free(&armorText[i]);
-  }
-
-  for (int i=0;i<6;i++) {
-    text_free(&vehiclesText[i]);
-  }
-
-  for (int i=0;i<15;i++) {
-    text_free(&weaponsText[i]);
-  }
-
-  for (int i=0;i<10;i++) {
-    text_free(&spellsText[i]);
-  }
-
-  for (int i=0;i<4;i++) {
-    text_free(&gemsText[i]);
-  }
+  uiZtats_freeTexts(OS_ARMORS_COUNT, armorText);
+  uiZtats_freeTexts(OS_VEHICLES_COUNT, vehiclesText);
+  uiZtats_freeTexts(OS_WEAPONS_COUNT, weaponsText);
+  uiZtats_freeTexts(OS_SPELLS_COUNT, spellsText);
+  uiZtats_freeTexts(OS_GEMS_COUNT, gemsText);
 
   if (inputTextfield != NULL) {
     inputTextfield->active = false;
     inputTextfield = NULL;
   }
+
+  texture_free(backgroundTextureId);
 }

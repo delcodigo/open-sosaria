@@ -1,6 +1,8 @@
 #ifndef OS_PLAYER_H
 #define OS_PLAYER_H
 
+#include "config.h"
+
 typedef struct {
   int health;
   int strength;
@@ -21,11 +23,11 @@ typedef struct {
   int vehicle;
   int armor;
   int weapon;
-  int armors[5];
-  int vehicles[6];
-  int weapons[15];
-  int spells[11];
-  int gems[4];
+  int armors[OS_ARMORS_COUNT];
+  int vehicles[OS_VEHICLES_COUNT];
+  int weapons[OS_WEAPONS_COUNT];
+  int spells[OS_SPELLS_COUNT];
+  int gems[OS_GEMS_COUNT];
 } Player;
 
 extern Player player;

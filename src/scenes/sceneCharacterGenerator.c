@@ -199,11 +199,11 @@ static void sceneCharacterGenerator_finishPlayerCreation() {
   player.vehicle = 0;
   player.armor = 1;
   player.weapon = 1;
-  for (int i=1;i<5;i++) { player.armors[i] = 0; }
-  for (int i=0;i<6;i++) { player.vehicles[i] = 0; }
-  for (int i=0;i<15;i++) { player.weapons[i] = 0; }
-  for (int i=0;i<11;i++) { player.spells[i] = 0; }
-  for (int i=0;i<4;i++) { player.gems[i] = 0; }
+  for (int i=1;i<OS_ARMORS_COUNT;i++) { player.armors[i] = 0; }
+  for (int i=0;i<OS_VEHICLES_COUNT;i++) { player.vehicles[i] = 0; }
+  for (int i=0;i<OS_WEAPONS_COUNT;i++) { player.weapons[i] = 0; }
+  for (int i=0;i<OS_SPELLS_COUNT;i++) { player.spells[i] = 0; }
+  for (int i=0;i<OS_GEMS_COUNT;i++) { player.gems[i] = 0; }
   player.armors[0] = 1;
   player.weapons[0] = 2;
   saveGame();

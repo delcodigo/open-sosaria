@@ -16,4 +16,10 @@
 #define OS_TILE_WIDTH 14
 #define OS_TILE_HEIGHT 16
 
+#define OS_ARMORS_COUNT 5
+#define OS_VEHICLES_COUNT 6
+#define OS_WEAPONS_COUNT 15
+#define OS_SPELLS_COUNT 11
+#define OS_GEMS_COUNT 4
+
 #endif

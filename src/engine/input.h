@@ -13,6 +13,7 @@ typedef struct {
   bool isSubmitted;
   bool isNumberOnly;
   bool isAnyKey;
+  int lastKey;
 } Textfield;
 
 typedef struct {

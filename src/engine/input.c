@@ -35,6 +35,7 @@ void input_keyCallback(GLFWwindow* window, int key, int scancode, int action, in
   if (action == GLFW_PRESS && inputTextfield != NULL && inputTextfield->active && inputTextfield->isAnyKey) {
     inputTextfield->isDirty = true;
     inputTextfield->isSubmitted = true;
+    inputTextfield->lastKey = key;
   }
 
   if (action == GLFW_PRESS || action == GLFW_REPEAT) {
@@ -42,11 +43,13 @@ void input_keyCallback(GLFWwindow* window, int key, int scancode, int action, in
       if (inputTextfield != NULL && inputTextfield->active && inputTextfield->cursorPosition > 0) {
         inputTextfield->text[--inputTextfield->cursorPosition] = '\0';
         inputTextfield->isDirty = true;
+        inputTextfield->lastKey = key;
       }
     } else if (key == GLFW_KEY_ENTER) {
       if (inputTextfield != NULL && inputTextfield->active) {
         inputTextfield->isDirty = true;
         inputTextfield->isSubmitted = true;
+        inputTextfield->lastKey = key;
       }
     }
   }
