@@ -146,6 +146,14 @@ $$
 	- **Upper nibble**: vehicle value.
 - While this is an interesting compact approach, in this engine reinterpretation vehicles are stored in a more traditional **entity list**.
 
+## BEVERY Data Loading
+
+- `BEVERY` is a saved snapshot of the Ultima I player-state memory region.
+- In the original game, save/load works by `BSAVE`/`BLOAD` of memory starting at `$7800` (`30720`) for about 7.5 KB, with a few zero-page state bytes copied into that region before saving.
+- That image contains both Applesoft-managed runtime data stored in the saved region and other state the game keeps in memory for the player/world session.
+- This engine reinterpretation reads the `BEVERY` memory image and locates Applesoft variables and arrays inside it, then converts them into local engine data structures.
+- The extraction path is implemented in `bever.c` and `bever.h`.
+
 ## Notes
 
 These findings are based on reinterpretation and observed behavior, and should be refined further as additional engine details are validated.
