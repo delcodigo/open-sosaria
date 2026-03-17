@@ -189,6 +189,22 @@ static bool playerOverworld_open() {
   return false;
 }
 
+static bool playerOverworld_drop() {
+  if (input.d == 1) {
+    input.d = 2;
+    waitingTime = 0.0f;
+    memset(&input, 0, sizeof(input));
+
+    char dropCommand[31] = {0};
+    snprintf(dropCommand, sizeof(dropCommand), "%.14s%.15s", ultimaStrings[98], ultimaStrings[162]);
+    uiConsole_replaceLastMessage(dropCommand);
+
+    return true;
+  }
+
+  return false;
+}
+
 bool playerOverworld_update(float deltaTime) {
   bool acted = false;
 
@@ -199,6 +215,7 @@ bool playerOverworld_update(float deltaTime) {
     if (playerOverworld_updateInfo()) { acted = true; } else
     if (playerOverworld_get()) { acted = true; } else
     if (playerOverworld_open()) { acted = true; } else
+    if (playerOverworld_drop()) { acted = true; } else
     if (playerOverworld_updateMovement(deltaTime)) { acted = true; }
   } else {
     keyRepeatDelay -= deltaTime;
