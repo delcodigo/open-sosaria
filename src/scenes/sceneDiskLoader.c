@@ -618,6 +618,49 @@ static size_t sceneDiskLoader_findVariableOffset(const uint8_t *data, size_t dat
   return 0;
 }
 
+static void sceneDiskLoader_extractHGRImage(uint8_t *disk, const char *fileName, UltimaImage *outImage) {
+  Buffer *imageBuffer = sceneDiskLoader_readDos33FileByName(disk, fileName);
+  if (imageBuffer && imageBuffer->data) {
+    // Decode HGR image
+    if (!sceneDiskLoader_decodeHGRImage(imageBuffer->data, imageBuffer->size, outImage)) {
+      sceneDiskLoader_freeImage(outImage);
+    }
+    free(imageBuffer->data);
+    free(imageBuffer);
+  }
+}
+
+static void sceneDiskLoader_extractBasicStrings(uint8_t *disk, const char *fileName) {
+  Buffer *fileBuffer = sceneDiskLoader_readDos33FileByName(disk, fileName);
+  if (fileBuffer && fileBuffer->data) {
+    size_t pos = 0;
+    while (pos + 4 <= fileBuffer->size) {
+      uint16_t nextAddr = (uint16_t)(fileBuffer->data[pos] | (fileBuffer->data[pos + 1] << 8));
+      pos += 4;
+
+      size_t start = pos;
+      while (pos < fileBuffer->size && fileBuffer->data[pos] != 0) {
+        pos++;
+      }
+
+      if (pos > start) {
+        sceneDiskLoader_emitQuotedStringsFromAppleBasicLine(fileBuffer->data + start, pos - start);
+      }
+
+      if (pos < fileBuffer->size && fileBuffer->data[pos] == 0) {
+        pos++;
+      }
+
+      if (nextAddr == 0) {
+        break;
+      }
+    }
+
+    free(fileBuffer->data);
+    free(fileBuffer);
+  }
+}
+
 static int sceneDiskLoader_verifyUltimaDisks() {
   if (!file_exists("disk1.dsk")) {
     strcpy(diskMsgText, "'disk1.dsk' not found!");
@@ -773,36 +816,10 @@ void sceneDiskLoader_extractUltimaAssets() {
   fclose(file1);
   fclose(file2);
 
-
-  Buffer *titleBuffer = sceneDiskLoader_readDos33FileByName(disk1, "PIC.ULTIMATUM");
-  if (titleBuffer && titleBuffer->data) {
-    // Decode HGR image
-    if (!sceneDiskLoader_decodeHGRImage(titleBuffer->data, titleBuffer->size, &ultimaAssets.titleScreen)) {
-      sceneDiskLoader_freeImage(&ultimaAssets.titleScreen);
-    }
-    free(titleBuffer->data);
-    free(titleBuffer);
-  }
-
-  Buffer *townBuffer = sceneDiskLoader_readDos33FileByName(disk2, "TWN.PIC");
-  if (townBuffer && townBuffer->data) {
-    // Decode HGR image
-    if (!sceneDiskLoader_decodeHGRImage(townBuffer->data, townBuffer->size, &ultimaAssets.townScreen)) {
-      sceneDiskLoader_freeImage(&ultimaAssets.townScreen);
-    }
-    free(townBuffer->data);
-    free(townBuffer);
-  }
-
-  Buffer *castleBuffer = sceneDiskLoader_readDos33FileByName(disk2, "CAS.PIC");
-  if (castleBuffer && castleBuffer->data) {
-    // Decode HGR image
-    if (!sceneDiskLoader_decodeHGRImage(castleBuffer->data, castleBuffer->size, &ultimaAssets.castleScreen)) {
-      sceneDiskLoader_freeImage(&ultimaAssets.castleScreen);
-    }
-    free(castleBuffer->data);
-    free(castleBuffer);
-  }
+  // Extract Apple II HGR Images
+  sceneDiskLoader_extractHGRImage(disk1, "PIC.ULTIMATUM", &ultimaAssets.titleScreen);
+  sceneDiskLoader_extractHGRImage(disk2, "TWN.PIC", &ultimaAssets.townScreen);
+  sceneDiskLoader_extractHGRImage(disk2, "CAS.PIC", &ultimaAssets.castleScreen);
 
   // Extract overworld tiles
   Buffer *ultShapesBuffer = sceneDiskLoader_readDos33FileByName(disk1, "ULTSHAPES");
@@ -827,65 +844,9 @@ void sceneDiskLoader_extractUltimaAssets() {
   // Read Strings
   memset(ultimaStrings, 0, sizeof(ultimaStrings));
 
-  // Main Menu
-  Buffer *mainMenuBuffer = sceneDiskLoader_readDos33FileByName(disk1, "INIT DISPLAY");
-  if (mainMenuBuffer && mainMenuBuffer->data) {
-    size_t pos = 0;
-    while (pos + 4 <= mainMenuBuffer->size) {
-      uint16_t nextAddr = (uint16_t)(mainMenuBuffer->data[pos] | (mainMenuBuffer->data[pos + 1] << 8));
-      pos += 4;
-
-      size_t start = pos;
-      while (pos < mainMenuBuffer->size && mainMenuBuffer->data[pos] != 0) {
-        pos++;
-      }
-
-      if (pos > start) {
-        sceneDiskLoader_emitQuotedStringsFromAppleBasicLine(mainMenuBuffer->data + start, pos - start);
-      }
-
-      if (pos < mainMenuBuffer->size && mainMenuBuffer->data[pos] == 0) {
-        pos++;
-      }
-
-      if (nextAddr == 0) {
-        break;
-      }
-    }
-
-    free(mainMenuBuffer->data);
-    free(mainMenuBuffer);
-  }
-
-  // Out Move
-  Buffer *outMoveBuffer = sceneDiskLoader_readDos33FileByName(disk1, "OUT MOVE");
-  if (outMoveBuffer && outMoveBuffer->data) {
-    size_t pos = 0;
-    while (pos + 4 <= outMoveBuffer->size) {
-      uint16_t nextAddr = (uint16_t)(outMoveBuffer->data[pos] | (outMoveBuffer->data[pos + 1] << 8));
-      pos += 4;
-
-      size_t start = pos;
-      while (pos < outMoveBuffer->size && outMoveBuffer->data[pos] != 0) {
-        pos++;
-      }
-
-      if (pos > start) {
-        sceneDiskLoader_emitQuotedStringsFromAppleBasicLine(outMoveBuffer->data + start, pos - start);
-      }
-
-      if (pos < outMoveBuffer->size && outMoveBuffer->data[pos] == 0) {
-        pos++;
-      }
-
-      if (nextAddr == 0) {
-        break;
-      }
-    }
-
-    free(outMoveBuffer->data);
-    free(outMoveBuffer);
-  }
+  // BASIC files strings
+  sceneDiskLoader_extractBasicStrings(disk1, "INIT DISPLAY");
+  sceneDiskLoader_extractBasicStrings(disk1, "OUT MOVE");
 
   // BEVERY
   Buffer *beveryBuffer = sceneDiskLoader_readDos33FileByName(disk2, "BEVERY");
