@@ -8,6 +8,7 @@
 #include "maths/matrix4.h"
 #include "engine/texture.h"
 #include "engine/input.h"
+#include "data/bevery.h"
 
 #define UI_ZTATS_VISIBLE_LINES 19
 
@@ -15,7 +16,7 @@ static const unsigned char textureData[4] = {0,0,0,255};
 static Geometry backgroundPanel;
 static Text titleText;
 static Text levelClassRaceText;
-static Text statLabels[8];
+static Text statLabelsText[8];
 static Text continueText;
 static Text armorText[OS_ARMORS_COUNT];
 static Text vehiclesText[OS_VEHICLES_COUNT];
@@ -32,7 +33,23 @@ bool ztatsActive = false;
 
 void uiZtats_free();
 
-static void uiZtats_buildTextGeometries(int itemsCount, bool isPadded, int stringIndex, Text *textArray, int *playerItems) {
+static void uiZtats_buildTextGeometries(int itemsStart, int itemsEnd, bool isPadded, char **array, Text *textArray, int *playerItems) {
+  int textIndex = 0;
+  for (int i=itemsStart;i<=itemsEnd;i++) {
+    char label[22] = {0};
+    int value = *(playerItems + textIndex);
+    if (isPadded) {
+      int padLength = 15 - strlen(array[i]);
+      snprintf(label, sizeof(label), "%.15s%*s%d", array[i], padLength, "", value);
+    } else {
+      snprintf(label, sizeof(label), "%.15s%d", array[i], value);
+    }
+
+    text_create(&textArray[textIndex++], label, false);
+  }
+}
+
+static void uiZtats_buildTextGeometriesByUltimaIndex(int itemsCount, bool isPadded, int stringIndex, Text *textArray, int *playerItems) {
   for (int i=0;i<itemsCount;i++) {
     char label[22] = {0};
     if (isPadded) {
@@ -61,15 +78,15 @@ void uiZtats_init() {
   memset(titleLine, '\0', sizeof(titleLine));
   char level[12] = {0};
   snprintf(level, sizeof(level), "%d", (int)(player.time / 1000.0f) + 1);
-  snprintf(titleLine, sizeof(titleLine), "%.10s%.4s %.10s %.10s", ultimaStrings[244], level, ultimaStrings[332 + player.race - 1], ultimaStrings[336 + player.type - 1]);
+  snprintf(titleLine, sizeof(titleLine), "%.10s%.4s %.10s %.10s", ultimaStrings[244], level, racesNames[player.race], typesNames[player.type]);
   text_create(&levelClassRaceText, titleLine, false);
 
-  uiZtats_buildTextGeometries(8, false, 322, statLabels, &player.health);
-  uiZtats_buildTextGeometries(OS_ARMORS_COUNT, true, 341, armorText, player.armors);
-  uiZtats_buildTextGeometries(OS_VEHICLES_COUNT, true, 347, vehiclesText, player.vehicles);
-  uiZtats_buildTextGeometries(OS_WEAPONS_COUNT, true, 353, weaponsText, player.weapons);
-  uiZtats_buildTextGeometries(OS_SPELLS_COUNT, true, 368, spellsText, player.spells);
-  uiZtats_buildTextGeometries(OS_GEMS_COUNT, false, 247, gemsText, player.gems);
+  uiZtats_buildTextGeometries(0, 7, false, statsNames, statLabelsText, &player.health);
+  uiZtats_buildTextGeometries(1, OS_ARMORS_COUNT, true, armorNames, armorText, player.armors);
+  uiZtats_buildTextGeometries(1, OS_VEHICLES_COUNT, true, vehicleNames, vehiclesText, player.vehicles);
+  uiZtats_buildTextGeometries(1, OS_WEAPONS_COUNT, true, weaponNames, weaponsText, player.weapons);
+  uiZtats_buildTextGeometries(0, OS_SPELLS_COUNT - 1, true, spellNames, spellsText, player.spells);
+  uiZtats_buildTextGeometriesByUltimaIndex(OS_GEMS_COUNT, false, 247, gemsText, player.gems);
 
   uiCursor_init();
 
@@ -109,7 +126,7 @@ void uiZtats_update(float deltaTime) {
   int yOffset = 24 - scroll * 8;
   int maxLeftLines = 0;
 
-  uiZtats_renderLabels(8, statLabels, &player.health, cx, cy, &maxLeftLines, &yOffset);
+  uiZtats_renderLabels(8, statLabelsText, &player.health, cx, cy, &maxLeftLines, &yOffset);
 
   yOffset = 88 - scroll * 8;
 
@@ -163,7 +180,7 @@ void uiZtats_free() {
   geometry_free(&backgroundPanel);
   text_free(&titleText);
   text_free(&levelClassRaceText);
-  uiZtats_freeTexts(8, statLabels);
+  uiZtats_freeTexts(8, statLabelsText);
   text_free(&continueText);
   uiCursor_free();
 

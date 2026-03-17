@@ -7,6 +7,8 @@
 #include "engine/scene.h"
 #include "memory.h"
 #include "scenes/sceneDiskLoader.h"
+#include "data/enemy.h"
+#include "data/bevery.h"
 #include <GLFW/glfw3.h>
 
 int main(void)
@@ -42,8 +44,11 @@ int main(void)
   if (currentScene.scene_free) {
     currentScene.scene_free();
   }
+
   engine_cleanup();
   sceneDiskLoader_freeTextures();
+  enemy_freeDefinitions();
+  bevery_free();
 
   printLeftPointers();
 

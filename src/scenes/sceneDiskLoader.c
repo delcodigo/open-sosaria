@@ -2,6 +2,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
+#include <ctype.h>
+#include <math.h>
 #include "engine/text.h"
 #include "engine/texture.h"
 #include "sceneDiskLoader.h"
@@ -10,6 +12,8 @@
 #include "memory.h"
 #include "config.h"
 #include "sceneSplash.h"
+#include "data/enemy.h"
+#include "data/bevery.h"
 
 #define DISK_SIZE 35 * 16 * 256
 #define DOS_TRACKS 35
@@ -371,14 +375,6 @@ static bool sceneDiskLoader_decodeHGRImage(const uint8_t *dataRaw, uint32_t size
   return true;
 }
 
-static void sceneDiskLoader_addToUltimaStrings(const char *str, int length) {
-  if (ultimaStringCount < 1000) {
-    strncpy(ultimaStrings[ultimaStringCount], str, length);
-    printf("Added to strings: [%d] '%s'\n", ultimaStringCount, ultimaStrings[ultimaStringCount]);
-    ultimaStringCount++;
-  }
-}
-
 static void sceneDiskLoader_emitQuotedStringsFromAppleBasicLine(const unsigned char *lineData, size_t lineLength) {
   size_t i = 0;
   bool shouldAppend = false;
@@ -524,6 +520,102 @@ static void sceneDiskLoader_decodeBterraMap(const uint8_t *dataRaw, uint32_t siz
       map[y][x] = (uint8_t)((data[idx] >> 4) & 0x0F);
     }
   }
+}
+
+static float sceneDiskLoader_decodeApplesoftFloat(const uint8_t *data) {
+  uint8_t exponent = data[0];
+  if (exponent == 0) return 0.0f;
+
+  int sign = (data[1] & 0x80) ? -1 : 1;
+
+  uint32_t mantissa =
+    ((uint32_t) (data[1] & 0x7F) << 24) |
+    ((uint32_t) data[2] << 16) |
+    ((uint32_t) data[3] << 8) |
+    (uint32_t) data[4];
+
+  float frac = 1.0f + ((float)mantissa / 2147483648.0f); // 2^31
+  int exp2 = (int) exponent - 129;
+
+  return sign * ldexpf(frac, exp2);
+}
+
+static void sceneDiskLoader_decodeEnemiesTable(const uint8_t *data) {
+  uint16_t enemiesCount = data[0x496] << 8 | data[0x497];
+  
+  enemyDefinitions = calloc(enemiesCount, sizeof(EnemyDefinition));
+  if (!enemyDefinitions) { return; }
+
+  int offset = 0x498;
+  int nameOffset = 0x405;
+  for (int i=0;i<enemiesCount;i++) {
+    float group = sceneDiskLoader_decodeApplesoftFloat(data + offset);
+    float rank = sceneDiskLoader_decodeApplesoftFloat(data + offset + 5);
+    float hp = sceneDiskLoader_decodeApplesoftFloat(data + offset + 10);
+
+    int nameLength = data[nameOffset];
+    int nameAddress = (data[nameOffset + 1] | data[nameOffset + 2] << 8) - 0x7800;
+    char name[17] = {0};
+    memcpy(name, data + nameAddress, nameLength);
+
+    offset += 15;
+    nameOffset += 3;
+
+    enemy_define(i, name, group, rank, hp);
+  }
+}
+
+static void sceneDiskLoader_decodeUltimaStrings(const uint8_t *data, size_t index, char ***variable, int *variableSize) {
+  int size = data[index] << 8 | data[index + 1];
+
+  *variableSize = size;
+  *variable = calloc(size, sizeof(char *));
+  if (!*variable) { return; }
+
+  int offset = index + 2;
+  for (int i=0;i<size;i++) {
+    int strLen = data[offset];
+    int address = (data[offset + 1] | data[offset + 2] << 8) - 0x7800;
+
+    (*variable)[i] = calloc(strLen + 1, sizeof(char));
+    if (!(*variable)[i]) { return; }
+    
+    memcpy((*variable)[i], data + address, strLen);
+    (*variable)[i][strLen] = '\0';
+    offset += 3;
+  }
+}
+
+static size_t sceneDiskLoader_findVariableOffset(const uint8_t *data, size_t dataSize, const char *varName) {
+  if (!data || !varName || !varName[0]) { return 0; }
+
+  char first = 0, second = 0;
+  int letters = 0;
+
+  for (const char *p=varName;*p;++p) {
+    if (*p == '$') { continue; }
+    if (isalpha((unsigned char)*p)) {
+      if (letters == 0){ first = (char)toupper((unsigned char)*p); } else
+      if (letters == 1){ second = (char)toupper((unsigned char)*p); }
+      letters++;
+      if (letters > 2) { return 0; }
+    } else {
+      return 0;
+    }
+  }
+
+  if (letters == 0) { return 0; }
+
+  uint8_t b0 = (uint8_t) first;
+  uint8_t b1 = (letters == 1) ? 0x80 : (uint8_t)(second | 0x80);
+
+  for (size_t i=0;i+1<dataSize;i++) {
+    if ((data[i] & 0x7F) == b0 && data[i+1] == b1) {
+      return i;
+    }
+  }
+
+  return 0;
 }
 
 static int sceneDiskLoader_verifyUltimaDisks() {
@@ -800,185 +892,37 @@ void sceneDiskLoader_extractUltimaAssets() {
   if (beveryBuffer && beveryBuffer->data) {
     uint32_t size = 0;
     const uint8_t *data = sceneDiskLoader_maybeStripBloadHeader(beveryBuffer->data, beveryBuffer->size, &size);
+    int variableHeaderCount = 5; // Skip the first 5 variable headers until we reach the size of the array
 
-    char stat[16] = {0};
-    memcpy(stat, data + 0x1C76, 15);
-    sceneDiskLoader_addToUltimaStrings(stat, strlen(stat));
+    // Stats
+    size_t address = sceneDiskLoader_findVariableOffset(data, size, "C$");
+    sceneDiskLoader_decodeUltimaStrings(data, address + variableHeaderCount, &statsNames, &statsNamesSize);
 
-    memcpy(stat, data + 0x1C67, 15);
-    sceneDiskLoader_addToUltimaStrings(stat, strlen(stat));
+    // Races
+    address = sceneDiskLoader_findVariableOffset(data, size, "RA$");
+    sceneDiskLoader_decodeUltimaStrings(data, address + variableHeaderCount, &racesNames, &racesNamesSize);
 
-    memcpy(stat, data + 0x1C58, 15);
-    sceneDiskLoader_addToUltimaStrings(stat, strlen(stat));
+    // Types
+    address = sceneDiskLoader_findVariableOffset(data, size, "TY$");
+    sceneDiskLoader_decodeUltimaStrings(data, address + variableHeaderCount, &typesNames, &typesNamesSize);
 
-    memcpy(stat, data + 0x1C49, 15);
-    sceneDiskLoader_addToUltimaStrings(stat, strlen(stat));
+    // Armors
+    address = sceneDiskLoader_findVariableOffset(data, size, "AR$");
+    sceneDiskLoader_decodeUltimaStrings(data, address + variableHeaderCount, &armorNames, &armorNamesSize);
 
-    memcpy(stat, data + 0x1C3A, 15);
-    sceneDiskLoader_addToUltimaStrings(stat, strlen(stat));
+    // Vehicles
+    address = sceneDiskLoader_findVariableOffset(data, size, "VE$");
+    sceneDiskLoader_decodeUltimaStrings(data, address + variableHeaderCount, &vehicleNames, &vehicleNamesSize);
 
-    memcpy(stat, data + 0x1C2B, 15);
-    sceneDiskLoader_addToUltimaStrings(stat, strlen(stat));
+    // Weapons
+    address = sceneDiskLoader_findVariableOffset(data, size, "PW$");
+    sceneDiskLoader_decodeUltimaStrings(data, address + variableHeaderCount, &weaponNames, &weaponNamesSize);
 
-    memcpy(stat, data + 0x1C1C, 15);
-    sceneDiskLoader_addToUltimaStrings(stat, strlen(stat));
+    // Spells
+    address = sceneDiskLoader_findVariableOffset(data, size, "SP$");
+    sceneDiskLoader_decodeUltimaStrings(data, address + variableHeaderCount, &spellNames, &spellNamesSize);
 
-    memcpy(stat, data + 0x1C0D, 15);
-    sceneDiskLoader_addToUltimaStrings(stat, strlen(stat));
-
-    char class[5] = {0};
-    memcpy(class, data + 0x1DFB, 4);
-    sceneDiskLoader_addToUltimaStrings(class, strlen(class));
-
-    memcpy(class, data + 0x1DF7, 4);
-    sceneDiskLoader_addToUltimaStrings(class, strlen(class));
-
-    char race[7] = {0};
-    memcpy(race, data + 0x13CF, 5);
-    sceneDiskLoader_addToUltimaStrings(race, 5);
-
-    memcpy(race, data + 0x13CC, 3);
-    sceneDiskLoader_addToUltimaStrings(race, 3);
-
-    memcpy(race, data + 0x13C7, 5);
-    sceneDiskLoader_addToUltimaStrings(race, 5);
-
-    memcpy(race, data + 0x13C1, 6);
-    sceneDiskLoader_addToUltimaStrings(race, 6);
-
-    char type[8] = {0};
-    memcpy(type, data + 0x13AD, 7);
-    sceneDiskLoader_addToUltimaStrings(type, 7);
-
-    memcpy(type, data + 0x13A7, 6);
-    sceneDiskLoader_addToUltimaStrings(type, 6);
-
-    memcpy(type, data + 0x13A1, 6);
-    sceneDiskLoader_addToUltimaStrings(type, 6);
-
-    memcpy(type, data + 0x139C, 5);
-    sceneDiskLoader_addToUltimaStrings(type, 5);
-
-    char armor[14] = {0};
-    memcpy(armor, data + 0x16C2, 4);
-    sceneDiskLoader_addToUltimaStrings(armor, 4);
-
-    memcpy(armor, data + 0x16B5, 13);
-    sceneDiskLoader_addToUltimaStrings(armor, 13);
-
-    memcpy(armor, data + 0x16AB, 10);
-    sceneDiskLoader_addToUltimaStrings(armor, 10);
-
-    memcpy(armor, data + 0x16A1, 10);
-    sceneDiskLoader_addToUltimaStrings(armor, 10);
-
-    memcpy(armor, data + 0x1696, 11);
-    sceneDiskLoader_addToUltimaStrings(armor, 11);
-
-    memcpy(armor, data + 0x168A, 12);
-    sceneDiskLoader_addToUltimaStrings(armor, 12);
-
-    char vehicles[8] = {0};
-    memcpy(vehicles, data + 0x1711, 4);
-    sceneDiskLoader_addToUltimaStrings(vehicles, 4);
-
-    memcpy(vehicles, data + 0x170C, 5);
-    sceneDiskLoader_addToUltimaStrings(vehicles, 5);
-
-    memcpy(vehicles, data + 0x1708, 4);
-    sceneDiskLoader_addToUltimaStrings(vehicles, 4);
-
-    memcpy(vehicles, data + 0x1704, 4);
-    sceneDiskLoader_addToUltimaStrings(vehicles, 4);
-
-    memcpy(vehicles, data + 0x16FD, 7);
-    sceneDiskLoader_addToUltimaStrings(vehicles, 7);
-
-    memcpy(vehicles, data + 0x16F6, 7);
-    sceneDiskLoader_addToUltimaStrings(vehicles, 7);
-
-    memcpy(vehicles, data + 0x16EF, 7);
-    sceneDiskLoader_addToUltimaStrings(vehicles, 7);
-
-    char weapons[14] = {0};
-    memcpy(weapons, data + 0x177A, 6);
-    sceneDiskLoader_addToUltimaStrings(weapons, 6);
-
-    memcpy(weapons, data + 0x1776, 4);
-    sceneDiskLoader_addToUltimaStrings(weapons, 4);
-
-    memcpy(weapons, data + 0x1773, 3);
-    sceneDiskLoader_addToUltimaStrings(weapons, 3);
-
-    memcpy(weapons, data + 0x1766, 13);
-    sceneDiskLoader_addToUltimaStrings(weapons, 13);
-
-    memcpy(weapons, data + 0x1761, 5);
-    sceneDiskLoader_addToUltimaStrings(weapons, 5);
-
-    memcpy(weapons, data + 0x1756, 11);
-    sceneDiskLoader_addToUltimaStrings(weapons, 11);
-
-    memcpy(weapons, data + 0x174A, 12);
-    sceneDiskLoader_addToUltimaStrings(weapons, 12);
-
-    memcpy(weapons, data + 0x1744, 6);
-    sceneDiskLoader_addToUltimaStrings(weapons, 6);
-
-    memcpy(weapons, data + 0x1740, 4);
-    sceneDiskLoader_addToUltimaStrings(weapons, 4);
-
-    memcpy(weapons, data + 0x173B, 5);
-    sceneDiskLoader_addToUltimaStrings(weapons, 5);
-
-    memcpy(weapons, data + 0x1733, 8);
-    sceneDiskLoader_addToUltimaStrings(weapons, 8);
-
-    memcpy(weapons, data + 0x172D, 6);
-    sceneDiskLoader_addToUltimaStrings(weapons, 6);
-
-    memcpy(weapons, data + 0x1722, 11);
-    sceneDiskLoader_addToUltimaStrings(weapons, 11);
-
-    memcpy(weapons, data + 0x171C, 6);
-    sceneDiskLoader_addToUltimaStrings(weapons, 6);
-
-    memcpy(weapons, data + 0x1715, 7);
-    sceneDiskLoader_addToUltimaStrings(weapons, 7);
-
-    char spells[15] = {0};
-    memcpy(spells, data + 0x1684, 4);
-    sceneDiskLoader_addToUltimaStrings(spells, 4);
-
-    memcpy(spells, data + 0x1680, 4);
-    sceneDiskLoader_addToUltimaStrings(spells, 4);
-
-    memcpy(spells, data + 0x167A, 6);
-    sceneDiskLoader_addToUltimaStrings(spells, 6);
-
-    memcpy(spells, data + 0x1670, 10);
-    sceneDiskLoader_addToUltimaStrings(spells, 10);
-
-    memcpy(spells, data + 0x166B, 5);
-    sceneDiskLoader_addToUltimaStrings(spells, 5);
-
-    memcpy(spells, data + 0x1660, 11);
-    sceneDiskLoader_addToUltimaStrings(spells, 11);
-
-    memcpy(spells, data + 0x1657, 9);
-    sceneDiskLoader_addToUltimaStrings(spells, 9);
-
-    memcpy(spells, data + 0x1652, 5);
-    sceneDiskLoader_addToUltimaStrings(spells, 5);
-
-    memcpy(spells, data + 0x164C, 6);
-    sceneDiskLoader_addToUltimaStrings(spells, 6);
-
-    memcpy(spells, data + 0x1645, 7);
-    sceneDiskLoader_addToUltimaStrings(spells, 7);
-
-    memcpy(spells, data + 0x1641, 4);
-    sceneDiskLoader_addToUltimaStrings(spells, 4);
+    sceneDiskLoader_decodeEnemiesTable(data);
 
     free(beveryBuffer->data);
     free(beveryBuffer);
