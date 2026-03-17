@@ -130,7 +130,14 @@ void text_render(Text *textGeometry, float x, float y) {
 }
 
 void text_free(Text *textGeometry) {
+  if (!textGeometry || !textGeometry->vertices) { return; }
+
   geometry_free(&textGeometry->geometry);
   free(textGeometry->vertices);
   free(textGeometry->indices);
+
+  textGeometry->vertices = NULL;
+  textGeometry->indices = NULL;
+  textGeometry->length = 0;
+  textGeometry->size = 0;
 }

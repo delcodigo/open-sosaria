@@ -20,7 +20,7 @@ void worldMap_init() {
   for (int i=0;i<OS_BTERRA_COUNT;i++) {
     for (int y=0;y<OS_BTERRA_MAP_HEIGHT;y++) {
       for (int x=0;x<OS_BTERRA_MAP_WIDTH;x++) {
-        uint8_t tile = ultimaAssets.bterraMaps[i][y][x];
+        uint8_t tile = (uint8_t)((ultimaAssets.bterraMaps[i][y][x] >> 4) & 0x0F);
         
         float tx1 = (tile * OS_TILE_WIDTH) / (float)ultimaAssets.overworldTiles.width;
         float ty1 = 0;

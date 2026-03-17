@@ -23,6 +23,9 @@ int racesNamesSize = 0;
 char **typesNames = NULL;
 int typesNamesSize = 0;
 
+char **placesNames = NULL;
+int placesNamesSize = 0;
+
 void bevery_free() {
   for (int i=0;i<statsNamesSize;i++) {
     free(statsNames[i]);
@@ -59,6 +62,11 @@ void bevery_free() {
   }
   free(typesNames);
 
+  for (int i=0;i<placesNamesSize;i++) {
+    free(placesNames[i]);
+  }
+  free(placesNames);
+
   statsNames = NULL;
   statsNamesSize = 0;
   armorNames = NULL;
@@ -73,4 +81,6 @@ void bevery_free() {
   racesNamesSize = 0;
   typesNames = NULL;
   typesNamesSize = 0;
+  placesNames = NULL;
+  placesNamesSize = 0;
 }

@@ -5,6 +5,7 @@
 #include "engine/camera.h"
 #include "engine/input.h"
 #include "data/saveAndLoad.h"
+#include "data/bevery.h"
 #include "ui/uiConsole.h"
 #include "ui/uiztats.h"
 #include "scenes/sceneDiskLoader.h"
@@ -55,9 +56,10 @@ bool playerOverworld_updateMovement(float deltaTime) {
   }
 
   if (moveX != 0 || moveY != 0) {
-    int tileIndex = (player.ty + moveY) * OS_BTERRA_MAP_WIDTH + (player.tx + moveX);
-    int world = tileIndex / (OS_BTERRA_MAP_WIDTH * OS_BTERRA_MAP_HEIGHT);
-    int tile = ultimaAssets.bterraMaps[world][player.ty + moveY][player.tx + moveX];
+    int tx = (int)((player.tx + moveX) % OS_BTERRA_MAP_WIDTH);
+    int ty = (int)((player.ty + moveY) % OS_BTERRA_MAP_HEIGHT);
+    int world = ((int)(player.ty + moveY) / OS_BTERRA_MAP_HEIGHT) * 2 + ((int)(player.tx + moveX) / OS_BTERRA_MAP_WIDTH);
+    int tile = (ultimaAssets.bterraMaps[world][ty][tx] >> 4) & 0x0F;
 
     uiConsole_replaceLastMessage(movementCommand);
 
@@ -119,6 +121,40 @@ static bool playerOverworld_updateSave() {
   return false;
 }
 
+static bool playerOverworld_updateInfo() {
+  if (input.i == 1) {
+    input.i = 2;
+    waitingTime = 0.0f;
+    memset(&input, 0, sizeof(input));
+
+    uiConsole_addMessage(ultimaStrings[176]);
+
+    int tx = (int)(player.tx % OS_BTERRA_MAP_WIDTH);
+    int ty = (int)(player.ty % OS_BTERRA_MAP_HEIGHT);
+    int world = ((int)player.ty / OS_BTERRA_MAP_HEIGHT) * 2 + ((int)player.tx / OS_BTERRA_MAP_WIDTH);
+    int tile = (ultimaAssets.bterraMaps[world][ty][tx] >> 4) & 0x0F;
+    int tileType = ultimaAssets.bterraMaps[world][ty][tx] & 0x0F;
+
+    if (tile == 0) { uiConsole_addMessage(ultimaStrings[177]); } else
+    if (tile == 1) { uiConsole_addMessage(ultimaStrings[178]); } else
+    if (tile == 2) { uiConsole_addMessage(ultimaStrings[179]); } else 
+    if (tile == 4) { uiConsole_addMessage(placesNames[world * 20 + tileType + 1]); } else
+    if (tile == 5) { uiConsole_addMessage(placesNames[world * 20 + tileType + 3]); } else
+    if (tile == 6) { 
+      char placeName[41] = {0};
+      snprintf(placeName, sizeof(placeName), "%s%s", ultimaStrings[180], placesNames[world * 20 + tileType + 13]);
+      uiConsole_addMessage(placeName);
+    } else
+    if (tile == 7) { uiConsole_addMessage(placesNames[world * 20 + tileType + 5]); }
+
+    uiConsole_addMessage(ultimaStrings[181]);
+
+    return true;
+  }
+
+  return false;
+}
+
 bool playerOverworld_update(float deltaTime) {
   bool acted = false;
 
@@ -126,6 +162,7 @@ bool playerOverworld_update(float deltaTime) {
     if (playerOverworld_updateZtats()) { acted = true; } else
     if (playerOverworld_updateWait()) { acted = true; } else
     if (playerOverworld_updateSave()) { acted = true; } else 
+    if (playerOverworld_updateInfo()) { acted = true; } else
     if (playerOverworld_updateMovement(deltaTime)) { acted = true; }
   } else {
     keyRepeatDelay -= deltaTime;

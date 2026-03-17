@@ -517,7 +517,7 @@ static void sceneDiskLoader_decodeBterraMap(const uint8_t *dataRaw, uint32_t siz
   for (int y=0;y<OS_BTERRA_MAP_HEIGHT;y++) {
     for (int x=0;x<OS_BTERRA_MAP_WIDTH;x++) {
       int idx = y * OS_BTERRA_MAP_WIDTH + x;
-      map[y][x] = (uint8_t)((data[idx] >> 4) & 0x0F);
+      map[y][x] = data[idx];
     }
   }
 }
@@ -882,6 +882,10 @@ void sceneDiskLoader_extractUltimaAssets() {
     // Spells
     address = sceneDiskLoader_findVariableOffset(data, size, "SP$");
     sceneDiskLoader_decodeUltimaStrings(data, address + variableHeaderCount, &spellNames, &spellNamesSize);
+
+    // Places
+    address = sceneDiskLoader_findVariableOffset(data, size, "TD$");
+    sceneDiskLoader_decodeUltimaStrings(data, address + variableHeaderCount, &placesNames, &placesNamesSize);
 
     sceneDiskLoader_decodeEnemiesTable(data);
 

@@ -22,6 +22,9 @@ extern int racesNamesSize;
 extern char **typesNames;
 extern int typesNamesSize;
 
+extern char **placesNames;
+extern int placesNamesSize;
+
 void bevery_free();
 
 #endif

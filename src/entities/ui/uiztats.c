@@ -172,7 +172,9 @@ void uiZtats_update(float deltaTime) {
 
 static void uiZtats_freeTexts(int itemsCount, Text *items) {
   for (int i=0;i<itemsCount;i++) {
-    text_free(&items[i]);
+    if (items[i].size > 0){
+      text_free(&items[i]);
+    }
   }
 }
 
