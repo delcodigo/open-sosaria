@@ -155,6 +155,40 @@ static bool playerOverworld_updateInfo() {
   return false;
 }
 
+static bool playerOverworld_get() {
+  if (input.g == 1) {
+    input.g = 2;
+    waitingTime = 0.0f;
+    memset(&input, 0, sizeof(input));
+
+    char getCommand[31] = {0};
+    snprintf(getCommand, sizeof(getCommand), "%.14s%.15s", ultimaStrings[98], ultimaStrings[173]);
+    uiConsole_replaceLastMessage(getCommand);
+    uiConsole_addMessage(ultimaStrings[174]);
+
+    return true;
+  }
+
+  return false;
+}
+
+static bool playerOverworld_open() {
+  if (input.o == 1) {
+    input.o = 2;
+    waitingTime = 0.0f;
+    memset(&input, 0, sizeof(input));
+
+    char openCommand[31] = {0};
+    snprintf(openCommand, sizeof(openCommand), "%.14s%.15s", ultimaStrings[98], ultimaStrings[187]);
+    uiConsole_replaceLastMessage(openCommand);
+    uiConsole_addMessage(ultimaStrings[188]);
+
+    return true;
+  }
+
+  return false;
+}
+
 bool playerOverworld_update(float deltaTime) {
   bool acted = false;
 
@@ -163,6 +197,8 @@ bool playerOverworld_update(float deltaTime) {
     if (playerOverworld_updateWait()) { acted = true; } else
     if (playerOverworld_updateSave()) { acted = true; } else 
     if (playerOverworld_updateInfo()) { acted = true; } else
+    if (playerOverworld_get()) { acted = true; } else
+    if (playerOverworld_open()) { acted = true; } else
     if (playerOverworld_updateMovement(deltaTime)) { acted = true; }
   } else {
     keyRepeatDelay -= deltaTime;

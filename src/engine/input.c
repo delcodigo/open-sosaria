@@ -111,5 +111,19 @@ void input_keyCallback(GLFWwindow* window, int key, int scancode, int action, in
         input.i = 1;
       }
       break;
+    case GLFW_KEY_G:
+      if (action == GLFW_RELEASE) {
+        input.g = 0;
+      } else if (input.g == 0 && action == GLFW_PRESS) {
+        input.g = 1;
+      }
+      break;
+    case GLFW_KEY_O:
+      if (action == GLFW_RELEASE) {
+        input.o = 0;
+      } else if (input.o == 0 && action == GLFW_PRESS) {
+        input.o = 1;
+      }
+      break;
   }
 }
