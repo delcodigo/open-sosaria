@@ -73,8 +73,8 @@ bool playerOverworld_updateMovement(float deltaTime) {
       return true;
     }
 
-    player.tx += moveX;
-    player.ty += moveY;
+    player.tx = (player.tx + moveX + OS_BTERRA_MAP_WIDTH * 2) % (OS_BTERRA_MAP_WIDTH * 2);
+    player.ty = (player.ty + moveY + OS_BTERRA_MAP_HEIGHT * 2) % (OS_BTERRA_MAP_HEIGHT * 2);
     keyRepeatDelay = 0.1f;
 
     player_consumeFood();
