@@ -16,7 +16,8 @@
 static PLAYER_STATE playerState = PLAYER_STATE_IDLE;
 static Geometry playerOverworldGeometry;
 static float transformationMatrix[16];
-static int readyStep = 0;
+
+static READY_STEP readyStep = READY_STEP_START;
 static Textfield inputTextfieldBuffer;
 static char selectedWeapon[3] = {0};
 static bool areKeysReleased = true;
@@ -231,7 +232,7 @@ static void playerOverworld_tryAndEquipSpell(int spellIndex, const char *charUse
     return;
   }
 
-  if (player.spells[spellIndex - 1] < 1 && spellIndex > 0) {
+  if (spellIndex > 0 && player.spells[spellIndex - 1] < 1) {
     snprintf(consoleMessage, sizeof(consoleMessage), "%.15s%s", ultimaStrings[225], spellNames[spellIndex]);
     uiConsole_addMessage(consoleMessage);
     return;
@@ -240,6 +241,201 @@ static void playerOverworld_tryAndEquipSpell(int spellIndex, const char *charUse
   player.spell = spellIndex;
   snprintf(consoleMessage, sizeof(consoleMessage), "%.15s%s", ultimaStrings[226], spellNames[spellIndex]);
   uiConsole_addMessage(consoleMessage);
+}
+
+static bool playerOverworld_readyStart() {
+  if (input.r == 1) {
+    input.r = 2;
+    waitingTime = 0.0f;
+    memset(&input, 0, sizeof(input));
+    char readyCommand[31] = {0};
+    snprintf(readyCommand, sizeof(readyCommand), "%.14s%.15s", ultimaStrings[98], ultimaStrings[198]);
+    uiConsole_replaceLastMessage(readyCommand);
+    uiConsole_addMessage(ultimaStrings[199]);
+
+    areKeysReleased = false;
+    playerState = PLAYER_STATE_READY_TYPE;
+    readyStep = READY_STEP_SELECT_TYPE;
+  }
+
+  return false;
+}
+
+static bool playerOverworld_readySelectType() {
+  if (input.w == 1) {
+    input.w = 2;
+    memset(selectedWeapon, 0, sizeof(selectedWeapon));
+    uiConsole_addMessage(ultimaStrings[205]);
+    playerOverworld_activateInput();
+    readyStep = READY_STEP_WEAPON_INPUT;
+  } else if (input.a == 1) {
+    input.a = 2;
+    uiConsole_addMessage(ultimaStrings[210]);
+    playerOverworld_activateInput();
+    readyStep = READY_STEP_ARMOR_EQUIP;
+  } else if (input.s == 1) {
+    input.s = 2;
+    uiConsole_addMessage(ultimaStrings[214]);
+    playerOverworld_activateInput();
+    readyStep = READY_STEP_SPELL_EQUIP;
+  }
+
+  return false;
+}
+
+static bool playerOverworld_readyWeaponInput() {
+  if (inputTextfield->isDirty && inputTextfield->text[0] != '\0') {
+    inputTextfield->isDirty = false;
+
+    if (selectedWeapon[0] == '\0') {
+      selectedWeapon[0] = (char)toupper(inputTextfield->text[0]);
+    } else if (selectedWeapon[1] == '\0') {
+      selectedWeapon[1] = (char)toupper(inputTextfield->text[0]);
+      readyStep = READY_STEP_WEAPON_EQUIP;
+    }
+
+    char weaponCommand[31] = {0};
+    snprintf(weaponCommand, sizeof(weaponCommand), "%.14s%.2s", ultimaStrings[205], selectedWeapon);
+    uiConsole_replaceLastMessage(weaponCommand);
+
+    inputTextfield->cursorPosition = 0;
+    inputTextfield->text[0] = '\0';
+    areKeysReleased = false;
+  }
+
+  return false;
+}
+
+static bool playerOverworld_readyWeaponEquip() {
+  char weaponCommand[31] = {0};
+  readyStep = READY_STEP_RETURN_TO_IDLE;
+  areKeysReleased = false;
+
+  for (int i=0;i<OS_WEAPONS_COUNT;i++) {
+    char weaponAbbreviation[3] = {weaponNames[i][0], weaponNames[i][1], '\0'};
+    if (strcmp(weaponAbbreviation, selectedWeapon) == 0) {
+      memset(selectedWeapon, 0, sizeof(selectedWeapon));
+
+      if (i > 0 && player.weapons[i - 1] < 1) {
+        snprintf(weaponCommand, sizeof(weaponCommand), "%.15s%.15s", ultimaStrings[207], weaponNames[i]);
+        uiConsole_addMessage(weaponCommand);
+        return true;
+      }
+
+      player.weapon = i - 1;
+      snprintf(weaponCommand, sizeof(weaponCommand), "%.15s%.15s", ultimaStrings[208], weaponNames[i]);
+      uiConsole_addMessage(weaponCommand);
+      return true;
+    }
+  }
+
+  snprintf(weaponCommand, sizeof(weaponCommand), "%.2s%.15s", selectedWeapon, ultimaStrings[206]);
+  uiConsole_addMessage(weaponCommand);
+  memset(selectedWeapon, 0, sizeof(selectedWeapon));
+  return true;
+}
+
+static bool playerOverworld_readyArmorEquip() {
+  if (inputTextfield->isDirty && inputTextfield->text[0] != '\0') {
+    inputTextfield->isDirty = false;
+    char consoleMessage[31] = {0};
+    char armorChar[2] = {(char)toupper(inputTextfield->text[0]), '\0'};
+    snprintf(consoleMessage, sizeof(consoleMessage), "%.14s%.1s", ultimaStrings[210], armorChar);
+    uiConsole_replaceLastMessage(consoleMessage);
+
+    readyStep = READY_STEP_RETURN_TO_IDLE;
+    areKeysReleased = false;
+
+    memset(consoleMessage, 0, sizeof(consoleMessage));
+
+    for (int i=0;i<OS_ARMORS_COUNT;i++) {
+      if (armorNames[i][0] == armorChar[0]) {
+        if (player.armors[i - 1] < 1 && i > 0) {
+          snprintf(consoleMessage, sizeof(consoleMessage), "%.15s%.15s", ultimaStrings[212], armorNames[i]);
+          uiConsole_addMessage(consoleMessage);
+          return false;
+        }
+
+        snprintf(consoleMessage, sizeof(consoleMessage), "%.15s%.15s", ultimaStrings[213], armorNames[i]);
+        uiConsole_addMessage(consoleMessage);
+        inputTextfield = NULL;
+        player.armor = i - 1;
+        return false;
+      }
+    }
+
+    snprintf(consoleMessage, sizeof(consoleMessage), "%.1s%.15s", armorChar, ultimaStrings[211]);
+    uiConsole_addMessage(consoleMessage);
+    return false;
+  }
+
+  return false;
+}
+
+static bool playerOverworld_readySpellEquip() {
+  if (inputTextfield->isDirty && inputTextfield->text[0] != '\0') {
+    char selectedSpellChar[2] = {(char)toupper(inputTextfield->text[0]), '\0'};
+    char consoleMessage[31] = {0};
+    inputTextfield->isDirty = false;
+
+    if (selectedSpellChar[0] == 'L') {
+      snprintf(consoleMessage, sizeof(consoleMessage), "%.15sL %.10s", ultimaStrings[214], ultimaStrings[216]);
+      uiConsole_replaceLastMessage(consoleMessage);
+      readyStep = READY_STEP_SPELL_LADDER;
+      areKeysReleased = false;
+      return false;
+    }
+
+    int spellIndex = -1;
+    for (int i=0;i<OS_SPELLS_COUNT;i++) {
+      if (spellNames[i][0] == selectedSpellChar[0]) {
+        spellIndex = i;
+        break;
+      }
+    }
+
+    playerOverworld_tryAndEquipSpell(spellIndex, selectedSpellChar);
+    readyStep = READY_STEP_RETURN_TO_IDLE;
+    areKeysReleased = false;
+    return true;
+  }
+
+  return false;
+}
+
+static bool playerOverworld_readySpellLadder() {
+  if (inputTextfield->isDirty && inputTextfield->text[0] != '\0') {
+    char selectedSpellChar[3] = {'L', (char)toupper(inputTextfield->text[0]), '\0'};
+    char consoleMessage[31] = {0};
+    inputTextfield->isDirty = false;
+    snprintf(consoleMessage, sizeof(consoleMessage), "%.15s%s", ultimaStrings[214], selectedSpellChar);
+    uiConsole_replaceLastMessage(consoleMessage);
+
+    readyStep = READY_STEP_RETURN_TO_IDLE;
+    areKeysReleased = false;
+
+    int spellIndex = -1;
+    if (selectedSpellChar[1] == 'U') {
+      spellIndex = 6;
+      playerOverworld_tryAndEquipSpell(spellIndex, "LU");
+    } else if (selectedSpellChar[1] == 'D') {
+      spellIndex = 5;
+      playerOverworld_tryAndEquipSpell(spellIndex, "LD");
+    } else {
+      uiConsole_addMessage(ultimaStrings[220]);
+    }
+
+    return true;
+  }
+
+  return false;
+}
+
+static void playerOverworld_readyReturnToIdle() {
+  inputTextfield = NULL;
+  inputTextfieldBuffer.active = false;
+  playerState = PLAYER_STATE_IDLE;
+  readyStep = READY_STEP_START;
 }
 
 static bool playerOverworld_ready() {
@@ -255,181 +451,24 @@ static bool playerOverworld_ready() {
     }
   }
 
-  if (readyStep == 0){
-    if (input.r == 1) {
-      input.r = 2;
-      waitingTime = 0.0f;
-      memset(&input, 0, sizeof(input));
-      char readyCommand[31] = {0};
-      snprintf(readyCommand, sizeof(readyCommand), "%.14s%.15s", ultimaStrings[98], ultimaStrings[198]);
-      uiConsole_replaceLastMessage(readyCommand);
-      uiConsole_addMessage(ultimaStrings[199]);
-      
-      areKeysReleased = false;
-      playerState = PLAYER_STATE_READY_TYPE;
-      readyStep = 1;
-
-      return false;
-    }
-  } else if (readyStep == 1) {
-    if (input.w != 0 && input.a != 0 && input.s != 0) { return false; }
-
-    if (input.w == 1) {
-      input.w = 2;
-      memset(selectedWeapon, 0, sizeof(selectedWeapon));
-      uiConsole_addMessage(ultimaStrings[205]);
-      playerOverworld_activateInput();
-      readyStep = 2;
-    } else if (input.a == 1) {
-      input.a = 2;
-      uiConsole_addMessage(ultimaStrings[210]);
-      playerOverworld_activateInput();
-      readyStep = 4;
-    } else if (input.s == 1) {
-      input.s = 2;
-      uiConsole_addMessage(ultimaStrings[214]);
-      playerOverworld_activateInput();
-      readyStep = 5;
-    }
-    
-    return false;
-  } else if (readyStep == 2) { // Weapon: select two letter weapon abbreviation
-    if (inputTextfield->isDirty && inputTextfield->text[0] != '\0') {
-      inputTextfield->isDirty = false;
-
-      if (selectedWeapon[0] == '\0') {
-        selectedWeapon[0] = (char)toupper(inputTextfield->text[0]);
-      } else if (selectedWeapon[1] == '\0') {
-        selectedWeapon[1] = (char)toupper(inputTextfield->text[0]);
-        readyStep = 3;
-      }
-
-      char weaponCommand[31] = {0};
-      snprintf(weaponCommand, sizeof(weaponCommand), "%.14s%.2s", ultimaStrings[205], selectedWeapon);
-      uiConsole_replaceLastMessage(weaponCommand);
-
-      inputTextfield->cursorPosition = 0;
-      inputTextfield->text[0] = '\0';
-      areKeysReleased = false;
-
-      return false;
-    }
-  } else if (readyStep == 3) { // Weapon: equip selected weapon
-    char weaponCommand[31] = {0};
-    readyStep = 7;
-    areKeysReleased = false;
-
-    for (int i=0;i<OS_WEAPONS_COUNT;i++) {
-      char weaponAbbreviation[3] = {weaponNames[i][0], weaponNames[i][1], '\0'};
-      if (strcmp(weaponAbbreviation, selectedWeapon) == 0) {
-        memset(selectedWeapon, 0, sizeof(selectedWeapon));
-
-        if (i > 0 && player.weapons[i - 1] < 1) {
-          snprintf(weaponCommand, sizeof(weaponCommand), "%.15s%.15s", ultimaStrings[207], weaponNames[i]);
-          uiConsole_addMessage(weaponCommand);
-          return true;
-        }
-
-        player.weapon = i - 1;
-        snprintf(weaponCommand, sizeof(weaponCommand), "%.15s%.15s", ultimaStrings[208], weaponNames[i]);
-        uiConsole_addMessage(weaponCommand);
-        return true;
-      }
-    }
-
-    snprintf(weaponCommand, sizeof(weaponCommand), "%.2s%.15s", selectedWeapon, ultimaStrings[206]);
-    uiConsole_addMessage(weaponCommand);
-    memset(selectedWeapon, 0, sizeof(selectedWeapon));
-    return true;
-  } else if (readyStep == 4) { // Armor: select and equip armor
-    if (inputTextfield->isDirty && inputTextfield->text[0] != '\0') {
-      inputTextfield->isDirty = false;
-      char consoleMessage[31] = {0};
-      char armorChar[2] = {(char)toupper(inputTextfield->text[0]), '\0'};
-      snprintf(consoleMessage, sizeof(consoleMessage), "%.14s%.1s", ultimaStrings[210], armorChar);
-      uiConsole_replaceLastMessage(consoleMessage);
-
-      readyStep = 7;
-      areKeysReleased = false;
-
-      memset(consoleMessage, 0, sizeof(consoleMessage));
-
-      for (int i=0;i<OS_ARMORS_COUNT;i++) {
-        if (armorNames[i][0] == armorChar[0]) {
-          if (player.armors[i - 1] < 1 && i > 0) {
-            snprintf(consoleMessage, sizeof(consoleMessage), "%.15s%.15s", ultimaStrings[212], armorNames[i]);
-            uiConsole_addMessage(consoleMessage);
-            inputTextfield = NULL;
-            return true;
-          }
-
-          snprintf(consoleMessage, sizeof(consoleMessage), "%.15s%.15s", ultimaStrings[213], armorNames[i]);
-          uiConsole_addMessage(consoleMessage);
-          inputTextfield = NULL;
-          player.armor = i - 1;
-          return true;
-        }
-      }
-
-      snprintf(consoleMessage, sizeof(consoleMessage), "%.1s%.15s", armorChar, ultimaStrings[211]);
-      uiConsole_addMessage(consoleMessage);
-      inputTextfield = NULL;
-      return true;
-    }
-  } else if (readyStep == 5) { // Spells: select and equip spell
-    if (inputTextfield->isDirty && inputTextfield->text[0] != '\0') {
-      char selectedSpellChar[2] = {(char)toupper(inputTextfield->text[0]), '\0'};
-      char consoleMessage[31] = {0};
-
-      if (selectedSpellChar[0] == 'L') {
-        snprintf(consoleMessage, sizeof(consoleMessage), "%.15sL %.10s", ultimaStrings[214], ultimaStrings[216]);
-        uiConsole_replaceLastMessage(consoleMessage);
-        readyStep = 6;
-        areKeysReleased = false;
-      } else {
-        int spellIndex = -1;
-        for (int i=0;i<OS_SPELLS_COUNT;i++) {
-          if (spellNames[i][0] == selectedSpellChar[0]) {
-            spellIndex = i;
-            break;
-          }
-        }
-
-        playerOverworld_tryAndEquipSpell(spellIndex, selectedSpellChar);
-        readyStep = 7;
-        areKeysReleased = false;
-
-        return true;
-      }
-    }
-  } else if (readyStep == 6) { // Select if spell is ladder up or down
-    if (inputTextfield->isDirty && inputTextfield->text[0] != '\0') {
-      char selectedSpellChar[3] = {'L', (char)toupper(inputTextfield->text[0]), '\0'};
-      char consoleMessage[31] = {0};
-      snprintf(consoleMessage, sizeof(consoleMessage), "%.15s%s", ultimaStrings[214], selectedSpellChar);
-      uiConsole_replaceLastMessage(consoleMessage);
-
-      readyStep = 7;
-      areKeysReleased = false;
-
-      int spellIndex = -1;
-      if (selectedSpellChar[1] == 'U') {
-        spellIndex = 6;
-        playerOverworld_tryAndEquipSpell(spellIndex, "LU");
-      } else if (selectedSpellChar[1] == 'D') {
-        spellIndex = 5;
-        playerOverworld_tryAndEquipSpell(spellIndex, "LD");
-      } else {
-        uiConsole_addMessage(ultimaStrings[220]);
-      }
-
-      return true;
-    }
-  } else if (readyStep == 7) { // Return to idle
-    inputTextfield = NULL;
-    inputTextfieldBuffer.active = false;
-    playerState = PLAYER_STATE_IDLE;
-    readyStep = 0;
+  switch (readyStep) {
+    case READY_STEP_START:
+      return playerOverworld_readyStart();
+    case READY_STEP_SELECT_TYPE:
+      return playerOverworld_readySelectType();
+    case READY_STEP_WEAPON_INPUT:
+      return playerOverworld_readyWeaponInput();
+    case READY_STEP_WEAPON_EQUIP:
+      return playerOverworld_readyWeaponEquip();
+    case READY_STEP_ARMOR_EQUIP:
+      return playerOverworld_readyArmorEquip();
+    case READY_STEP_SPELL_EQUIP:
+      return playerOverworld_readySpellEquip();
+    case READY_STEP_SPELL_LADDER:
+      return playerOverworld_readySpellLadder();
+    case READY_STEP_RETURN_TO_IDLE:
+      playerOverworld_readyReturnToIdle();
+      break;
   }
 
   return false;
