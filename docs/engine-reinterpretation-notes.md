@@ -89,6 +89,21 @@ $$
 	- BLUE GEM
 	- WHITE GEM
 
+## Ready Command Input Behavior (Original Ultima)
+
+- Pressing **R** prompts for category selection: **(W)eapons**, **(A)rmors**, or **(S)pells**.
+- Each category uses different matching rules:
+	- **Weapons** require entering the first **two letters** of the weapon name.
+	- **Armors** require only **one letter**.
+	- **Spells** usually require only **one letter**, except ladder spells:
+		- Enter **L** first.
+		- Then enter **U** (Ladder Up) or **D** (Ladder Down).
+- Each category also has a default hidden selection:
+	- **Weapons** default: **Hands**.
+	- **Armor** default: **Skin**.
+	- **Spells** default: **Pray**.
+- These defaults are selectable through readying behavior, but they are not shown as normal inventory items in the Ztats screen.
+
 ## Overworld Spell Restrictions
 
 - Only **3** spells are usable on the overworld: **pray**, **projectile**, and **kill**.
