@@ -23,6 +23,7 @@ typedef struct {
   int vehicle;
   int armor;
   int weapon;
+  int spell;
   int armors[OS_ARMORS_COUNT];
   int vehicles[OS_VEHICLES_COUNT];
   int weapons[OS_WEAPONS_COUNT];

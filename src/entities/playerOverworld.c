@@ -222,6 +222,26 @@ static void playerOverworld_activateInput() {
   areKeysReleased = false;
 }
 
+static void playerOverworld_tryAndEquipSpell(int spellIndex, const char *charUsed) {
+  char consoleMessage[31] = {0};
+
+  if (spellIndex < 0) {
+    snprintf(consoleMessage, sizeof(consoleMessage), "%.15s%s%.10s", ultimaStrings[214], charUsed, ultimaStrings[224]);
+    uiConsole_replaceLastMessage(consoleMessage);
+    return;
+  }
+
+  if (player.spells[spellIndex - 1] < 1 && spellIndex > 0) {
+    snprintf(consoleMessage, sizeof(consoleMessage), "%.15s%s", ultimaStrings[225], spellNames[spellIndex]);
+    uiConsole_addMessage(consoleMessage);
+    return;
+  }
+
+  player.spell = spellIndex;
+  snprintf(consoleMessage, sizeof(consoleMessage), "%.15s%s", ultimaStrings[226], spellNames[spellIndex]);
+  uiConsole_addMessage(consoleMessage);
+}
+
 static bool playerOverworld_ready() {
   if (!areKeysReleased) {
     if (input_areKeysReleased()) {
@@ -268,6 +288,8 @@ static bool playerOverworld_ready() {
     } else if (input.s == 1) {
       input.s = 2;
       uiConsole_addMessage(ultimaStrings[214]);
+      playerOverworld_activateInput();
+      readyStep = 5;
     }
     
     return false;
@@ -294,10 +316,8 @@ static bool playerOverworld_ready() {
     }
   } else if (readyStep == 3) { // Weapon: equip selected weapon
     char weaponCommand[31] = {0};
-    inputTextfieldBuffer.active = false;
-    inputTextfield = NULL;
-    playerState = PLAYER_STATE_IDLE;
-    readyStep = 0;
+    readyStep = 7;
+    areKeysReleased = false;
 
     for (int i=0;i<OS_WEAPONS_COUNT;i++) {
       char weaponAbbreviation[3] = {weaponNames[i][0], weaponNames[i][1], '\0'};
@@ -329,9 +349,8 @@ static bool playerOverworld_ready() {
       snprintf(consoleMessage, sizeof(consoleMessage), "%.14s%.1s", ultimaStrings[210], armorChar);
       uiConsole_replaceLastMessage(consoleMessage);
 
-      inputTextfieldBuffer.active = false;
-      playerState = PLAYER_STATE_IDLE;
-      readyStep = 0;
+      readyStep = 7;
+      areKeysReleased = false;
 
       memset(consoleMessage, 0, sizeof(consoleMessage));
 
@@ -357,6 +376,60 @@ static bool playerOverworld_ready() {
       inputTextfield = NULL;
       return true;
     }
+  } else if (readyStep == 5) { // Spells: select and equip spell
+    if (inputTextfield->isDirty && inputTextfield->text[0] != '\0') {
+      char selectedSpellChar[2] = {(char)toupper(inputTextfield->text[0]), '\0'};
+      char consoleMessage[31] = {0};
+
+      if (selectedSpellChar[0] == 'L') {
+        snprintf(consoleMessage, sizeof(consoleMessage), "%.15sL %.10s", ultimaStrings[214], ultimaStrings[216]);
+        uiConsole_replaceLastMessage(consoleMessage);
+        readyStep = 6;
+        areKeysReleased = false;
+      } else {
+        int spellIndex = -1;
+        for (int i=0;i<OS_SPELLS_COUNT;i++) {
+          if (spellNames[i][0] == selectedSpellChar[0]) {
+            spellIndex = i;
+            break;
+          }
+        }
+
+        playerOverworld_tryAndEquipSpell(spellIndex, selectedSpellChar);
+        readyStep = 7;
+        areKeysReleased = false;
+
+        return true;
+      }
+    }
+  } else if (readyStep == 6) { // Select if spell is ladder up or down
+    if (inputTextfield->isDirty && inputTextfield->text[0] != '\0') {
+      char selectedSpellChar[3] = {'L', (char)toupper(inputTextfield->text[0]), '\0'};
+      char consoleMessage[31] = {0};
+      snprintf(consoleMessage, sizeof(consoleMessage), "%.15s%s", ultimaStrings[214], selectedSpellChar);
+      uiConsole_replaceLastMessage(consoleMessage);
+
+      readyStep = 7;
+      areKeysReleased = false;
+
+      int spellIndex = -1;
+      if (selectedSpellChar[1] == 'U') {
+        spellIndex = 6;
+        playerOverworld_tryAndEquipSpell(spellIndex, "LU");
+      } else if (selectedSpellChar[1] == 'D') {
+        spellIndex = 5;
+        playerOverworld_tryAndEquipSpell(spellIndex, "LD");
+      } else {
+        uiConsole_addMessage(ultimaStrings[220]);
+      }
+
+      return true;
+    }
+  } else if (readyStep == 7) { // Return to idle
+    inputTextfield = NULL;
+    inputTextfieldBuffer.active = false;
+    playerState = PLAYER_STATE_IDLE;
+    readyStep = 0;
   }
 
   return false;
