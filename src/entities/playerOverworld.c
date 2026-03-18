@@ -213,6 +213,15 @@ static bool playerOverworld_drop() {
   return false;
 }
 
+static void playerOverworld_activateInput() {
+  inputTextfieldBuffer.active = true;
+  inputTextfield = &inputTextfieldBuffer;
+  inputTextfield->cursorPosition = 0;
+  inputTextfield->text[0] = '\0';
+  inputTextfield->isDirty = false;
+  areKeysReleased = false;
+}
+
 static bool playerOverworld_ready() {
   if (!areKeysReleased) {
     if (input_areKeysReleased()) {
@@ -249,28 +258,26 @@ static bool playerOverworld_ready() {
       input.w = 2;
       memset(selectedWeapon, 0, sizeof(selectedWeapon));
       uiConsole_addMessage(ultimaStrings[205]);
-      inputTextfieldBuffer.active = true;
-      inputTextfield = &inputTextfieldBuffer;
-      inputTextfield->cursorPosition = 0;
-      inputTextfield->text[0] = '\0';
-      areKeysReleased = false;
+      playerOverworld_activateInput();
       readyStep = 2;
     } else if (input.a == 1) {
       input.a = 2;
       uiConsole_addMessage(ultimaStrings[210]);
+      playerOverworld_activateInput();
+      readyStep = 4;
     } else if (input.s == 1) {
       input.s = 2;
       uiConsole_addMessage(ultimaStrings[214]);
     }
     
     return false;
-  } else if (readyStep == 2) {
-    if (inputTextfield->isDirty) {
+  } else if (readyStep == 2) { // Weapon: select two letter weapon abbreviation
+    if (inputTextfield->isDirty && inputTextfield->text[0] != '\0') {
       inputTextfield->isDirty = false;
 
-      if (selectedWeapon[0] == '\0' && inputTextfield->text[0] != '\0') {
+      if (selectedWeapon[0] == '\0') {
         selectedWeapon[0] = (char)toupper(inputTextfield->text[0]);
-      } else if (selectedWeapon[1] == '\0' && inputTextfield->text[0] != '\0') {
+      } else if (selectedWeapon[1] == '\0') {
         selectedWeapon[1] = (char)toupper(inputTextfield->text[0]);
         readyStep = 3;
       }
@@ -285,7 +292,7 @@ static bool playerOverworld_ready() {
 
       return false;
     }
-  } else if (readyStep == 3) {
+  } else if (readyStep == 3) { // Weapon: equip selected weapon
     char weaponCommand[31] = {0};
     inputTextfieldBuffer.active = false;
     inputTextfield = NULL;
@@ -314,6 +321,42 @@ static bool playerOverworld_ready() {
     uiConsole_addMessage(weaponCommand);
     memset(selectedWeapon, 0, sizeof(selectedWeapon));
     return true;
+  } else if (readyStep == 4) { // Armor: select and equip armor
+    if (inputTextfield->isDirty && inputTextfield->text[0] != '\0') {
+      inputTextfield->isDirty = false;
+      char consoleMessage[31] = {0};
+      char armorChar[2] = {(char)toupper(inputTextfield->text[0]), '\0'};
+      snprintf(consoleMessage, sizeof(consoleMessage), "%.14s%.1s", ultimaStrings[210], armorChar);
+      uiConsole_replaceLastMessage(consoleMessage);
+
+      inputTextfieldBuffer.active = false;
+      playerState = PLAYER_STATE_IDLE;
+      readyStep = 0;
+
+      memset(consoleMessage, 0, sizeof(consoleMessage));
+
+      for (int i=0;i<OS_ARMORS_COUNT;i++) {
+        if (armorNames[i][0] == armorChar[0]) {
+          if (player.armors[i - 1] < 1 && i > 0) {
+            snprintf(consoleMessage, sizeof(consoleMessage), "%.15s%.15s", ultimaStrings[212], armorNames[i]);
+            uiConsole_addMessage(consoleMessage);
+            inputTextfield = NULL;
+            return true;
+          }
+
+          snprintf(consoleMessage, sizeof(consoleMessage), "%.15s%.15s", ultimaStrings[213], armorNames[i]);
+          uiConsole_addMessage(consoleMessage);
+          inputTextfield = NULL;
+          player.armor = i - 1;
+          return true;
+        }
+      }
+
+      snprintf(consoleMessage, sizeof(consoleMessage), "%.1s%.15s", armorChar, ultimaStrings[211]);
+      uiConsole_addMessage(consoleMessage);
+      inputTextfield = NULL;
+      return true;
+    }
   }
 
   return false;
