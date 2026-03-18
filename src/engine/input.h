@@ -28,6 +28,10 @@ typedef struct {
   int g;
   int o;
   int d;
+  int r;
+  int w;
+  int a;
+  int s;
 } SosariaInput;
 
 extern Textfield *inputTextfield;
@@ -35,5 +39,6 @@ extern SosariaInput input;
 
 void input_charCallback(GLFWwindow* window, unsigned int codepoint);
 void input_keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
+bool input_areKeysReleased();
 
 #endif

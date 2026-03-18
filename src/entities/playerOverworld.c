@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <string.h>
+#include <ctype.h>
 #include "playerOverworld.h"
 #include "engine/geometry.h"
 #include "engine/camera.h"
@@ -12,8 +13,13 @@
 #include "maths/matrix4.h"
 #include "config.h"
 
+static PLAYER_STATE playerState = PLAYER_STATE_IDLE;
 static Geometry playerOverworldGeometry;
 static float transformationMatrix[16];
+static int readyStep = 0;
+static Textfield inputTextfieldBuffer;
+static char selectedWeapon[3] = {0};
+static bool areKeysReleased = true;
 
 static float keyRepeatDelay = 0;
 static float waitingTime = 0.0f;
@@ -21,6 +27,8 @@ static float waitingTime = 0.0f;
 void playerOverworld_init() {
   geometry_setSprite(&playerOverworldGeometry, OS_TILE_WIDTH, OS_TILE_HEIGHT, 0, 0.5f, 0.125f, 1.0f);
   matrix4_setIdentity(transformationMatrix);
+  memset(&inputTextfieldBuffer, 0, sizeof(inputTextfieldBuffer));
+  inputTextfieldBuffer.maxLength = 2;
 }
 
 bool playerOverworld_updateWait() {
@@ -205,25 +213,139 @@ static bool playerOverworld_drop() {
   return false;
 }
 
+static bool playerOverworld_ready() {
+  if (!areKeysReleased) {
+    if (input_areKeysReleased()) {
+      areKeysReleased = true;
+      if (inputTextfield != NULL){
+        inputTextfield->cursorPosition = 0;
+        inputTextfield->text[0] = '\0';
+      }
+    } else {
+      return false;
+    }
+  }
+
+  if (readyStep == 0){
+    if (input.r == 1) {
+      input.r = 2;
+      waitingTime = 0.0f;
+      memset(&input, 0, sizeof(input));
+      char readyCommand[31] = {0};
+      snprintf(readyCommand, sizeof(readyCommand), "%.14s%.15s", ultimaStrings[98], ultimaStrings[198]);
+      uiConsole_replaceLastMessage(readyCommand);
+      uiConsole_addMessage(ultimaStrings[199]);
+      
+      areKeysReleased = false;
+      playerState = PLAYER_STATE_READY_TYPE;
+      readyStep = 1;
+
+      return false;
+    }
+  } else if (readyStep == 1) {
+    if (input.w != 0 && input.a != 0 && input.s != 0) { return false; }
+
+    if (input.w == 1) {
+      input.w = 2;
+      memset(selectedWeapon, 0, sizeof(selectedWeapon));
+      uiConsole_addMessage(ultimaStrings[205]);
+      inputTextfieldBuffer.active = true;
+      inputTextfield = &inputTextfieldBuffer;
+      inputTextfield->cursorPosition = 0;
+      inputTextfield->text[0] = '\0';
+      areKeysReleased = false;
+      readyStep = 2;
+    } else if (input.a == 1) {
+      input.a = 2;
+      uiConsole_addMessage(ultimaStrings[210]);
+    } else if (input.s == 1) {
+      input.s = 2;
+      uiConsole_addMessage(ultimaStrings[214]);
+    }
+    
+    return false;
+  } else if (readyStep == 2) {
+    if (inputTextfield->isDirty) {
+      inputTextfield->isDirty = false;
+
+      if (selectedWeapon[0] == '\0' && inputTextfield->text[0] != '\0') {
+        selectedWeapon[0] = (char)toupper(inputTextfield->text[0]);
+      } else if (selectedWeapon[1] == '\0' && inputTextfield->text[0] != '\0') {
+        selectedWeapon[1] = (char)toupper(inputTextfield->text[0]);
+        readyStep = 3;
+      }
+
+      char weaponCommand[31] = {0};
+      snprintf(weaponCommand, sizeof(weaponCommand), "%.14s%.2s", ultimaStrings[205], selectedWeapon);
+      uiConsole_replaceLastMessage(weaponCommand);
+
+      inputTextfield->cursorPosition = 0;
+      inputTextfield->text[0] = '\0';
+      areKeysReleased = false;
+
+      return false;
+    }
+  } else if (readyStep == 3) {
+    char weaponCommand[31] = {0};
+    inputTextfieldBuffer.active = false;
+    inputTextfield = NULL;
+    playerState = PLAYER_STATE_IDLE;
+    readyStep = 0;
+
+    for (int i=0;i<OS_WEAPONS_COUNT;i++) {
+      char weaponAbbreviation[3] = {weaponNames[i][0], weaponNames[i][1], '\0'};
+      if (strcmp(weaponAbbreviation, selectedWeapon) == 0) {
+        memset(selectedWeapon, 0, sizeof(selectedWeapon));
+
+        if (i > 0 && player.weapons[i - 1] < 1) {
+          snprintf(weaponCommand, sizeof(weaponCommand), "%.15s%.15s", ultimaStrings[207], weaponNames[i]);
+          uiConsole_addMessage(weaponCommand);
+          return true;
+        }
+
+        player.weapon = i - 1;
+        snprintf(weaponCommand, sizeof(weaponCommand), "%.15s%.15s", ultimaStrings[208], weaponNames[i]);
+        uiConsole_addMessage(weaponCommand);
+        return true;
+      }
+    }
+
+    snprintf(weaponCommand, sizeof(weaponCommand), "%.2s%.15s", selectedWeapon, ultimaStrings[206]);
+    uiConsole_addMessage(weaponCommand);
+    memset(selectedWeapon, 0, sizeof(selectedWeapon));
+    return true;
+  }
+
+  return false;
+}
+
 bool playerOverworld_update(float deltaTime) {
   bool acted = false;
 
   if (keyRepeatDelay <= 0) {
-    if (playerOverworld_updateZtats()) { acted = true; } else
-    if (playerOverworld_updateWait()) { acted = true; } else
-    if (playerOverworld_updateSave()) { acted = true; } else 
-    if (playerOverworld_updateInfo()) { acted = true; } else
-    if (playerOverworld_get()) { acted = true; } else
-    if (playerOverworld_open()) { acted = true; } else
-    if (playerOverworld_drop()) { acted = true; } else
-    if (playerOverworld_updateMovement(deltaTime)) { acted = true; }
+    switch (playerState) {
+      case PLAYER_STATE_IDLE:
+        if (playerOverworld_updateZtats()) { acted = true; } else
+        if (playerOverworld_updateWait()) { acted = true; } else
+        if (playerOverworld_updateSave()) { acted = true; } else 
+        if (playerOverworld_updateInfo()) { acted = true; } else
+        if (playerOverworld_get()) { acted = true; } else
+        if (playerOverworld_open()) { acted = true; } else
+        if (playerOverworld_drop()) { acted = true; } else
+        if (playerOverworld_ready()) { acted = true; } else
+        if (playerOverworld_updateMovement(deltaTime)) { acted = true; }
+        break;
+      case PLAYER_STATE_READY_TYPE:
+        if (playerOverworld_ready()) { acted = true; }
+        break;
+    }
   } else {
     keyRepeatDelay -= deltaTime;
     if (keyRepeatDelay < 0) {
       keyRepeatDelay = 0;
     }
   }
-  
+      
   matrix4_setPosition(transformationMatrix, player.tx * OS_TILE_WIDTH, player.ty * OS_TILE_HEIGHT, 1);
   camera_setPosition3f(&camera, (player.tx + 1) * OS_TILE_WIDTH - OS_SCREEN_WIDTH / 2, (player.ty + 1) * OS_TILE_HEIGHT - OS_SCREEN_HEIGHT / 2, 10);
   float *viewMatrix = camera_getViewProjectionMatrix(&camera);

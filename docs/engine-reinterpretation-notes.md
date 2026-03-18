@@ -137,6 +137,11 @@ $$
 
 - The overworld map is divided into **4 chunks**: `bterra0`, `bterra1`, `bterra2`, `bterra3`.
 
+### Overworld Extra Commands
+
+- `drop`, `get`, and `open` are not actually usable actions on the overworld.
+- Even so, the game still accepts those commands and prints a specific feedback message for each one.
+
 ## Save/Load Map Snapshot Behavior
 
 - On save/load, the original behavior persists the current **64x64 map tile buffer**.

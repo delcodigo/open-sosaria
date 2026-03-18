@@ -1,3 +1,4 @@
+#include "engine.h"
 #include "input.h"
 #include <string.h>
 
@@ -132,5 +133,43 @@ void input_keyCallback(GLFWwindow* window, int key, int scancode, int action, in
         input.d = 1;
       }
       break;
+    case GLFW_KEY_R:
+      if (action == GLFW_RELEASE) {
+        input.r = 0;
+      } else if (input.r == 0 && action == GLFW_PRESS) {
+        input.r = 1;
+      }
+      break;
+    case GLFW_KEY_W:
+      if (action == GLFW_RELEASE) {
+        input.w = 0;
+      } else if (input.w == 0 && action == GLFW_PRESS) {
+        input.w = 1;
+      }
+      break;
+    case GLFW_KEY_A:
+      if (action == GLFW_RELEASE) {
+        input.a = 0;
+      } else if (input.a == 0 && action == GLFW_PRESS) {
+        input.a = 1;
+      }
+      break;
+    case GLFW_KEY_S:
+      if (action == GLFW_RELEASE) {
+        input.s = 0;
+      } else if (input.s == 0 && action == GLFW_PRESS) {
+        input.s = 1;
+      }
+      break;
   }
+}
+
+bool input_areKeysReleased() {
+  for (int i = 32; i < 128; i++) {
+    if (glfwGetKey(window, i) == GLFW_PRESS) {
+      return false;
+    }
+  }
+
+  return true;
 }
