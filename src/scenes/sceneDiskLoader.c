@@ -291,6 +291,26 @@ static void sceneDiskLoader_setPixel(UltimaImage *img, int x, int y, uint8_t r, 
   img->data[index + 3] = 255;
 }
 
+static void sceneDiskLoader_fillHGRGaps(UltimaImage *outImage) {
+  int width = outImage->width;
+  int height = outImage->height;
+
+  for (int y=0;y<height;y++) {
+    for (int x=1;x<width-1;x++) {
+      uint32_t index = (y * width + x) * 4;
+      uint32_t nextIndex = (y * width + x + 1) * 4;
+      uint32_t prevIndex = (y * width + x - 1) * 4;
+
+      if (outImage->data[index] == 0 && outImage->data[prevIndex] == outImage->data[nextIndex]) {
+        outImage->data[index + 0] = outImage->data[prevIndex + 0];
+        outImage->data[index + 1] = outImage->data[prevIndex + 1];
+        outImage->data[index + 2] = outImage->data[prevIndex + 2];
+        outImage->data[index + 3] = outImage->data[prevIndex + 3];
+      }
+    }
+  }
+}
+
 static bool sceneDiskLoader_decodeHGRImage(const uint8_t *dataRaw, uint32_t sizeRaw, UltimaImage *outImage) {
   if (!dataRaw || !outImage) { return false; }
 
@@ -367,6 +387,7 @@ static bool sceneDiskLoader_decodeHGRImage(const uint8_t *dataRaw, uint32_t size
     }
   }
 
+  sceneDiskLoader_fillHGRGaps(outImage);
   outImage->textureId = texture_load(outImage->width, outImage->height, outImage->data);
   sceneDiskLoader_freeImage(outImage);
 
@@ -498,6 +519,8 @@ static void sceneDiskLoader_decodeUltShapesTiles(const uint8_t *dataRaw, uint32_
       }
     }
   }
+
+  sceneDiskLoader_fillHGRGaps(outImage);
 
   outImage->textureId = texture_load(outImage->width, outImage->height, outImage->data);
   sceneDiskLoader_freeImage(outImage);
@@ -773,16 +796,20 @@ static bool sceneDiskLoader_renderShapeTable(const ShapeTable *table, UltimaImag
   for (int x=0;x<originalWidth;x++) {
     for (int y=0;y<originalHeight;y++) {
       uint32_t index = (y * originalWidth + x) * 4;
-      if (outImage->data[index] == 0) { 
-        outImage->data[index + 3] = 0;
-        continue; 
-      }
       
       bool leftLit = false;
       bool rightLit = false;
 
       if (x > 0) {leftLit = outImage->data[index - 4] != 0;}
       if (x < originalWidth - 1) {rightLit = outImage->data[index + 4] != 0;}
+
+      if (outImage->data[index] == 0) { 
+        if (!leftLit && !rightLit) {
+          outImage->data[index + 0] = 225;
+          outImage->data[index + 3] = 0;
+        }
+        continue; 
+      }
 
       if (!leftLit && !rightLit) {
         if ((x & 1) == 0) {
@@ -797,6 +824,8 @@ static bool sceneDiskLoader_renderShapeTable(const ShapeTable *table, UltimaImag
       }
     }
   }
+
+  sceneDiskLoader_fillHGRGaps(outImage);
 
   outImage->textureId = texture_load(outImage->width, outImage->height, outImage->data);
   sceneDiskLoader_freeImage(outImage);
