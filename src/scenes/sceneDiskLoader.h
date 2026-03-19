@@ -2,6 +2,7 @@
 #define OS_SCENE_DISK_LOADER_H
 
 #include <stdbool.h>
+#include <stdint.h>
 #include "engine/scene.h"
 #include "config.h"
 #include <GLFW/glfw3.h>
@@ -20,10 +21,19 @@ typedef struct {
   UltimaImage castleScreen;
 
   UltimaImage overworldTiles;
+  UltimaImage enemySprites;
   uint8_t bterraMaps[OS_BTERRA_COUNT][OS_BTERRA_MAP_WIDTH][OS_BTERRA_MAP_HEIGHT];
 
   bool loaded;
 } UltimaAssets;
+
+typedef struct {
+  uint16_t count;
+  uint16_t *starts;
+  uint16_t *ends;
+  const uint8_t *data;
+  uint32_t data_size;
+} ShapeTable;
 
 void sceneDiskLoader_freeTextures();
 

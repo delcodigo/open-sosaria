@@ -10,5 +10,6 @@ typedef struct {
 } EnemyEncounter;
 
 extern Scene sceneOverworld;
+extern EnemyEncounter enemyEncounter;
 
 #endif

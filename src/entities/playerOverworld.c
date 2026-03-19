@@ -2,20 +2,29 @@
 #include <string.h>
 #include <ctype.h>
 #include "playerOverworld.h"
+#include "worldMap.h"
 #include "engine/geometry.h"
 #include "engine/camera.h"
 #include "engine/input.h"
 #include "data/saveAndLoad.h"
 #include "data/bevery.h"
+#include "data/enemy.h"
 #include "ui/uiConsole.h"
 #include "ui/uiztats.h"
 #include "scenes/sceneDiskLoader.h"
+#include "scenes/sceneOverworld.h"
 #include "maths/matrix4.h"
 #include "config.h"
+#include "utils.h"
+#include "memory.h"
 
 static PLAYER_STATE playerState = PLAYER_STATE_IDLE;
 static Geometry playerOverworldGeometry;
 static float transformationMatrix[16];
+
+static Geometry *enemyGeometry = NULL;
+static float enemyTransformationMatrix[16];
+static bool renderEnemy = false;
 
 static READY_STEP readyStep = READY_STEP_START;
 static Textfield inputTextfieldBuffer;
@@ -28,6 +37,7 @@ static float waitingTime = 0.0f;
 void playerOverworld_init() {
   geometry_setSprite(&playerOverworldGeometry, OS_TILE_WIDTH, OS_TILE_HEIGHT, 0, 0.5f, 0.125f, 1.0f);
   matrix4_setIdentity(transformationMatrix);
+  matrix4_setIdentity(enemyTransformationMatrix);
   memset(&inputTextfieldBuffer, 0, sizeof(inputTextfieldBuffer));
   inputTextfieldBuffer.maxLength = 2;
 }
@@ -41,6 +51,41 @@ bool playerOverworld_updateWait() {
     keyRepeatDelay = 0.3f;
     return true;
   }
+
+  return false;
+}
+
+bool playerOverworld_tryAndDodgeEnemies(int mx, int my) {
+  if (enemyEncounter.monsterId <= 0 || 
+    (float)(player.strength + player.agility) / 400.0f > rand01() ||
+    player.vehicle + 2 > rand01() * 14
+  ) {
+    enemyEncounter.monsterId = 0;
+    renderEnemy = false;
+    return true;
+  }
+
+  char encounterMessage[31] = {0};
+  snprintf(encounterMessage, sizeof(encounterMessage), "%.15s %.10s", ultimaStrings[121], enemyDefinitions[enemyEncounter.monsterId].name);
+  uiConsole_inverseText();
+  uiConsole_addMessage(encounterMessage);
+  uiConsole_inverseText();
+
+  renderEnemy = true;
+  if (enemyGeometry != NULL) {
+    geometry_free(enemyGeometry);
+    free(enemyGeometry);
+    enemyGeometry = NULL;
+  }
+
+  int tile = (worldMap_getPlayerTile() >> 4) & 0x0F;
+  if (tile > 2) { tile = 1; }
+  float tx1 = tile * (OS_ENEMY_SPRITE_WIDTH / (float)ultimaAssets.enemySprites.width);
+  float tx2 = tx1 + (OS_ENEMY_SPRITE_WIDTH / (float)ultimaAssets.enemySprites.width);
+
+  enemyGeometry = (Geometry*) malloc(sizeof(Geometry));
+  matrix4_setPosition(enemyTransformationMatrix, (player.tx + mx) * OS_TILE_WIDTH, (player.ty + my) * OS_TILE_HEIGHT, 2.0f);
+  geometry_setSprite(enemyGeometry, OS_ENEMY_SPRITE_WIDTH, OS_ENEMY_SPRITE_HEIGHT, tx1, 0, tx2, 1);
 
   return false;
 }
@@ -71,6 +116,11 @@ bool playerOverworld_updateMovement(float deltaTime) {
     int tile = (ultimaAssets.bterraMaps[world][ty][tx] >> 4) & 0x0F;
 
     uiConsole_replaceLastMessage(movementCommand);
+
+    if (!playerOverworld_tryAndDodgeEnemies(moveX, moveY)) {
+      keyRepeatDelay = 0.3f;
+      return true;
+    }
 
     if (tile == 0) {
       uiConsole_addMessage(ultimaStrings[122]);
@@ -507,9 +557,18 @@ bool playerOverworld_update(float deltaTime) {
 
   geometry_render(&playerOverworldGeometry, ultimaAssets.overworldTiles.textureId, transformationMatrix, viewMatrix);
 
+  if (renderEnemy && enemyGeometry != NULL) {
+    geometry_render(enemyGeometry, ultimaAssets.enemySprites.textureId, enemyTransformationMatrix, viewMatrix);
+  }
+
   return acted;
 }
 
 void playerOverworld_free() {
   geometry_free(&playerOverworldGeometry);
+  if (enemyGeometry != NULL) {
+    geometry_free(enemyGeometry);
+    free(enemyGeometry);
+    enemyGeometry = NULL;
+  }
 }

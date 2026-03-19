@@ -15,7 +15,7 @@
 #include "utils.h"
 
 static bool playerActed = false;
-static EnemyEncounter enemyEncounter = { -1, 0, 0};
+EnemyEncounter enemyEncounter = { -1, 0, 0};
 
 static void sceneOverworld_init() {
   worldMap_init();
@@ -103,14 +103,14 @@ static void sceneOverworld_update(float deltaTime) {
     uiConsole_addMessage(ultimaStrings[98]);
   }
 
+  float *viewMatrix = camera_getViewProjectionMatrix(&camera);
+  
+  worldMap_update(viewMatrix);
+
   if (playerOverworld_update(deltaTime)) { 
     playerActed = true; 
     sceneOverworld_resolveEncounter();
   }
-
-  float *viewMatrix = camera_getViewProjectionMatrix(&camera);
-  
-  worldMap_update(viewMatrix);
 
   uiConsole_update();
 }

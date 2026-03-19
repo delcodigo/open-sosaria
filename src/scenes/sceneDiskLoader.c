@@ -277,8 +277,6 @@ static void sceneDiskLoader_freeImage(UltimaImage *img) {
   if (img && img->data) {
     free(img->data);
     img->data = NULL;
-    img->width = 0;
-    img->height = 0;
   }
 }
 
@@ -661,6 +659,163 @@ static void sceneDiskLoader_extractBasicStrings(uint8_t *disk, const char *fileN
   }
 }
 
+bool sceneDiskLoader_parseShapeTable(const uint8_t *dataRaw, uint32_t sizeRaw, ShapeTable *table) {
+  if (!dataRaw || !table) { return false; }
+
+  uint32_t size = 0;
+  const uint8_t *data = sceneDiskLoader_maybeStripBloadHeader(dataRaw, sizeRaw, &size);
+  if (!data || size < 8) { return false; }
+
+  uint16_t count = (uint16_t)(data[0] | (data[1] << 8));
+  if (count < 1 || count > 255) { return false; }
+
+  // Try mode with count or count+1 pointers
+  for (int j=0;j<2;j++) {
+    int ptrWords = count + j;
+    if (2 + ptrWords * 2 <= (int)size) {
+      uint16_t *ptr = (uint16_t *)malloc(ptrWords * sizeof(uint16_t));
+      if (!ptr) { continue; }
+
+      for (int i=0;i<ptrWords;i++) {
+        ptr[i] = (uint16_t)(data[2 + i * 2] | (data[2 + i * 2 + 1] << 8));
+      }
+
+      bool valid = true;
+      for (int i=0;i<ptrWords;i++) {
+        if (ptr[i] > size) { valid = false; break; }
+        if (i > 0 && ptr[i] < ptr[i-1]) { valid = false; break; }
+      }
+
+      if (valid) {
+        table->count = count;
+        table->starts = (uint16_t *)malloc(count * sizeof(uint16_t));
+        table->ends = (uint16_t *)malloc(count * sizeof(uint16_t));
+
+        if (table->starts && table->ends) {
+          for (int i=0;i<count;i++) {
+            table->starts[i] = ptr[i];
+            table->ends[i] = ptr[i+1];
+          }
+          table->data = data;
+          table->data_size = size;
+          free(ptr);
+          return true;
+        }
+
+        free(table->starts);
+        free(table->ends);
+      }
+
+      free(ptr);
+    }
+  }
+
+  return false;
+}
+
+static bool sceneDiskLoader_renderShapeTable(const ShapeTable *table, UltimaImage *outImage, int tileWidth, int tileHeight) {
+  if (!table || !outImage) { return false; }
+
+  const int cols = 8;
+  const int rows = (int) ceil((float)table->count / (float)cols);
+  const int originalWidth = cols * tileWidth;
+  const int originalHeight = rows * tileHeight;
+
+  *outImage = sceneDiskLoader_createImage(originalWidth, originalHeight, 0, 0, 0);
+  if (!outImage->data) { return false; }
+
+  // Direction vectors: up, right, down, left
+  const int dirs[4][2] = {
+    {0, -1},
+    {1, 0},
+    {0, 1},
+    {-1, 0}
+  };
+
+  for (uint16_t s=0;s<table->count;s++) {
+    int cx = (s % cols) * tileWidth;
+    int cy = (s / cols) * tileHeight;
+    int x = cx;
+    int y = cy;
+
+    uint16_t start = table->starts[s];
+    uint16_t end = table->ends[s];
+
+    for (uint16_t i=start;i<end && i<table->data_size;i++) {
+      uint8_t byte = table->data[i];
+      if (byte == 0) { continue; }
+
+      // Apple II shape table format
+      int aDir = byte & 0x03;
+      bool aPlot = ((byte>>2) & 0x01) != 0;
+      int bDir = (byte >> 3) & 0x03;
+      bool bPlot = ((byte >> 5) & 0x01) != 0;
+      int cDir = (byte >> 6) & 0x03;
+
+      if (aPlot) { sceneDiskLoader_setPixel(outImage, x, y, 255, 255, 255); }
+      x += dirs[aDir][0];
+      y += dirs[aDir][1];
+
+      if (!(bDir == 0 && !bPlot && cDir == 0)) {
+        if (bPlot) { sceneDiskLoader_setPixel(outImage, x, y, 255, 255, 255); }
+        x += dirs[bDir][0];
+        y += dirs[bDir][1];
+      }
+
+      if (cDir != 0) {
+        x += dirs[cDir][0];
+        y += dirs[cDir][1];
+      }
+    }
+  }
+
+  // HGR coloring
+  for (int x=0;x<originalWidth;x++) {
+    for (int y=0;y<originalHeight;y++) {
+      uint32_t index = (y * originalWidth + x) * 4;
+      if (outImage->data[index] == 0) { 
+        outImage->data[index + 3] = 0;
+        continue; 
+      }
+      
+      bool leftLit = false;
+      bool rightLit = false;
+
+      if (x > 0) {leftLit = outImage->data[index - 4] != 0;}
+      if (x < originalWidth - 1) {rightLit = outImage->data[index + 4] != 0;}
+
+      if (!leftLit && !rightLit) {
+        if ((x & 1) == 0) {
+          outImage->data[index + 0] = 190;
+          outImage->data[index + 1] = 80;
+          outImage->data[index + 2] = 255;
+        } else {
+          outImage->data[index + 0] = 80;
+          outImage->data[index + 1] = 220;
+          outImage->data[index + 2] = 80;
+        }
+      }
+    }
+  }
+
+  outImage->textureId = texture_load(outImage->width, outImage->height, outImage->data);
+  sceneDiskLoader_freeImage(outImage);
+
+  return true;
+}
+
+static void sceneDiskLoader_freeShapeTable(ShapeTable *table) {
+  if (table) {
+    free(table->starts);
+    free(table->ends);
+    table->starts = NULL;
+    table->ends = NULL;
+    table->count = 0;
+    table->data = NULL;
+    table->data_size = 0;
+  }
+}
+
 static int sceneDiskLoader_verifyUltimaDisks() {
   if (!file_exists("disk1.dsk")) {
     strcpy(diskMsgText, "'disk1.dsk' not found!");
@@ -829,6 +984,19 @@ void sceneDiskLoader_extractUltimaAssets() {
     free(ultShapesBuffer);
   }
 
+  // Extract enemy sprites
+  Buffer *outShapesBuffer = sceneDiskLoader_readDos33FileByName(disk1, "OUT.SHAPES");
+  if (outShapesBuffer && outShapesBuffer->data) {
+    ShapeTable table = {0};
+    if (sceneDiskLoader_parseShapeTable(outShapesBuffer->data, outShapesBuffer->size, &table)) {
+      sceneDiskLoader_renderShapeTable(&table, &ultimaAssets.enemySprites, OS_ENEMY_SPRITE_WIDTH, OS_ENEMY_SPRITE_HEIGHT);
+      sceneDiskLoader_freeShapeTable(&table);
+    }
+
+    free(outShapesBuffer->data);
+    free(outShapesBuffer);
+  }
+
   // Extract Bterra maps
   for (int i=0;i<OS_BTERRA_COUNT;i++) {
     char name[16];
@@ -932,6 +1100,8 @@ void sceneDiskLoader_freeTextures() {
     ultimaAssets.castleScreen.textureId = 0;
     texture_free(ultimaAssets.overworldTiles.textureId);
     ultimaAssets.overworldTiles.textureId = 0;
+    texture_free(ultimaAssets.enemySprites.textureId);
+    ultimaAssets.enemySprites.textureId = 0;
   }
 }
 
