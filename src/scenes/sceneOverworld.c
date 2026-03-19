@@ -15,6 +15,7 @@
 #include "utils.h"
 
 static bool playerActed = false;
+
 EnemyEncounter enemyEncounter = { -1, 0, 0};
 
 static void sceneOverworld_init() {
@@ -54,11 +55,11 @@ static void sceneOverworld_resolveEncounter() {
   }
 
   uiConsole_inverseText();
-  uiConsole_addMessage(ultimaStrings[252]);
+  uiConsole_queueMessage(ultimaStrings[252]);
 
   char enemiesMsg[31] = {0};
   snprintf(enemiesMsg, sizeof(enemiesMsg), "%.10s %d %s%s", ultimaStrings[253], enemyEncounter.number, enemyDefinitions[enemyEncounter.monsterId].name, enemyEncounter.number > 1 ? "s" : ""  );
-  uiConsole_addMessage(enemiesMsg);
+  uiConsole_queueMessage(enemiesMsg);
 
   int hits = 0;
   for (int i=1;i<=enemyEncounter.number;i++) {
@@ -82,9 +83,9 @@ static void sceneOverworld_resolveEncounter() {
 
   memset(enemiesMsg, 0, sizeof(enemiesMsg));
   snprintf(enemiesMsg, sizeof(enemiesMsg), "%.10s%d%.10s%d", ultimaStrings[256], hits, ultimaStrings[257], enemyEncounter.number - hits);
-  uiConsole_addMessage(enemiesMsg);
+  uiConsole_queueMessage(enemiesMsg);
 
-  uiConsole_inverseText();
+  uiConsole_normalText();
   uiConsole_updateStats();
 
   if (hits > 0) {
@@ -93,26 +94,27 @@ static void sceneOverworld_resolveEncounter() {
 }
 
 static void sceneOverworld_update(float deltaTime) {
-  if (ztatsActive){
-    uiZtats_update(deltaTime);
-    return;
-  }
+  if (!queuedMessagesCount){
+    if (ztatsActive){
+      uiZtats_update(deltaTime);
+      return;
+    }
 
-  if (playerActed) {
-    playerActed = false;
-    uiConsole_addMessage(ultimaStrings[98]);
-  }
+    if (playerActed) {
+      playerActed = false;
+      sceneOverworld_resolveEncounter();
+      uiConsole_addMessage(ultimaStrings[98]);
+    }
 
-  float *viewMatrix = camera_getViewProjectionMatrix(&camera);
+    if (playerOverworld_update(deltaTime)) { 
+      playerActed = true; 
+    }
+  }
   
+  float *viewMatrix = camera_getViewProjectionMatrix(&camera);
   worldMap_update(viewMatrix);
-
-  if (playerOverworld_update(deltaTime)) { 
-    playerActed = true; 
-    sceneOverworld_resolveEncounter();
-  }
-
-  uiConsole_update();
+  playerOverworld_render();
+  uiConsole_update(deltaTime);
 }
 
 static void sceneOverworld_free() {

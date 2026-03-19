@@ -68,8 +68,8 @@ bool playerOverworld_tryAndDodgeEnemies(int mx, int my) {
   char encounterMessage[31] = {0};
   snprintf(encounterMessage, sizeof(encounterMessage), "%.15s %.10s", ultimaStrings[121], enemyDefinitions[enemyEncounter.monsterId].name);
   uiConsole_inverseText();
-  uiConsole_addMessage(encounterMessage);
-  uiConsole_inverseText();
+  uiConsole_queueMessage(encounterMessage);
+  uiConsole_normalText();
 
   renderEnemy = true;
   if (enemyGeometry != NULL) {
@@ -550,7 +550,11 @@ bool playerOverworld_update(float deltaTime) {
       keyRepeatDelay = 0;
     }
   }
-      
+
+  return acted;
+}
+
+void playerOverworld_render() {
   matrix4_setPosition(transformationMatrix, player.tx * OS_TILE_WIDTH, player.ty * OS_TILE_HEIGHT, 1);
   camera_setPosition3f(&camera, (player.tx + 1) * OS_TILE_WIDTH - OS_SCREEN_WIDTH / 2, (player.ty + 1) * OS_TILE_HEIGHT - OS_SCREEN_HEIGHT / 2, 10);
   float *viewMatrix = camera_getViewProjectionMatrix(&camera);
@@ -560,8 +564,6 @@ bool playerOverworld_update(float deltaTime) {
   if (renderEnemy && enemyGeometry != NULL) {
     geometry_render(enemyGeometry, ultimaAssets.enemySprites.textureId, enemyTransformationMatrix, viewMatrix);
   }
-
-  return acted;
 }
 
 void playerOverworld_free() {

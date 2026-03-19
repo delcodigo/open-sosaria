@@ -22,6 +22,7 @@ typedef enum {
 
 void playerOverworld_init();
 bool playerOverworld_update(float deltaTime);
+void playerOverworld_render();
 void playerOverworld_free();
 
 #endif

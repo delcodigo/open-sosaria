@@ -18,6 +18,11 @@ static const unsigned char textureData[] = {0,0,0,255};
 static GLuint blackPanelTextureId;
 static float transformMatrix[16];
 static bool inverseText = false;
+static char queuedMessages[10][30] = { 0 };
+static bool queuedInverted[10] = { 0 };
+int queuedMessagesCount = 0;
+static float timeToNextMessage = 0.0f;
+static bool dequeuing = false;
 
 void uiConsole_init() {
   geometry_setSprite(&blackPanel, OS_SCREEN_WIDTH, OS_TILE_HEIGHT * 2, 0, 0, 0, 1);
@@ -49,10 +54,28 @@ void uiConsole_init() {
 }
 
 void uiConsole_inverseText() {
-  inverseText = !inverseText;
+  inverseText = true;
+}
+
+void uiConsole_normalText() {
+  inverseText = false;
+}
+
+void uiConsole_queueMessage(const char *message) {
+  if (queuedMessagesCount < 10) {
+    strncpy(queuedMessages[queuedMessagesCount], message, sizeof(queuedMessages[queuedMessagesCount]));
+    queuedMessages[queuedMessagesCount][29] = '\0';
+    queuedInverted[queuedMessagesCount] = inverseText;
+    queuedMessagesCount++;
+  }
 }
 
 void uiConsole_addMessage(const char *message) {
+  if (queuedMessagesCount > 0 && !dequeuing) {
+    uiConsole_queueMessage(message);
+    return;
+  }
+
   for (int i=0;i<3;i++) {
     strncpy(consoleLines[i], consoleLines[i + 1], sizeof(consoleLines[i]));
     text_update(&consoleText[i], consoleLines[i], consoleText[i+1].isInverted);
@@ -81,7 +104,24 @@ void uiConsole_updateStats() {
   text_update(&stats[3], player.gold > 99999 ? "*****" : statStr, false);
 }
 
-void uiConsole_update() {
+void uiConsole_update(float deltaTime) {
+  if (queuedMessagesCount > 0) {
+    timeToNextMessage -= deltaTime;
+    if (timeToNextMessage <= 0) {
+      inverseText = queuedInverted[0];
+      dequeuing = true;
+      uiConsole_addMessage(queuedMessages[0]);
+      for (int i=0;i<queuedMessagesCount - 1;i++) {
+        strncpy(queuedMessages[i], queuedMessages[i + 1], sizeof(queuedMessages[i]));
+        queuedInverted[i] = queuedInverted[i + 1];
+      }
+      queuedMessagesCount--;
+      timeToNextMessage = 0.3f;
+    }
+  }
+
+  dequeuing = false;
+
   float *viewMatrix = camera_getViewProjectionMatrix(&camera);
   matrix4_setPosition(transformMatrix, camera_getX(&camera), camera_getY(&camera) + OS_SCREEN_HEIGHT - OS_TILE_HEIGHT * 2, 2);
   geometry_render(&blackPanel, blackPanelTextureId, transformMatrix, viewMatrix);
