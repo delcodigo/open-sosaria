@@ -5,6 +5,7 @@
 #include "engine/geometry.h"
 
 void worldMap_init();
+int worldMap_getPlayerTile();
 void worldMap_update(float *viewMatrix);
 void worldMap_free();
 

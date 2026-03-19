@@ -37,6 +37,13 @@ void worldMap_init() {
 
 }
 
+int worldMap_getPlayerTile() {
+  int tx = (int)(player.tx % OS_BTERRA_MAP_WIDTH);
+  int ty = (int)(player.ty % OS_BTERRA_MAP_HEIGHT);
+  int world = ((int)player.ty / OS_BTERRA_MAP_HEIGHT) * 2 + ((int)player.tx / OS_BTERRA_MAP_WIDTH);
+  return ultimaAssets.bterraMaps[world][ty][tx];
+}
+
 void worldMap_update(float *viewMatrix) {
   int hsign = 1;
   int vsign = 1;

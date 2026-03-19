@@ -70,6 +70,8 @@ void text_update(Text *textGeometry, const char* text, bool isInverted) {
 
   text_addGlyphs(text, textGeometry->vertices, textGeometry->indices, isInverted);
 
+  textGeometry->isInverted = isInverted;
+
   glBindBuffer(GL_ARRAY_BUFFER, textGeometry->geometry.VBO);
   glBufferData(GL_ARRAY_BUFFER, textGeometry->size, textGeometry->vertices, GL_STATIC_DRAW);
 
@@ -86,6 +88,7 @@ void text_create(Text *textGeometry, const char* text, bool isInverted) {
   glGenBuffers(1, &geometry->VBO);
   glGenBuffers(1, &geometry->EBO);
 
+  textGeometry->isInverted = isInverted;
   textGeometry->length = strlen(text);
   textGeometry->size = textGeometry->length * OS_QUAD_VERTEX_SIZE * sizeof(float);
   textGeometry->vertices = (float*) malloc(textGeometry->size);

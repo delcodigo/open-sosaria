@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 
 int file_exists(const char *filename) {
   FILE *file = fopen(filename, "r");
@@ -9,4 +10,8 @@ int file_exists(const char *filename) {
   }
 
   return 0;
+}
+
+float rand01() {
+  return (float)rand() / (float)RAND_MAX;
 }

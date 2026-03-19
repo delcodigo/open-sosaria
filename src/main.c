@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 #include <math.h>
 #include "maths/matrix4.h"
 #include "engine/engine.h"
@@ -23,6 +24,8 @@ int main(void)
   }
 
   scene_load(&sceneDiskLoader);
+
+  srand((unsigned int)time(NULL));
 
   float lastTime = 0.0;
   while (!glfwWindowShouldClose(window)) {

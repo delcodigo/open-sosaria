@@ -17,6 +17,7 @@ static char consoleLines[4][30] = { 0 };
 static const unsigned char textureData[] = {0,0,0,255};
 static GLuint blackPanelTextureId;
 static float transformMatrix[16];
+static bool inverseText = false;
 
 void uiConsole_init() {
   geometry_setSprite(&blackPanel, OS_SCREEN_WIDTH, OS_TILE_HEIGHT * 2, 0, 0, 0, 1);
@@ -47,21 +48,25 @@ void uiConsole_init() {
   }
 }
 
+void uiConsole_inverseText() {
+  inverseText = !inverseText;
+}
+
 void uiConsole_addMessage(const char *message) {
   for (int i=0;i<3;i++) {
     strncpy(consoleLines[i], consoleLines[i + 1], sizeof(consoleLines[i]));
-    text_update(&consoleText[i], consoleLines[i], false);
+    text_update(&consoleText[i], consoleLines[i], consoleText[i+1].isInverted);
   }
 
   strncpy(consoleLines[3], message, sizeof(consoleLines[3]));
   consoleLines[3][29] = '\0';
-  text_update(&consoleText[3], consoleLines[3], false);
+  text_update(&consoleText[3], consoleLines[3], inverseText);
 }
 
 void uiConsole_replaceLastMessage(const char *message) {
   strncpy(consoleLines[3], message, sizeof(consoleLines[3]));
   consoleLines[3][29] = '\0';
-  text_update(&consoleText[3], consoleLines[3], false);
+  text_update(&consoleText[3], consoleLines[3], consoleText[3].isInverted);
 }
 
 void uiConsole_updateStats() {
