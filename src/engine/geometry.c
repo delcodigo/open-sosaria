@@ -61,10 +61,6 @@ void geometry_build(Geometry *geometry, const float *vertices, int verticesCount
 }
 
 void geometry_setSprite(Geometry *geometry, float width, float height, float tx1, float ty1, float tx2, float ty2) {
-  glGenVertexArrays(1, &geometry->VAO);
-  glGenBuffers(1, &geometry->VBO);
-  glGenBuffers(1, &geometry->EBO);
-
   float vertices[] = {
     0.0f, 0.0f, 0.0f, tx1, ty1,
     width, 0.0f, 0.0f, tx2, ty1,

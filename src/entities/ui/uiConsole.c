@@ -38,19 +38,21 @@ void uiConsole_init() {
 
   char statStr[7] = {0};
   snprintf(statStr, sizeof(statStr), "%d", player.health);
-  text_create(&stats[0], player.health > 99999 ? "*****" : statStr, false);
+  text_create(&stats[0], "     ", false);
   snprintf(statStr, sizeof(statStr), "%d", (int)player.food);
-  text_create(&stats[1], (int)player.food > 99999 ? "*****" : statStr, false);
+  text_create(&stats[1], "     ", false);
   snprintf(statStr, sizeof(statStr), "%d", player.experience);
-  text_create(&stats[2], player.experience > 99999 ? "*****" : statStr, false);
+  text_create(&stats[2], "     ", false);
   snprintf(statStr, sizeof(statStr), "%d", player.gold);
-  text_create(&stats[3], player.gold > 99999 ? "*****" : statStr, false);
+  text_create(&stats[3], "     ", false);
 
   for (int i=0;i<4;i++) {
     memset(consoleLines[i], ' ', sizeof(consoleLines[i]));
     consoleLines[i][29] = '\0';
     text_create(&consoleText[i], consoleLines[i], false);
   }
+
+  uiConsole_updateStats();
 }
 
 void uiConsole_inverseText() {
@@ -116,7 +118,7 @@ void uiConsole_update(float deltaTime) {
         queuedInverted[i] = queuedInverted[i + 1];
       }
       queuedMessagesCount--;
-      timeToNextMessage = 0.3f;
+      timeToNextMessage = 0.15f;
     }
   }
 

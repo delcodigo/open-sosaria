@@ -1,6 +1,8 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#include <math.h>
 #include "playerOverworld.h"
 #include "worldMap.h"
 #include "engine/geometry.h"
@@ -110,6 +112,7 @@ bool playerOverworld_updateMovement(float deltaTime) {
   }
 
   if (moveX != 0 || moveY != 0) {
+    waitingTime = 0.0f;
     int tx = (int)((player.tx + moveX) % OS_BTERRA_MAP_WIDTH);
     int ty = (int)((player.ty + moveY) % OS_BTERRA_MAP_HEIGHT);
     int world = ((int)(player.ty + moveY) / OS_BTERRA_MAP_HEIGHT) * 2 + ((int)(player.tx + moveX) / OS_BTERRA_MAP_WIDTH);
@@ -524,6 +527,94 @@ static bool playerOverworld_ready() {
   return false;
 }
 
+static bool playerOverworld_updateAttack() {
+  if (input.a == 1) {
+    input.a = 2;
+    waitingTime = 0.0f;
+    lagTime = 1.5f;
+
+    char consoleMessage[31] = {0};
+    snprintf(consoleMessage, sizeof(consoleMessage), "%.15s%.14s", ultimaStrings[98], ultimaStrings[126]);
+    uiConsole_replaceLastMessage(consoleMessage);
+
+    int monsterId = enemyEncounter.monsterId;
+
+    if (monsterId < 6 || monsterId > 20) {
+      uiConsole_queueMessage(ultimaStrings[127]);
+      return true;
+    }
+
+    memset(consoleMessage, 0, sizeof(consoleMessage));
+    snprintf(consoleMessage, sizeof(consoleMessage), "%s", enemyDefinitions[monsterId].name);
+    uiConsole_inverseText();
+    uiConsole_queueMessage(consoleMessage);
+
+    uiConsole_normalText();
+
+    if ((monsterId < 10 || monsterId == 12) && (player.weapon < 7 || player.weapon == 11 || player.weapon == 13)) {
+      uiConsole_queueMessage(ultimaStrings[128]);
+      return true;
+    }
+
+    memset(consoleMessage, 0, sizeof(consoleMessage));
+    snprintf(consoleMessage, sizeof(consoleMessage), "%.15s%s", ultimaStrings[129], weaponNames[player.weapon]);
+    uiConsole_queueMessage(consoleMessage);
+
+    if (player.weapon > 7 && player.weapon < 12) {
+      memset(consoleMessage, 0, sizeof(consoleMessage));
+      snprintf(consoleMessage, sizeof(consoleMessage), "%.10s%.19s", weaponNames[player.weapon], ultimaStrings[135]);
+      uiConsole_queueMessage(consoleMessage);
+      return true;
+    }
+
+    int attack = rand01() * 20 + (player.strength + player.agility) / 5 + player.weapon;
+    int defense = enemyDefinitions[monsterId].rank + 10;
+    if (attack > defense || attack > 20) {
+      int damage = (int)((player.strength + player.weapon) * rand01()) + 1;
+      memset(consoleMessage, 0, sizeof(consoleMessage));
+      snprintf(consoleMessage, sizeof(consoleMessage), "%.5s%.10s%d", ultimaStrings[131], ultimaStrings[132], damage);
+      uiConsole_queueMessage(consoleMessage);
+
+      enemyEncounter.hp -= damage;
+
+      if (enemyEncounter.hp <= 0) {
+        enemyEncounter.number -= 1;
+        
+        player.experience += enemyDefinitions[monsterId].rank * 5;
+        int goldEarned = (int)(enemyDefinitions[monsterId].rank * 4 * rand01()) + 10;
+        player.gold += goldEarned;
+
+        memset(consoleMessage, 0, sizeof(consoleMessage));
+        snprintf(consoleMessage, sizeof(consoleMessage), "%.15s%d", ultimaStrings[134], goldEarned);
+        uiConsole_queueMessage(consoleMessage);
+
+        if (enemyEncounter.number <= 0) {
+          enemyEncounter.monsterId = -1;
+          renderEnemy = false;
+          if (enemyGeometry != NULL) {
+            geometry_free(enemyGeometry);
+            free(enemyGeometry);
+            enemyGeometry = NULL;
+          }
+        } else {
+          enemyEncounter.hp = (int)(20 * rand01() + pow(rand01(), 2) * (int)(player.time / 1000.0f)) + 5;
+        }
+
+        uiConsole_updateStats();
+
+      }
+
+      return true;
+    }
+
+    uiConsole_queueMessage(ultimaStrings[130]);
+    
+    return true;
+  }
+
+  return false;
+}
+
 bool playerOverworld_update(float deltaTime) {
   bool acted = false;
 
@@ -538,6 +629,7 @@ bool playerOverworld_update(float deltaTime) {
         if (playerOverworld_open()) { acted = true; } else
         if (playerOverworld_drop()) { acted = true; } else
         if (playerOverworld_ready()) { acted = true; } else
+        if (playerOverworld_updateAttack()) { acted = true; } else
         if (playerOverworld_updateMovement(deltaTime)) { acted = true; }
         break;
       case PLAYER_STATE_READY_TYPE:

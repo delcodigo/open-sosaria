@@ -17,6 +17,7 @@
 static bool playerActed = false;
 
 EnemyEncounter enemyEncounter = { -1, 0, 0};
+float lagTime = 0.0f;
 
 static void sceneOverworld_init() {
   worldMap_init();
@@ -94,7 +95,12 @@ static void sceneOverworld_resolveEncounter() {
 }
 
 static void sceneOverworld_update(float deltaTime) {
-  if (!queuedMessagesCount){
+  if (lagTime > 0) {
+    lagTime -= deltaTime;
+    if (lagTime < 0) { lagTime = 0; }
+  }
+  
+  if (!queuedMessagesCount && lagTime <= 0){
     if (ztatsActive){
       uiZtats_update(deltaTime);
       return;

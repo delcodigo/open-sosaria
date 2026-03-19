@@ -1,4 +1,5 @@
 #include <string.h>
+#include <stdlib.h>
 #include "text.h"
 #include "memory.h"
 #include "config.h"
@@ -65,10 +66,22 @@ static void text_addGlyphs(const char *text, float *vertices, unsigned int *indi
 }
 
 void text_update(Text *textGeometry, const char* text, bool isInverted) {
+  if (!textGeometry || !textGeometry->vertices || !textGeometry->indices || !text) { return; }
+
   memset(textGeometry->vertices, 0, textGeometry->size);
   memset(textGeometry->indices, 0, textGeometry->length * OS_QUAD_INDEX_SIZE * sizeof(unsigned int));
 
-  text_addGlyphs(text, textGeometry->vertices, textGeometry->indices, isInverted);
+  if (textGeometry->length > 0) {
+    char fixedText[textGeometry->length + 1];
+    memset(fixedText, ' ', textGeometry->length);
+    
+    size_t inputLength = strlen(text);
+    size_t copyLength = inputLength < textGeometry->length ? inputLength : textGeometry->length;
+    memcpy(fixedText, text, copyLength);
+    fixedText[copyLength] = '\0';
+
+    text_addGlyphs(fixedText, textGeometry->vertices, textGeometry->indices, isInverted);
+  }
 
   textGeometry->isInverted = isInverted;
 
