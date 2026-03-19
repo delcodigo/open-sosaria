@@ -27,6 +27,13 @@ static int ultimaStringCount = 0;
 UltimaAssets ultimaAssets = {0};
 float loaderTime = 0.0f;
 
+static int colorBlack[3] = {0, 0, 0};
+static int colorBlue[3] = {0, 146, 255};
+static int colorPurple[3] = {146, 0, 255};
+static int colorGreen[3] = {36, 182, 0};
+static int colorWhite[3] = {255, 255, 255};
+static int colorOrange[3] = {255, 86, 0};
+
 typedef struct {
   uint8_t *data;
   uint32_t size;
@@ -301,11 +308,32 @@ static void sceneDiskLoader_fillHGRGaps(UltimaImage *outImage) {
       uint32_t nextIndex = (y * width + x + 1) * 4;
       uint32_t prevIndex = (y * width + x - 1) * 4;
 
-      if (outImage->data[index] == 0 && outImage->data[prevIndex] == outImage->data[nextIndex]) {
-        outImage->data[index + 0] = outImage->data[prevIndex + 0];
-        outImage->data[index + 1] = outImage->data[prevIndex + 1];
-        outImage->data[index + 2] = outImage->data[prevIndex + 2];
-        outImage->data[index + 3] = outImage->data[prevIndex + 3];
+      bool isCurrBlack = (outImage->data[index+0] == colorBlack[0] && outImage->data[index+1] == colorBlack[1] && outImage->data[index+2] == colorBlack[2]);
+      bool neighborsSameColor = (
+        outImage->data[prevIndex+0] == outImage->data[nextIndex+0] &&
+        outImage->data[prevIndex+1] == outImage->data[nextIndex+1] &&
+        outImage->data[prevIndex+2] == outImage->data[nextIndex+2]
+      );
+      bool neighborIsLit = (outImage->data[prevIndex+0] != 0 || outImage->data[prevIndex+1] != 0 || outImage->data[prevIndex+2] != 0);
+      bool isNeighborWhite = (outImage->data[prevIndex+0] == colorWhite[0] && outImage->data[prevIndex+1] == colorWhite[1] && outImage->data[prevIndex+2] == colorWhite[2]);
+
+      if (isCurrBlack && neighborsSameColor && neighborIsLit) {
+        int r, g, b;
+
+        if (!isNeighborWhite) {
+          r = outImage->data[prevIndex+0];
+          g = outImage->data[prevIndex+1];
+          b = outImage->data[prevIndex+2];
+        } else if ((x & 1) == 0) {
+          r = colorGreen[0]; g = colorGreen[1]; b = colorGreen[2];
+        } else {
+          r = colorPurple[0]; g = colorPurple[1]; b = colorPurple[2];
+        }
+
+        outImage->data[index + 0] = r;
+        outImage->data[index + 1] = g;
+        outImage->data[index + 2] = b;
+        outImage->data[index + 3] = 255;
       }
     }
   }
@@ -321,7 +349,7 @@ static bool sceneDiskLoader_decodeHGRImage(const uint8_t *dataRaw, uint32_t size
   const int originalWidth = 280;
   const int originalHeight = 192;
 
-  *outImage = sceneDiskLoader_createImage(originalWidth, originalHeight, 0, 0, 0);
+  *outImage = sceneDiskLoader_createImage(originalWidth, originalHeight, colorBlack[0], colorBlack[1], colorBlack[2]);
   if (!outImage->data) { return false; }
 
   // Decode HGR with approximate colors
@@ -356,29 +384,29 @@ static bool sceneDiskLoader_decodeHGRImage(const uint8_t *dataRaw, uint32_t size
 
         if (!current) {
           // black
-          r = g = b = 0;
+          r = colorBlack[0]; g = colorBlack[1]; b = colorBlack[2];
         } else if (left || right) {
           // adjacent lit pixels trend toward white
-          r = g = b = 255;
+          r = colorWhite[0]; g = colorWhite[1]; b = colorWhite[2];
         } else {
           // isolated pixel -> artifact color
           int odd = x & 1;
           int ph = phase[x];
 
-          // phase shifts the palette
-          // ph=0: odd/even -> green/purple
-          // ph=1: odd/even -> orange/blue
+          // Apple II NTSC artifact colors:
+          // ph=0: even -> purple, odd -> green
+          // ph=1: even -> blue,   odd -> orange
           if (ph == 0) {
             if (odd) {
-              r = 48; g = 200; b = 64; // green
+              r = colorGreen[0]; g = colorGreen[1]; b = colorGreen[2];
             } else {
-              r = 200; g = 64; b = 255; // purple
+              r = colorPurple[0]; g = colorPurple[1]; b = colorPurple[2];
             }
           } else {
             if (odd) {
-              r = 255; g = 144; b = 48; // orange
+              r = colorOrange[0]; g = colorOrange[1]; b = colorOrange[2];
             } else {
-              r = 64; g = 136; b = 255; // blue
+              r = colorBlue[0]; g = colorBlue[1]; b = colorBlue[2];
             }
           }
         }
@@ -447,20 +475,20 @@ static void sceneDiskLoader_emitQuotedStringsFromAppleBasicLine(const unsigned c
 
 static void sceneDiskLoader_hgrColorForPixel(bool on, bool hi, bool parityEven, bool adjacentOn, uint8_t *r, uint8_t *g, uint8_t *b) {
   if (!on) {
-    *r = 0; *g = 0; *b = 0;
+    *r = colorBlack[0]; *g = colorBlack[1]; *b = colorBlack[2];
   } else if (adjacentOn) {
-    *r = 245; *g = 245; *b = 245;
+    *r = colorWhite[0]; *g = colorWhite[1]; *b = colorWhite[2];
   } else if (hi) {
     if (parityEven) {
-      *r = 70; *g = 150; *b = 255;
+      *r = colorBlue[0]; *g = colorBlue[1]; *b = colorBlue[2];
     } else {
-      *r = 255; *g = 150; *b = 70;
+      *r = colorOrange[0]; *g = colorOrange[1]; *b = colorOrange[2];
     }
   } else {
     if (parityEven) {
-      *r = 190; *g = 80; *b = 255;
+      *r = colorPurple[0]; *g = colorPurple[1]; *b = colorPurple[2];
     } else {
-      *r = 80; *g = 220; *b = 80;
+      *r = colorGreen[0]; *g = colorGreen[1]; *b = colorGreen[2];
     }
   }
 }
@@ -487,7 +515,7 @@ static void sceneDiskLoader_decodeUltShapesTiles(const uint8_t *dataRaw, uint32_
   const int originalWidth = tilesPerRow * tileW;
   const int originalHeight = rows * tileH;
 
-  *outImage = sceneDiskLoader_createImage(originalWidth, originalHeight, 0, 0, 0);
+  *outImage = sceneDiskLoader_createImage(originalWidth, originalHeight, colorBlack[0], colorBlack[1], colorBlack[2]);
   if (!outImage->data) { return; }
 
   for (int t=0;t<tileCount;t++) {
@@ -692,8 +720,8 @@ bool sceneDiskLoader_parseShapeTable(const uint8_t *dataRaw, uint32_t sizeRaw, S
   uint16_t count = (uint16_t)(data[0] | (data[1] << 8));
   if (count < 1 || count > 255) { return false; }
 
-  // Try mode with count or count+1 pointers
-  for (int j=0;j<2;j++) {
+  // Try mode with count+1 pointers first, then count pointers
+  for (int j=1;j>=0;j--) {
     int ptrWords = count + j;
     if (2 + ptrWords * 2 <= (int)size) {
       uint16_t *ptr = (uint16_t *)malloc(ptrWords * sizeof(uint16_t));
@@ -710,23 +738,90 @@ bool sceneDiskLoader_parseShapeTable(const uint8_t *dataRaw, uint32_t sizeRaw, S
       }
 
       if (valid) {
-        table->count = count;
-        table->starts = (uint16_t *)malloc(count * sizeof(uint16_t));
-        table->ends = (uint16_t *)malloc(count * sizeof(uint16_t));
-
-        if (table->starts && table->ends) {
-          for (int i=0;i<count;i++) {
-            table->starts[i] = ptr[i];
-            table->ends[i] = ptr[i+1];
+        if (ptrWords == count + 1) {
+          uint16_t *starts = (uint16_t *)malloc(count * sizeof(uint16_t));
+          uint16_t *ends = (uint16_t *)malloc(count * sizeof(uint16_t));
+          if (!starts || !ends) {
+            free(starts);
+            free(ends);
+            free(ptr);
+            continue;
           }
+
+          memcpy(starts, ptr, count * sizeof(uint16_t));
+          memcpy(ends, ptr + 1, count * sizeof(uint16_t));
+
+          bool rangesValid = true;
+          for (int i=0;i<count;i++) {
+            if (starts[i] >= ends[i] || ends[i] > size) {
+              rangesValid = false;
+              break;
+            }
+          }
+
+          if (!rangesValid) {
+            free(starts);
+            free(ends);
+            free(ptr);
+            continue;
+          }
+
+          table->count = count;
+          table->starts = starts;
+          table->ends = ends;
           table->data = data;
           table->data_size = size;
           free(ptr);
           return true;
         }
 
-        free(table->starts);
-        free(table->ends);
+        if (ptrWords == count) {
+          uint16_t *ends = (uint16_t *)malloc(count * sizeof(uint16_t));
+          if (!ends) {
+            free(ptr);
+            continue;
+          }
+
+          bool rangesValid = true;
+          
+          for (int i=0;i<count;i++) {
+            uint16_t s = ptr[i];
+            uint16_t limit = i + 1 < count ? ptr[i + 1] : (uint16_t)size;
+            uint16_t e = limit;
+
+            if (s >= limit || limit > size) {
+              rangesValid = false;
+              break;
+            }
+
+            for (uint16_t p=s;p<limit;p++) {
+              if (data[p] == 0) {
+                e = p + 1;
+                break;
+              }
+            }
+
+            if (e <= s || e > size) {
+              rangesValid = false;
+              break;
+            }
+
+            ends[i] = e;
+          }
+
+          if (!rangesValid) {
+            free(ends);
+            free(ptr);
+            continue;
+          }
+
+          table->count = count;
+          table->starts = ptr;
+          table->ends = ends;
+          table->data = data;
+          table->data_size = size;
+          return true;
+        }
       }
 
       free(ptr);
@@ -736,7 +831,7 @@ bool sceneDiskLoader_parseShapeTable(const uint8_t *dataRaw, uint32_t sizeRaw, S
   return false;
 }
 
-static bool sceneDiskLoader_renderShapeTable(const ShapeTable *table, UltimaImage *outImage, int tileWidth, int tileHeight) {
+static bool sceneDiskLoader_renderEnemiesShapeTable(const ShapeTable *table, UltimaImage *outImage, int tileWidth, int tileHeight) {
   if (!table || !outImage) { return false; }
 
   const int cols = 8;
@@ -744,7 +839,7 @@ static bool sceneDiskLoader_renderShapeTable(const ShapeTable *table, UltimaImag
   const int originalWidth = cols * tileWidth;
   const int originalHeight = rows * tileHeight;
 
-  *outImage = sceneDiskLoader_createImage(originalWidth, originalHeight, 0, 0, 0);
+  *outImage = sceneDiskLoader_createImage(originalWidth, originalHeight, 255, 0, 0);
   if (!outImage->data) { return false; }
 
   // Direction vectors: up, right, down, left
@@ -755,9 +850,10 @@ static bool sceneDiskLoader_renderShapeTable(const ShapeTable *table, UltimaImag
     {-1, 0}
   };
 
-  for (uint16_t s=0;s<table->count;s++) {
-    int cx = (s % cols) * tileWidth;
-    int cy = (s / cols) * tileHeight;
+  for (int s=table->count-1;s>=0;s--) {
+    int sind = (s >= table->count / 2) ? s - table->count / 2 : s;
+    int cx = (sind % cols) * tileWidth;
+    int cy = (sind / cols) * tileHeight;
     int x = cx;
     int y = cy;
 
@@ -775,12 +871,14 @@ static bool sceneDiskLoader_renderShapeTable(const ShapeTable *table, UltimaImag
       bool bPlot = ((byte >> 5) & 0x01) != 0;
       int cDir = (byte >> 6) & 0x03;
 
-      if (aPlot) { sceneDiskLoader_setPixel(outImage, x, y, 255, 255, 255); }
+      int *color = (s >= table->count / 2) ? colorBlack : colorWhite;
+
+      if (aPlot) { sceneDiskLoader_setPixel(outImage, x, y, color[0], color[1], color[2]); }
       x += dirs[aDir][0];
       y += dirs[aDir][1];
 
       if (!(bDir == 0 && !bPlot && cDir == 0)) {
-        if (bPlot) { sceneDiskLoader_setPixel(outImage, x, y, 255, 255, 255); }
+        if (bPlot) { sceneDiskLoader_setPixel(outImage, x, y, color[0], color[1], color[2]); }
         x += dirs[bDir][0];
         y += dirs[bDir][1];
       }
@@ -792,34 +890,43 @@ static bool sceneDiskLoader_renderShapeTable(const ShapeTable *table, UltimaImag
     }
   }
 
+  for (int y=0;y<originalHeight;y++) {
+    for (int x=0;x<originalWidth;x++) {
+      uint32_t index = (y * originalWidth + x) * 4;
+      if (outImage->data[index] == 255 && outImage->data[index + 1] == 0 && outImage->data[index + 2] == 0) {
+        outImage->data[index + 0] = 0;
+        outImage->data[index + 1] = 0;
+        outImage->data[index + 2] = 0;
+        outImage->data[index + 3] = 0;
+        continue;
+      }
+    }
+  }
+
   // HGR coloring
-  for (int x=0;x<originalWidth;x++) {
-    for (int y=0;y<originalHeight;y++) {
+  for (int y=0;y<originalHeight;y++) {
+    for (int x=0;x<originalWidth;x++) {
       uint32_t index = (y * originalWidth + x) * 4;
       
+      bool isLit = outImage->data[index] != 0 || outImage->data[index + 1] != 0 || outImage->data[index + 2] != 0;
+      if (!isLit) { continue; }
+
       bool leftLit = false;
       bool rightLit = false;
-
-      if (x > 0) {leftLit = outImage->data[index - 4] != 0;}
-      if (x < originalWidth - 1) {rightLit = outImage->data[index + 4] != 0;}
-
-      if (outImage->data[index] == 0) { 
-        if (!leftLit && !rightLit) {
-          outImage->data[index + 0] = 225;
-          outImage->data[index + 3] = 0;
-        }
-        continue; 
-      }
+      
+      if (x > 0) { leftLit = outImage->data[index - 4] != 0 || outImage->data[index - 3] != 0 || outImage->data[index - 2] != 0; }
+      if (x < originalWidth - 1) { rightLit = outImage->data[index + 4] != 0 || outImage->data[index + 5] != 0 || outImage->data[index + 6] != 0; }
 
       if (!leftLit && !rightLit) {
+        // isolated lit pixel -> NTSC artifact color (shape tables have no hi-bit, default ph=0)
         if ((x & 1) == 0) {
-          outImage->data[index + 0] = 190;
-          outImage->data[index + 1] = 80;
-          outImage->data[index + 2] = 255;
+          outImage->data[index + 0] = colorPurple[0];
+          outImage->data[index + 1] = colorPurple[1];
+          outImage->data[index + 2] = colorPurple[2];
         } else {
-          outImage->data[index + 0] = 80;
-          outImage->data[index + 1] = 220;
-          outImage->data[index + 2] = 80;
+          outImage->data[index + 0] = colorGreen[0];
+          outImage->data[index + 1] = colorGreen[1];
+          outImage->data[index + 2] = colorGreen[2];
         }
       }
     }
@@ -1018,7 +1125,7 @@ void sceneDiskLoader_extractUltimaAssets() {
   if (outShapesBuffer && outShapesBuffer->data) {
     ShapeTable table = {0};
     if (sceneDiskLoader_parseShapeTable(outShapesBuffer->data, outShapesBuffer->size, &table)) {
-      sceneDiskLoader_renderShapeTable(&table, &ultimaAssets.enemySprites, OS_ENEMY_SPRITE_WIDTH, OS_ENEMY_SPRITE_HEIGHT);
+      sceneDiskLoader_renderEnemiesShapeTable(&table, &ultimaAssets.enemySprites, OS_ENEMY_SPRITE_WIDTH, OS_ENEMY_SPRITE_HEIGHT);
       sceneDiskLoader_freeShapeTable(&table);
     }
 
