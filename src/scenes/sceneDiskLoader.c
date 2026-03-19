@@ -591,24 +591,22 @@ static float sceneDiskLoader_decodeApplesoftFloat(const uint8_t *data) {
 
 static void sceneDiskLoader_decodeEnemiesTable(const uint8_t *data) {
   uint16_t enemiesCount = data[0x496] << 8 | data[0x497];
-  
+
   enemyDefinitions = calloc(enemiesCount, sizeof(EnemyDefinition));
   if (!enemyDefinitions) { return; }
 
   int offset = 0x498;
   int nameOffset = 0x405;
+  int stride = 5;
   for (int i=0;i<enemiesCount;i++) {
-    float group = sceneDiskLoader_decodeApplesoftFloat(data + offset);
-    float rank = sceneDiskLoader_decodeApplesoftFloat(data + offset + 5);
-    float hp = sceneDiskLoader_decodeApplesoftFloat(data + offset + 10);
+    float group = sceneDiskLoader_decodeApplesoftFloat(data + offset + (0 * enemiesCount + i) * stride);
+    float rank = sceneDiskLoader_decodeApplesoftFloat(data + offset + (1 * enemiesCount + i) * stride);
+    float hp = sceneDiskLoader_decodeApplesoftFloat(data + offset + (2 * enemiesCount + i) * stride);
 
-    int nameLength = data[nameOffset];
-    int nameAddress = (data[nameOffset + 1] | data[nameOffset + 2] << 8) - 0x7800;
+    int nameLength = data[nameOffset + i * 3];
+    int nameAddress = ((int)data[nameOffset + i * 3 + 1] | ((int)data[nameOffset + i * 3 + 2] << 8)) - 0x7800;
     char name[17] = {0};
     memcpy(name, data + nameAddress, nameLength);
-
-    offset += 15;
-    nameOffset += 3;
 
     enemy_define(i, name, group, rank, hp);
   }

@@ -46,7 +46,7 @@ static void sceneOverworld_spawnMonsters() {
     enemyEncounter.hp = (enemyEncounter.monsterId - 9) * 20 * rand01() + 30 + pow(rand01(), 2) * (int)(player.time / 100);
   }
 
-  enemyEncounter.number = (int)pow(rand01(), 2) * enemyDefinitions[enemyEncounter.monsterId].group + 1;
+  enemyEncounter.number = (int)(pow(rand01(), 2) * enemyDefinitions[enemyEncounter.monsterId].group) + 1;
 }
 
 static void sceneOverworld_resolveEncounter() {

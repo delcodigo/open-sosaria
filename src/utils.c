@@ -13,5 +13,5 @@ int file_exists(const char *filename) {
 }
 
 float rand01() {
-  return (float)rand() / (float)RAND_MAX;
+  return (float)rand() / ((float)RAND_MAX + 1.0f);
 }

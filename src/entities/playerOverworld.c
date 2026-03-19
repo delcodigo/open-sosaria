@@ -567,7 +567,7 @@ static bool playerOverworld_updateAttack() {
       return true;
     }
 
-    int attack = rand01() * 20 + (player.strength + player.agility) / 5 + player.weapon;
+    float attack = rand01() * 20.0f + (float)(player.strength + player.agility) / 5.0f + (float)player.weapon;
     int defense = enemyDefinitions[monsterId].rank + 10;
     if (attack > defense || attack > 20) {
       int damage = (int)((player.strength + player.weapon) * rand01()) + 1;
@@ -577,7 +577,7 @@ static bool playerOverworld_updateAttack() {
 
       enemyEncounter.hp -= damage;
 
-      if (enemyEncounter.hp <= 0) {
+      if (enemyEncounter.hp < 0) {
         enemyEncounter.number -= 1;
         
         player.experience += enemyDefinitions[monsterId].rank * 5;
@@ -585,7 +585,7 @@ static bool playerOverworld_updateAttack() {
         player.gold += goldEarned;
 
         memset(consoleMessage, 0, sizeof(consoleMessage));
-        snprintf(consoleMessage, sizeof(consoleMessage), "%.15s%d", ultimaStrings[134], goldEarned);
+        snprintf(consoleMessage, sizeof(consoleMessage), "%.15s+%d", ultimaStrings[134], goldEarned);
         uiConsole_queueMessage(consoleMessage);
 
         if (enemyEncounter.number <= 0) {
@@ -641,6 +641,10 @@ bool playerOverworld_update(float deltaTime) {
     if (keyRepeatDelay < 0) {
       keyRepeatDelay = 0;
     }
+  }
+
+  if (acted) {
+    player.time += 0.6f;
   }
 
   return acted;
