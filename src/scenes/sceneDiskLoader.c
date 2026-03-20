@@ -1202,8 +1202,9 @@ void sceneDiskLoader_extractUltimaAssets() {
 }
 
 void sceneDiskLoader_init() {
-  sceneDiskLoader_verifyUltimaDisks();
-  sceneDiskLoader_extractUltimaAssets();
+  if (sceneDiskLoader_verifyUltimaDisks()) {
+    sceneDiskLoader_extractUltimaAssets();
+  }
 
   loaderTime = 2.0f; // Show the loader for 2 seconds before proceeding
 }

@@ -62,6 +62,12 @@ int engine_init() {
     return 0;
   }
 
+  /* Apply integer-scaled viewport immediately on startup (e.g., maximized windows). */
+  int framebufferWidth = 0;
+  int framebufferHeight = 0;
+  glfwGetFramebufferSize(window, &framebufferWidth, &framebufferHeight);
+  engine_screenResizeCallback(window, framebufferWidth, framebufferHeight);
+
   glEnable(GL_DEPTH_TEST);
   glEnable(GL_BLEND);
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
