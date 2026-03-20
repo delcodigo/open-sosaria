@@ -73,7 +73,7 @@ void osFree(void *ptr, const char *file, int line) {
 }
 
 void printLeftPointers() {
-  printf("Remaining pointers: %ld\n", allocationCount);
+  printf("Remaining pointers: %zu\n", allocationCount);
   for (size_t i = 0; i < allocationCount; i++) {
     printf("  Address: %p, Size: %zu\n", allocations[i].ptr, allocations[i].size);
   }

@@ -47,17 +47,18 @@ If files are missing, the runtime should fail with a clear error message.
 
 **Linux:**
 ```bash
-sudo apt install libglfw3-dev libgl1-mesa-dev
+sudo apt install build-essential pkg-config libglfw3-dev libgl1-mesa-dev
 ```
 
 **macOS:**
 ```bash
-brew install glfw
+brew install pkg-config glfw
 ```
 
 **Windows:**
-- GLFW3 libraries in `C:/CLibs/include` and `C:/CLibs/libs`
-- Or adjust paths in Makefile `LDFlags`
+- Use an MSYS2 MinGW-w64 shell (`UCRT64` recommended)
+- Install `gcc`, `make`, `pkgconf`, and `glfw` from MSYS2
+- Manual fallback: install GLFW to `C:/CLibs/include` and `C:/CLibs/libs`
 
 See [BUILDING.md](BUILDING.md) for detailed build instructions.
 
@@ -68,6 +69,8 @@ make              # Release build
 make debug        # Debug build with symbols
 make clean        # Clean build artifacts
 ```
+
+On some MSYS2 setups, use `mingw32-make` if `make` is not available in PATH.
 
 ## Run
 

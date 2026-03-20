@@ -2,67 +2,87 @@
 
 ## Requirements
 
-- GCC compiler with C99 support
+- GCC or Clang with C99 support
 - GLFW3 development libraries
 - OpenGL libraries
-- Make
+- GNU Make
+- `pkg-config` recommended
+
+## Supported Toolchains
+
+The Makefile is written for GNU Make plus a POSIX shell.
+
+- Linux: system GCC or Clang
+- macOS: Apple Clang with Homebrew packages
+- Windows: MSYS2 MinGW-w64 shell (`UCRT64` or `MINGW64`)
+
+On Windows, run `make` from an MSYS2 shell. The recipes use POSIX commands such as `mkdir -p` and `rm -rf`.
 
 ## Build Types
 
 ```bash
-make              # Release build (optimized, stripped)
-make debug        # Debug build (symbols, no optimization, no stripping)
+make              # Release build (stripped, GUI subsystem on Windows)
+make debug        # Debug build (symbols, console subsystem on Windows)
 make clean        # Remove build artifacts
 ```
+
+On some MSYS2 setups, `make` may be exposed as `mingw32-make`. If `make` is not found, use `mingw32-make` for the same targets.
 
 ## Platform-Specific Setup
 
 ### Linux (Ubuntu/Debian)
 
 ```bash
-sudo apt install libglfw3-dev libgl1-mesa-dev build-essential
+sudo apt install build-essential pkg-config libglfw3-dev libgl1-mesa-dev
 ```
 
-The Makefile expects GLFW headers in `/usr/local/include` and libraries in `/usr/local/lib`. If using system packages, they're typically in `/usr/include` and `/usr/lib`, which the linker will find automatically.
+The Makefile prefers `pkg-config` to discover GLFW. If `pkg-config` is unavailable, it falls back to `-lglfw` plus the required OpenGL/X11 libraries.
 
 ### macOS
 
 ```bash
-brew install glfw
+brew install pkg-config glfw
 ```
 
-GLFW will be installed to `/usr/local/` by default.
+The Makefile prefers `pkg-config`. If it is unavailable, it falls back to `brew --prefix` and links the required macOS frameworks.
 
-### Windows (MinGW/MSYS2)
+### Windows (MSYS2)
 
-The Makefile expects GLFW in `C:/CLibs/include` and `C:/CLibs/libs`.
+Recommended setup:
 
-1. Download GLFW from [glfw.org](https://www.glfw.org/download.html)
-2. Extract to `C:/CLibs/` or adjust the paths in the Makefile's `LDFlags`
-3. Or use MSYS2 package manager:
-   ```bash
-   pacman -S mingw-w64-x86_64-glfw
-   ```
-   Then update the Makefile paths accordingly.
+```bash
+pacman -S --needed mingw-w64-ucrt-x86_64-gcc mingw-w64-ucrt-x86_64-make mingw-w64-ucrt-x86_64-pkgconf mingw-w64-ucrt-x86_64-glfw
+```
+
+Launch the matching MSYS2 shell before building. If `pkg-config` cannot locate GLFW, the Makefile falls back to `C:/CLibs/include` and `C:/CLibs/libs` for a manual install.
+
+If `make` is unavailable in the shell, run `mingw32-make` instead.
 
 ## Build Details
 
-### Compiler Flags
+### Compiler and Linker Flags
 
 **Release build:**
 - `-std=c99` - C99 standard
-- `-s` - Strip symbols (smaller binary)
 - `-Wall -Wextra -Werror` - Strict warnings
-- Platform-specific defines: `-DCR_UNIX`, `-DCR_WINDOWS`, `-D_POSIX_C_SOURCE=200809L`
+- `-MMD -MP` - Generate header dependency files
+- `-s` - Strip symbols from the final binary
+- Windows only: `-mwindows` for the GUI subsystem
 
 **Debug build:**
 - `-g` - Debug symbols
 - `-DDEBUG` - Debug macro
-- No stripping or `-mwindows` flag
+- No `-s` or `-mwindows`
+
+**Standard variable layout:**
+- `CPPFLAGS` - Include paths and preprocessor defines
+- `CFLAGS` - Warning and compile flags
+- `LDFLAGS` - Linker search paths and options
+- `LDLIBS` - Linked libraries
 
 ### Special Compilation Rules
 
-The `glad.c` dependency file is compiled without `-Werror` and `-pedantic-errors` to avoid warnings in third-party code.
+The third-party `glad.c` source is compiled without warning promotion so external code does not fail the build.
 
 ## Verifying the Build
 
@@ -72,43 +92,31 @@ Check dynamic library dependencies:
 # Linux
 ldd bin/open-sosaria
 
-# macOS  
+# macOS
 otool -L bin/open-sosaria
 
 # Windows (MSYS2)
 ldd bin/open-sosaria.exe
 ```
 
-## Makefile Variables
-
-- `CC` - Compiler (default: `gcc`)
-- `CFLAGS` - Base compiler flags (default: `-std=c99`)
-- `LDFlags` - Linker flags (platform-specific, auto-detected)
-- `OSBuildFlags` - OS-specific build flags (e.g., `-s` for stripping)
-- `OSDebugFlags` - Debug-specific flags (e.g., `-DDEBUG`)
-
 ## Project Structure
 
-```
+```text
 open-sosaria/
 ├── src/
-│   ├── main.c              # Main entry point
-│   └── dependencies/
-│       ├── glad.c          # OpenGL loader
-│       └── glad.h          # OpenGL headers
-├── build/                  # Object files (*.o)
+├── build/                  # Object files and generated .d files
 ├── bin/
-│   └── open-sosaria        # Final executable
+│   └── open-sosaria(.exe)  # Final executable
 └── Makefile
 ```
 
 ## Troubleshooting
 
-**"cannot find -lglfw" error:**
+**Missing GLFW flags or "cannot find -lglfw":**
 - Ensure GLFW development libraries are installed
-- On Linux, verify `/usr/local/lib` or `/usr/lib` contains `libglfw.so`
-- On macOS, check `/usr/local/lib` for `libglfw.dylib`
-- On Windows, verify paths in `LDFlags` match your GLFW installation
+- Verify `pkg-config --cflags --libs glfw3` succeeds
+- On Windows, use the MSYS2 shell that matches the installed package set (`UCRT64` vs `MINGW64`)
+- If using a manual Windows install, verify `C:/CLibs/include` and `C:/CLibs/libs`
 
 **Compilation warnings in glad.c:**
-- These are suppressed by design; glad.c uses a special compilation rule
+- These are suppressed by design; `glad.c` uses a dedicated compile rule

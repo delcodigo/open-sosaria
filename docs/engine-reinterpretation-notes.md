@@ -152,6 +152,66 @@ $$
 
 - The overworld map is divided into **4 chunks**: `bterra0`, `bterra1`, `bterra2`, `bterra3`.
 
+## Overworld Combat Flow
+
+- After each player action, overworld combat resolution runs on the next update cycle.
+- Combat state is tracked with `enemyEncounter.monsterId`:
+	- Active encounter: monster id between **6** and **20**.
+	- No active encounter: ids outside that range.
+- Monster encounters with ids **6..20** are the overworld encounter set.
+- If there is no active encounter, the engine attempts to spawn a new enemy group.
+- If there is an active encounter, the enemy group performs an attack pass against the player.
+
+### Encounter Spawn and Group Size
+
+- Spawn checks are tile-dependent and probabilistic:
+	- Base early return when `rand01() > 0.1`.
+	- Extra suppression on tile type 1 when `rand01() > 0.5`.
+- Spawned monster id range depends on tile category.
+- Group count is:
+
+$$
+\left\lfloor rand01()^2 \times groupSize\right\rfloor + 1
+$$
+
+where `groupSize` comes from `enemyDefinitions[monsterId].group`.
+
+### Enemy Attack Resolution
+
+- During enemy retaliation, each enemy in the group rolls a hit independently.
+- Player defense uses armor, with extra defense when riding vehicles with ids **4..6**: **FRIGATE**, **AIR CAR**, and **SHUTTLE**.
+- Each successful enemy hit reduces player health by:
+
+$$
+\left\lfloor rank \times rand01() + 1\right\rfloor
+$$
+
+where `rank` is the attacking monster rank.
+
+### Movement While in Combat
+
+- Moving while an encounter is active first runs an escape/dodge check.
+- On successful dodge/escape, the encounter is cleared and enemy rendering is disabled.
+- On failed dodge/escape:
+	- Movement is blocked for that action.
+	- Enemy rendering is enabled.
+	- An encounter message is printed.
+
+### Fleeing and Weapon Reach Constraints
+
+- Fleeing is a valid and sometimes necessary option because weapon viability is monster-dependent.
+- In melee attack flow:
+	- Monsters with id **< 10** are treated as water monsters.
+	- Monster id **12** is treated as hidden archers.
+	- Weapons with indices **< 7**, **11**, and **13** are treated as melee-only for this reach check.
+- If a melee-only weapon is used against those monster sets, the attack yields an immediate no-damage result.
+
+### Group HP Model (First Enemy vs Following Enemies)
+
+- Initial encounter HP (effectively the first enemy in the group) is generated in spawn logic using formulas that include progression scaled by `player.time / 100`.
+- After one enemy dies and the group still has members left, HP for the next enemy is regenerated with a different formula that scales progression by `player.time / 1000` and uses a lower baseline.
+- Practical effect: the first enemy in a spawned group tends to be tougher, while subsequent enemies in the same group are generally weaker.
+
 ### Overworld Extra Commands
 
 - `drop`, `get`, and `open` are not actually usable actions on the overworld.
