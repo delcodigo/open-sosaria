@@ -12,8 +12,7 @@
 static Geometry blackPanel;
 static Text statsLabels[4];
 static Text stats[4];
-static Text consoleText[4];
-static char consoleLines[4][30] = { 0 };
+static ConsoleLine consoleLines[4];
 static const unsigned char textureData[] = {0,0,0,255};
 static GLuint blackPanelTextureId;
 static float transformMatrix[16];
@@ -21,6 +20,8 @@ static char queuedMessages[10][30] = { 0 };
 int queuedMessagesCount = 0;
 static float timeToNextMessage = 0.0f;
 static bool dequeuing = false;
+static float flashTime = 0.0f;
+static char flashChar = '0';
 
 void uiConsole_init() {
   geometry_setSprite(&blackPanel, OS_SCREEN_WIDTH, OS_TILE_HEIGHT * 2, 0, 0, 0, 1);
@@ -45,9 +46,10 @@ void uiConsole_init() {
   text_create(&stats[3], "     ");
 
   for (int i=0;i<4;i++) {
-    memset(consoleLines[i], ' ', sizeof(consoleLines[i]));
-    consoleLines[i][29] = '\0';
-    text_create(&consoleText[i], consoleLines[i]);
+    memset(consoleLines[i].line, ' ', sizeof(consoleLines[i].line));
+    consoleLines[i].line[29] = '\0';
+    consoleLines[i].isFlashing = false;
+    text_create(&consoleLines[i].text, consoleLines[i].line);
   }
 
   uiConsole_updateStats();
@@ -61,6 +63,26 @@ void uiConsole_queueMessage(const char *message) {
   }
 }
 
+static void uiConsole_detectFlashing(int index) {
+  int length = strlen(consoleLines[index].line);
+  for (int i=0;i<length-1;i++) {
+    if (consoleLines[index].line[i] == '^' && consoleLines[index].line[i + 1] == 'F') {
+      consoleLines[index].isFlashing = true;
+      return;
+    }
+  }
+}
+
+static void uiConsole_reverseFlashing(int index) {
+  int length = strlen(consoleLines[index].line);
+  for (int i=0;i<length-3;i++) {
+    if (consoleLines[index].line[i] == '^' && consoleLines[index].line[i + 1] == 'F') {
+      consoleLines[index].line[i + 3] = flashChar;
+      return;
+    }
+  }
+}
+
 void uiConsole_addMessage(const char *message) {
   if (queuedMessagesCount > 0 && !dequeuing) {
     uiConsole_queueMessage(message);
@@ -68,19 +90,24 @@ void uiConsole_addMessage(const char *message) {
   }
 
   for (int i=0;i<3;i++) {
-    strncpy(consoleLines[i], consoleLines[i + 1], sizeof(consoleLines[i]));
-    text_update(&consoleText[i], consoleLines[i]);
+    consoleLines[i].isFlashing = consoleLines[i + 1].isFlashing;
+    strncpy(consoleLines[i].line, consoleLines[i + 1].line, sizeof(consoleLines[i].line));
+    text_update(&consoleLines[i].text, consoleLines[i].line);
   }
 
-  strncpy(consoleLines[3], message, sizeof(consoleLines[3]));
-  consoleLines[3][29] = '\0';
-  text_update(&consoleText[3], consoleLines[3]);
+  int length = strlen(message);
+  strncpy(consoleLines[3].line, message, sizeof(consoleLines[3].line));
+  consoleLines[3].line[length < 29 ? length : 29] = '\0';
+  consoleLines[3].isFlashing = false;
+  uiConsole_detectFlashing(3);
+  text_update(&consoleLines[3].text, consoleLines[3].line);
 }
 
 void uiConsole_replaceLastMessage(const char *message) {
-  strncpy(consoleLines[3], message, sizeof(consoleLines[3]));
-  consoleLines[3][29] = '\0';
-  text_update(&consoleText[3], consoleLines[3]);
+  strncpy(consoleLines[3].line, message, sizeof(consoleLines[3].line));
+  consoleLines[3].line[29] = '\0';
+  uiConsole_detectFlashing(3);
+  text_update(&consoleLines[3].text, consoleLines[3].line);
 }
 
 void uiConsole_updateStats() {
@@ -117,12 +144,24 @@ void uiConsole_update(float deltaTime) {
 
   int cx = camera_getX(&camera);
   int cy = camera_getY(&camera) + 160;
+
+  flashTime += deltaTime;
   for (int i=0;i<4;i++) {
     int sy = cy + OS_FONT_GLYPH_HEIGHT * i;
+
+    if (flashTime >= 0.15f && consoleLines[i].isFlashing) {
+      uiConsole_reverseFlashing(i);
+      text_update(&consoleLines[i].text, consoleLines[i].line);
+    }
     
-    text_renderxyz(&consoleText[i], cx, sy, 3);
+    text_renderxyz(&consoleLines[i].text, cx, sy, 3);
     text_renderxyz(&statsLabels[i], cx + 203, sy, 3);
     text_renderxyz(&stats[i], cx + 238, sy, 3);
+  }
+
+  if (flashTime >= 0.15f) {
+    flashTime = 0;
+    flashChar = flashChar == '0' ? '1' : '0';
   }
 }
 
@@ -133,6 +172,6 @@ void uiConsole_free() {
   for (int i=0;i<4;i++) {
     text_free(&statsLabels[i]);
     text_free(&stats[i]);
-    text_free(&consoleText[i]);
+    text_free(&consoleLines[i].text);
   }
 }

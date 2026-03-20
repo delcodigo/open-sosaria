@@ -532,7 +532,7 @@ static bool playerOverworld_updateAttack() {
     lagTime = 1.5f;
 
     char consoleMessage[31] = {0};
-    snprintf(consoleMessage, sizeof(consoleMessage), "%.13s^1%.12s^0", ultimaStrings[98], ultimaStrings[126]);
+    snprintf(consoleMessage, sizeof(consoleMessage), "%.11s^F^1%.12s^0", ultimaStrings[98], ultimaStrings[126]);
     uiConsole_replaceLastMessage(consoleMessage);
 
     int monsterId = enemyEncounter.monsterId;
@@ -543,7 +543,7 @@ static bool playerOverworld_updateAttack() {
     }
 
     memset(consoleMessage, 0, sizeof(consoleMessage));
-    snprintf(consoleMessage, sizeof(consoleMessage), "^1%s^0", enemyDefinitions[monsterId].name);
+    snprintf(consoleMessage, sizeof(consoleMessage), "^F^1%s^0", enemyDefinitions[monsterId].name);
     uiConsole_queueMessage(consoleMessage);
 
     if ((monsterId < 10 || monsterId == 12) && (player.weapon < 7 || player.weapon == 11 || player.weapon == 13)) {

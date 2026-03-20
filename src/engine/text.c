@@ -8,7 +8,7 @@
 static float transformMatrix[16];
 
 static bool text_isFormattingCode(const char *text) {
-  return text[0] == '^' && (text[1] == '0' || text[1] == '1');
+  return text[0] == '^' && (text[1] == '0' || text[1] == '1' || text[1] == 'F');
 }
 
 static unsigned int text_getVisibleLength(const char *text) {
@@ -83,7 +83,10 @@ static bool text_addGlyphs(const char *text, float *vertices, unsigned int *indi
 
   for (int i=0;text[i] != '\0' && glyphIndex < glyphCount;i++) {
     if (text_isFormattingCode(&text[i])) {
-      isInverted = text[i + 1] == '1';
+      if (text[i + 1] != 'F'){
+        isInverted = text[i + 1] == '1';
+      }
+      
       i++;
       continue;
     }

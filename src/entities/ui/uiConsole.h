@@ -2,8 +2,15 @@
 #define OS_UI_CONSOLE_H
 
 #include "engine/geometry.h"
+#include "engine/text.h"
 
 extern int queuedMessagesCount;
+
+typedef struct {
+  Text text;
+  char line[30];
+  bool isFlashing;
+} ConsoleLine;
 
 void uiConsole_init();
 void uiConsole_queueMessage(const char *message);
