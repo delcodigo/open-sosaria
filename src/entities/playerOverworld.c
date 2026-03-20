@@ -68,10 +68,8 @@ bool playerOverworld_tryAndDodgeEnemies(int mx, int my) {
   }
 
   char encounterMessage[31] = {0};
-  snprintf(encounterMessage, sizeof(encounterMessage), "%.15s %.10s", ultimaStrings[121], enemyDefinitions[enemyEncounter.monsterId].name);
-  uiConsole_inverseText();
+  snprintf(encounterMessage, sizeof(encounterMessage), "^1%.15s %.8s^0", ultimaStrings[121], enemyDefinitions[enemyEncounter.monsterId].name);
   uiConsole_queueMessage(encounterMessage);
-  uiConsole_normalText();
 
   renderEnemy = true;
   if (enemyGeometry != NULL) {
@@ -534,7 +532,7 @@ static bool playerOverworld_updateAttack() {
     lagTime = 1.5f;
 
     char consoleMessage[31] = {0};
-    snprintf(consoleMessage, sizeof(consoleMessage), "%.15s%.14s", ultimaStrings[98], ultimaStrings[126]);
+    snprintf(consoleMessage, sizeof(consoleMessage), "%.13s^1%.12s^0", ultimaStrings[98], ultimaStrings[126]);
     uiConsole_replaceLastMessage(consoleMessage);
 
     int monsterId = enemyEncounter.monsterId;
@@ -545,11 +543,8 @@ static bool playerOverworld_updateAttack() {
     }
 
     memset(consoleMessage, 0, sizeof(consoleMessage));
-    snprintf(consoleMessage, sizeof(consoleMessage), "%s", enemyDefinitions[monsterId].name);
-    uiConsole_inverseText();
+    snprintf(consoleMessage, sizeof(consoleMessage), "^1%s^0", enemyDefinitions[monsterId].name);
     uiConsole_queueMessage(consoleMessage);
-
-    uiConsole_normalText();
 
     if ((monsterId < 10 || monsterId == 12) && (player.weapon < 7 || player.weapon == 11 || player.weapon == 13)) {
       uiConsole_queueMessage(ultimaStrings[128]);

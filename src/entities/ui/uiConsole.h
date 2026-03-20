@@ -6,8 +6,6 @@
 extern int queuedMessagesCount;
 
 void uiConsole_init();
-void uiConsole_inverseText();
-void uiConsole_normalText();
 void uiConsole_queueMessage(const char *message);
 void uiConsole_addMessage(const char *message);
 void uiConsole_replaceLastMessage(const char *message);

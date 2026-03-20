@@ -45,7 +45,7 @@ static void uiZtats_buildTextGeometries(int itemsStart, int itemsEnd, bool isPad
       snprintf(label, sizeof(label), "%.15s%d", array[i], value);
     }
 
-    text_create(&textArray[textIndex++], label, false);
+    text_create(&textArray[textIndex++], label);
   }
 }
 
@@ -59,7 +59,7 @@ static void uiZtats_buildTextGeometriesByUltimaIndex(int itemsCount, bool isPadd
       snprintf(label, sizeof(label), "%.15s%d", ultimaStrings[stringIndex + i], *(playerItems + i));
     }
 
-    text_create(&textArray[i], label, false);
+    text_create(&textArray[i], label);
   }
 }
 
@@ -71,15 +71,15 @@ void uiZtats_init() {
 
   char titleLine[41] = {0};
   snprintf(titleLine, sizeof(titleLine), "%.10s%.10s%.15s", ultimaStrings[242], ultimaStrings[243], player.name);
-  text_create(&titleText, titleLine, false);
+  text_create(&titleText, titleLine);
 
-  text_create(&continueText, "UP/DOWN: SCROLL. ANY KEY: CONTINUE--", false);
+  text_create(&continueText, "UP/DOWN: SCROLL. ANY KEY: CONTINUE--");
 
   memset(titleLine, '\0', sizeof(titleLine));
   char level[12] = {0};
   snprintf(level, sizeof(level), "%d", (int)(player.time / 1000.0f) + 1);
   snprintf(titleLine, sizeof(titleLine), "%.10s%.4s %.10s %.10s", ultimaStrings[244], level, racesNames[player.race], typesNames[player.type]);
-  text_create(&levelClassRaceText, titleLine, false);
+  text_create(&levelClassRaceText, titleLine);
 
   uiZtats_buildTextGeometries(0, 7, false, statsNames, statLabelsText, &player.health);
   uiZtats_buildTextGeometries(1, OS_ARMORS_COUNT, true, armorNames, armorText, player.armors);

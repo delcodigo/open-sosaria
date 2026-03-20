@@ -7,7 +7,7 @@ static bool cursorVisible = true;
 void uiCursor_init() {
   char cursorStr[16] = { 0 };
   cursorStr[0] = 127;
-  text_create(&cursorTextGeometry, cursorStr, false);
+  text_create(&cursorTextGeometry, cursorStr);
 }
 
 void uiCursor_update(float deltaTime, float x, float y) {

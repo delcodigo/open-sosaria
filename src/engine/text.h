@@ -14,8 +14,8 @@ typedef struct {
   bool isInverted;
 }Text;
 
-void text_create(Text *textGeometry, const char* text, bool isInverted);
-void text_update(Text *textGeometry, const char* text, bool isInverted);
+void text_create(Text *textGeometry, const char* text);
+void text_update(Text *textGeometry, const char* text);
 void text_renderxyz(Text *textGeometry, float x, float y, float z);
 void text_render(Text *textGeometry, float x, float y);
 void text_free(Text *textGeometry);

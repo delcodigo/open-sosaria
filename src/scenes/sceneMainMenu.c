@@ -1,4 +1,5 @@
 #include <string.h>
+#include <stdio.h>
 #include "sceneMainMenu.h"
 #include "data/saveAndLoad.h"
 #include "engine/text.h"
@@ -26,20 +27,23 @@ static Textfield menuInputField = {
 };
 
 static void sceneMainMenu_init() {
-  text_create(&titleTextGeometry[0], ultimaStrings[0], true);
-  text_create(&titleTextGeometry[1], ultimaStrings[1], false);
-  text_create(&titleTextGeometry[2], ultimaStrings[2], false);
-  text_create(&titleTextGeometry[3], ultimaStrings[3], false);
+  char invertedTitleText[strlen(ultimaStrings[0]) + 3];
+  snprintf(invertedTitleText, sizeof(invertedTitleText), "^1%s", ultimaStrings[0]);
 
-  text_create(&copyrightTextGeometry[0], ultimaStrings[4], false);
-  text_create(&copyrightTextGeometry[1], ultimaStrings[5], false);
+  text_create(&titleTextGeometry[0], invertedTitleText);
+  text_create(&titleTextGeometry[1], ultimaStrings[1]);
+  text_create(&titleTextGeometry[2], ultimaStrings[2]);
+  text_create(&titleTextGeometry[3], ultimaStrings[3]);
 
-  text_create(&optionsTextGeometry[0], ultimaStrings[7], false);
-  text_create(&optionsTextGeometry[1], ultimaStrings[8], false);
+  text_create(&copyrightTextGeometry[0], ultimaStrings[4]);
+  text_create(&copyrightTextGeometry[1], ultimaStrings[5]);
 
-  text_create(&choiceTextGeometry, ultimaStrings[9], false);
+  text_create(&optionsTextGeometry[0], ultimaStrings[7]);
+  text_create(&optionsTextGeometry[1], ultimaStrings[8]);
 
-  text_create(&noSavedGameTextGeometry, "NO SAVED GAME FOUND", false);
+  text_create(&choiceTextGeometry, ultimaStrings[9]);
+
+  text_create(&noSavedGameTextGeometry, "NO SAVED GAME FOUND");
 
   uiCursor_init();
 

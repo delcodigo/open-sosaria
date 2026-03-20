@@ -7,83 +7,106 @@
 
 static float transformMatrix[16];
 
-static void text_addGlyphs(const char *text, float *vertices, unsigned int *indices, bool isInverted) {
-  int length = strlen(text);
-
-  int vertexOffset = 0;
-  int indexOffset = 0;
-
-  float x1 = 0;
-  float y1 = 0;
-
-  float yOff = isInverted ? 0.5f : 0.0f;
-
-  for (int i=0;i<length;i++) {
-    char c = text[i] - OS_FONT_OFFSET;
-    int row = c / (OS_FONT_WIDTH / OS_FONT_GLYPH_WIDTH);
-    int col = c % (OS_FONT_WIDTH / OS_FONT_GLYPH_WIDTH);
-
-    float x2 = x1 + OS_FONT_GLYPH_WIDTH;
-    float y2 = y1 + OS_FONT_GLYPH_HEIGHT;
-    float tx1 = (float)(col * OS_FONT_GLYPH_WIDTH) / OS_FONT_WIDTH;
-    float ty1 = (float)(row * OS_FONT_GLYPH_HEIGHT) / OS_FONT_HEIGHT + yOff;
-    float tx2 = (float)((col + 1) * OS_FONT_GLYPH_WIDTH) / OS_FONT_WIDTH;
-    float ty2 = (float)((row + 1) * OS_FONT_GLYPH_HEIGHT) / OS_FONT_HEIGHT + yOff;
-
-    vertices[vertexOffset++] = x1;
-    vertices[vertexOffset++] = y2;
-    vertices[vertexOffset++] = 0.0f;
-    vertices[vertexOffset++] = tx1;
-    vertices[vertexOffset++] = ty2;
-
-    vertices[vertexOffset++] = x2;
-    vertices[vertexOffset++] = y2;
-    vertices[vertexOffset++] = 0.0f;
-    vertices[vertexOffset++] = tx2;
-    vertices[vertexOffset++] = ty2;
-
-    vertices[vertexOffset++] = x1;
-    vertices[vertexOffset++] = y1;
-    vertices[vertexOffset++] = 0.0f;
-    vertices[vertexOffset++] = tx1;
-    vertices[vertexOffset++] = ty1;
-
-    vertices[vertexOffset++] = x2;
-    vertices[vertexOffset++] = y1;
-    vertices[vertexOffset++] = 0.0f;
-    vertices[vertexOffset++] = tx2;
-    vertices[vertexOffset++] = ty1;
-
-    indices[indexOffset++] = i * 4 + 0;
-    indices[indexOffset++] = i * 4 + 1;
-    indices[indexOffset++] = i * 4 + 2;
-    indices[indexOffset++] = i * 4 + 1;
-    indices[indexOffset++] = i * 4 + 3;
-    indices[indexOffset++] = i * 4 + 2;
-
-    x1 += OS_FONT_GLYPH_WIDTH;
-  }
+static bool text_isFormattingCode(const char *text) {
+  return text[0] == '^' && (text[1] == '0' || text[1] == '1');
 }
 
-void text_update(Text *textGeometry, const char* text, bool isInverted) {
+static unsigned int text_getVisibleLength(const char *text) {
+  unsigned int visibleLength = 0;
+
+  for (int i=0;text[i] != '\0';i++) {
+    if (text_isFormattingCode(&text[i])) {
+      i++;
+      continue;
+    }
+
+    visibleLength++;
+  }
+
+  return visibleLength;
+}
+
+static void text_addGlyph(char glyph, unsigned int glyphIndex, float *vertices, unsigned int *indices, int *vertexOffset, int *indexOffset, float *x1, bool isInverted) {
+  unsigned char character = (unsigned char) glyph;
+  int c = character - OS_FONT_OFFSET;
+  int row = c / (OS_FONT_WIDTH / OS_FONT_GLYPH_WIDTH);
+  int col = c % (OS_FONT_WIDTH / OS_FONT_GLYPH_WIDTH);
+
+  float yOff = isInverted ? 0.5f : 0.0f;
+  float x2 = *x1 + OS_FONT_GLYPH_WIDTH;
+  float y2 = OS_FONT_GLYPH_HEIGHT;
+  float tx1 = (float)(col * OS_FONT_GLYPH_WIDTH) / OS_FONT_WIDTH;
+  float ty1 = (float)(row * OS_FONT_GLYPH_HEIGHT) / OS_FONT_HEIGHT + yOff;
+  float tx2 = (float)((col + 1) * OS_FONT_GLYPH_WIDTH) / OS_FONT_WIDTH;
+  float ty2 = (float)((row + 1) * OS_FONT_GLYPH_HEIGHT) / OS_FONT_HEIGHT + yOff;
+
+  vertices[(*vertexOffset)++] = *x1;
+  vertices[(*vertexOffset)++] = y2;
+  vertices[(*vertexOffset)++] = 0.0f;
+  vertices[(*vertexOffset)++] = tx1;
+  vertices[(*vertexOffset)++] = ty2;
+
+  vertices[(*vertexOffset)++] = x2;
+  vertices[(*vertexOffset)++] = y2;
+  vertices[(*vertexOffset)++] = 0.0f;
+  vertices[(*vertexOffset)++] = tx2;
+  vertices[(*vertexOffset)++] = ty2;
+
+  vertices[(*vertexOffset)++] = *x1;
+  vertices[(*vertexOffset)++] = 0.0f;
+  vertices[(*vertexOffset)++] = 0.0f;
+  vertices[(*vertexOffset)++] = tx1;
+  vertices[(*vertexOffset)++] = ty1;
+
+  vertices[(*vertexOffset)++] = x2;
+  vertices[(*vertexOffset)++] = 0.0f;
+  vertices[(*vertexOffset)++] = 0.0f;
+  vertices[(*vertexOffset)++] = tx2;
+  vertices[(*vertexOffset)++] = ty1;
+
+  indices[(*indexOffset)++] = glyphIndex * 4 + 0;
+  indices[(*indexOffset)++] = glyphIndex * 4 + 1;
+  indices[(*indexOffset)++] = glyphIndex * 4 + 2;
+  indices[(*indexOffset)++] = glyphIndex * 4 + 1;
+  indices[(*indexOffset)++] = glyphIndex * 4 + 3;
+  indices[(*indexOffset)++] = glyphIndex * 4 + 2;
+
+  *x1 = x2;
+}
+
+static bool text_addGlyphs(const char *text, float *vertices, unsigned int *indices, unsigned int glyphCount) {
+  int vertexOffset = 0;
+  int indexOffset = 0;
+  float x1 = 0;
+  bool isInverted = false;
+  unsigned int glyphIndex = 0;
+
+  for (int i=0;text[i] != '\0' && glyphIndex < glyphCount;i++) {
+    if (text_isFormattingCode(&text[i])) {
+      isInverted = text[i + 1] == '1';
+      i++;
+      continue;
+    }
+
+    text_addGlyph(text[i], glyphIndex++, vertices, indices, &vertexOffset, &indexOffset, &x1, isInverted);
+  }
+
+  while (glyphIndex < glyphCount) {
+    text_addGlyph(' ', glyphIndex++, vertices, indices, &vertexOffset, &indexOffset, &x1, isInverted);
+  }
+
+  return isInverted;
+}
+
+void text_update(Text *textGeometry, const char* text) {
   if (!textGeometry || !textGeometry->vertices || !textGeometry->indices || !text) { return; }
 
   memset(textGeometry->vertices, 0, textGeometry->size);
   memset(textGeometry->indices, 0, textGeometry->length * OS_QUAD_INDEX_SIZE * sizeof(unsigned int));
 
   if (textGeometry->length > 0) {
-    char fixedText[textGeometry->length + 1];
-    memset(fixedText, ' ', textGeometry->length);
-    
-    size_t inputLength = strlen(text);
-    size_t copyLength = inputLength < textGeometry->length ? inputLength : textGeometry->length;
-    memcpy(fixedText, text, copyLength);
-    fixedText[copyLength] = '\0';
-
-    text_addGlyphs(fixedText, textGeometry->vertices, textGeometry->indices, isInverted);
+    textGeometry->isInverted = text_addGlyphs(text, textGeometry->vertices, textGeometry->indices, textGeometry->length);
   }
-
-  textGeometry->isInverted = isInverted;
 
   glBindBuffer(GL_ARRAY_BUFFER, textGeometry->geometry.VBO);
   glBufferData(GL_ARRAY_BUFFER, textGeometry->size, textGeometry->vertices, GL_STATIC_DRAW);
@@ -94,20 +117,19 @@ void text_update(Text *textGeometry, const char* text, bool isInverted) {
   textGeometry->geometry.indexCount = textGeometry->length * OS_QUAD_INDEX_SIZE;
 }
 
-void text_create(Text *textGeometry, const char* text, bool isInverted) {
+void text_create(Text *textGeometry, const char* text) {
   Geometry *geometry = &textGeometry->geometry;
 
   glGenVertexArrays(1, &geometry->VAO);
   glGenBuffers(1, &geometry->VBO);
   glGenBuffers(1, &geometry->EBO);
 
-  textGeometry->isInverted = isInverted;
-  textGeometry->length = strlen(text);
+  textGeometry->length = text_getVisibleLength(text);
   textGeometry->size = textGeometry->length * OS_QUAD_VERTEX_SIZE * sizeof(float);
   textGeometry->vertices = (float*) malloc(textGeometry->size);
   textGeometry->indices = (unsigned int*) malloc(textGeometry->length * OS_QUAD_INDEX_SIZE * sizeof(unsigned int));
 
-  text_addGlyphs(text, textGeometry->vertices, textGeometry->indices, isInverted);
+  textGeometry->isInverted = text_addGlyphs(text, textGeometry->vertices, textGeometry->indices, textGeometry->length);
 
   glBindVertexArray(geometry->VAO);
   glBindBuffer(GL_ARRAY_BUFFER, geometry->VBO);
