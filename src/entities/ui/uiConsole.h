@@ -10,6 +10,7 @@ typedef struct {
   Text text;
   char line[30];
   bool isFlashing;
+  bool isTypewriter;
 } ConsoleLine;
 
 void uiConsole_init();

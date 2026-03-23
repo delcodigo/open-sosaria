@@ -610,6 +610,11 @@ static bool playerOverworld_updateAttack() {
   return false;
 }
 
+/*static void playerOverworld_castDungeonSpell() {
+  uiConsole_queueMessage(ultimaStrings[160]);
+  uiConsole_queueMessage(ultimaStrings[161]);
+}*/
+
 static bool playerOverwolrd_cast() {
   if (input.c == 1) {
     input.c = 2;
@@ -628,11 +633,11 @@ static bool playerOverwolrd_cast() {
 
     player.spells[player.spell] -= 1;
 
-    // TODO: Text Speed typewritter
     switch (player.spell) {
       case 0:
-        uiConsole_queueMessage(ultimaStrings[148]);
-        // TODO: Text Speed normal
+        memset(consoleMessage, 0, sizeof(consoleMessage));
+        snprintf(consoleMessage, sizeof(consoleMessage), "^T%.28s", ultimaStrings[148]);
+        uiConsole_queueMessage(consoleMessage);
         int randomEffect = rand01() * 3 + 1;
         bool removedEnemies = false;
         if (randomEffect == 1 && enemyEncounter.monsterId > 0) {

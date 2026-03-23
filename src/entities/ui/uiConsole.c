@@ -22,6 +22,8 @@ static float timeToNextMessage = 0.0f;
 static bool dequeuing = false;
 static float flashTime = 0.0f;
 static char flashChar = '0';
+static int typewriterIndex = 2;
+static float typewriterTime = 0.0f;
 
 void uiConsole_init() {
   geometry_setSprite(&blackPanel, OS_SCREEN_WIDTH, OS_TILE_HEIGHT * 2, 0, 0, 0, 1);
@@ -73,6 +75,17 @@ static void uiConsole_detectFlashing(int index) {
   }
 }
 
+static bool uiConsole_isTypewriter(const char *line) {
+  int length = strlen(line);
+  for (int i=0;i<length-1;i++) {
+    if (line[i] == '^' && line[i + 1] == 'T') {
+      return true;
+    }
+  }
+
+  return false;
+}
+
 static void uiConsole_reverseFlashing(int index) {
   int length = strlen(consoleLines[index].line);
   for (int i=0;i<length-3;i++) {
@@ -122,17 +135,51 @@ void uiConsole_updateStats() {
   text_update(&stats[3], player.gold > 99999 ? "*****" : statStr);
 }
 
+static void uiConsole_updateTypewriter(float deltaTime) {
+  typewriterTime += deltaTime;
+  if (typewriterTime >= 0.15f) {
+    typewriterTime = 0;
+    int length = strlen(queuedMessages[0]);
+    if (typewriterIndex < length) {
+      char currentLine[30] = {0};
+      strncpy(currentLine, queuedMessages[0], typewriterIndex + 1);
+      currentLine[typewriterIndex + 1] = '\0';
+      if (typewriterIndex <= 2) {
+        uiConsole_addMessage(currentLine);
+      } else {
+        printf("Typewriter: %s index: %d\n", currentLine, typewriterIndex);
+        uiConsole_replaceLastMessage(currentLine);
+      }
+      typewriterIndex++;
+    } else {
+      typewriterIndex = 2;
+      timeToNextMessage = 0.15f;
+      for (int i=0;i<queuedMessagesCount - 1;i++) {
+        strncpy(queuedMessages[i], queuedMessages[i + 1], sizeof(queuedMessages[i]));
+      }
+      queuedMessagesCount--;
+    }
+  }
+}
+
 void uiConsole_update(float deltaTime) {
   if (queuedMessagesCount > 0) {
     timeToNextMessage -= deltaTime;
     if (timeToNextMessage <= 0) {
       dequeuing = true;
-      uiConsole_addMessage(queuedMessages[0]);
-      for (int i=0;i<queuedMessagesCount - 1;i++) {
-        strncpy(queuedMessages[i], queuedMessages[i + 1], sizeof(queuedMessages[i]));
+      
+      if (uiConsole_isTypewriter(queuedMessages[0])) {
+        uiConsole_updateTypewriter(deltaTime);
+      } else {
+        uiConsole_addMessage(queuedMessages[0]);
+        for (int i=0;i<queuedMessagesCount - 1;i++) {
+          strncpy(queuedMessages[i], queuedMessages[i + 1], sizeof(queuedMessages[i]));
+        }
+        queuedMessagesCount--;
+        typewriterTime = 0;
+        typewriterIndex = 2;
+        timeToNextMessage = 0.15f;
       }
-      queuedMessagesCount--;
-      timeToNextMessage = 0.15f;
     }
   }
 

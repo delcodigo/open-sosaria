@@ -8,7 +8,7 @@
 static float transformMatrix[16];
 
 static bool text_isFormattingCode(const char *text) {
-  return text[0] == '^' && (text[1] == '0' || text[1] == '1' || text[1] == 'F');
+  return text[0] == '^' && (text[1] == '0' || text[1] == '1' || text[1] == 'F' || text[1] == 'T');
 }
 
 static unsigned int text_getVisibleLength(const char *text) {
