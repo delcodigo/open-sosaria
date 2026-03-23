@@ -435,6 +435,12 @@ static bool playerOverworld_readySpellEquip() {
       readyStep = READY_STEP_SPELL_LADDER;
       areKeysReleased = false;
       return false;
+    } else if (selectedSpellChar[0] == 'P') {
+      snprintf(consoleMessage, sizeof(consoleMessage), "%.12sP[RAY/ROJ] (R/J)", ultimaStrings[214]);
+      uiConsole_replaceLastMessage(consoleMessage);
+      readyStep = READY_STEP_SPELL_PRAYER_OR_PROJECTILE;
+      areKeysReleased = false;
+      return false;
     }
 
     int spellIndex = -1;
@@ -489,6 +495,34 @@ static void playerOverworld_readyReturnToIdle() {
   readyStep = READY_STEP_START;
 }
 
+static bool playerOverworld_readPrayerOrProjectile() {
+  if (inputTextfield->isDirty && inputTextfield->text[0] != '\0') {
+    char selectedSpellChar[3] = {'P', (char)toupper(inputTextfield->text[0]), '\0'};
+    char consoleMessage[31] = {0};
+    inputTextfield->isDirty = false;
+    snprintf(consoleMessage, sizeof(consoleMessage), "%.15s%s", ultimaStrings[214], selectedSpellChar);
+    uiConsole_replaceLastMessage(consoleMessage);
+
+    readyStep = READY_STEP_RETURN_TO_IDLE;
+    areKeysReleased = false;
+
+    int spellIndex = -1;
+    if (selectedSpellChar[1] == 'R') {
+      spellIndex = 0;
+      playerOverworld_tryAndEquipSpell(spellIndex, "PR");
+    } else if (selectedSpellChar[1] == 'J') {
+      spellIndex = 3;
+      playerOverworld_tryAndEquipSpell(spellIndex, "PJ");
+    } else {
+      uiConsole_addMessage(ultimaStrings[220]);
+    }
+
+    return true;
+  }
+
+  return false;
+}
+
 static bool playerOverworld_ready() {
   if (!areKeysReleased) {
     if (input_areKeysReleased()) {
@@ -517,12 +551,47 @@ static bool playerOverworld_ready() {
       return playerOverworld_readySpellEquip();
     case READY_STEP_SPELL_LADDER:
       return playerOverworld_readySpellLadder();
+    case READY_STEP_SPELL_PRAYER_OR_PROJECTILE:
+      return playerOverworld_readPrayerOrProjectile();
+      break;
     case READY_STEP_RETURN_TO_IDLE:
       playerOverworld_readyReturnToIdle();
       break;
   }
 
   return false;
+}
+
+static void playerOverworld_checkIfEnemiesDead() {
+  if (enemyEncounter.hp < 0) {
+    char consoleMessage[31] = {0};
+    int monsterId = enemyEncounter.monsterId;
+
+    enemyEncounter.number -= 1;
+    
+    player.experience += enemyDefinitions[monsterId].rank * 5;
+    int goldEarned = (int)(enemyDefinitions[monsterId].rank * 4 * rand01()) + 10;
+    player.gold += goldEarned;
+
+    memset(consoleMessage, 0, sizeof(consoleMessage));
+    snprintf(consoleMessage, sizeof(consoleMessage), "%.15s+%d", ultimaStrings[134], goldEarned);
+    uiConsole_queueMessage(consoleMessage);
+
+    if (enemyEncounter.number <= 0) {
+      enemyEncounter.monsterId = -1;
+      renderEnemy = false;
+      if (enemyGeometry != NULL) {
+        geometry_free(enemyGeometry);
+        free(enemyGeometry);
+        enemyGeometry = NULL;
+      }
+    } else {
+      enemyEncounter.hp = (int)(20 * rand01() + pow(rand01(), 2) * (int)(player.time / 1000.0f)) + 5;
+    }
+
+    uiConsole_updateStats();
+
+  }
 }
 
 static bool playerOverworld_updateAttack() {
@@ -572,32 +641,7 @@ static bool playerOverworld_updateAttack() {
 
       enemyEncounter.hp -= damage;
 
-      if (enemyEncounter.hp < 0) {
-        enemyEncounter.number -= 1;
-        
-        player.experience += enemyDefinitions[monsterId].rank * 5;
-        int goldEarned = (int)(enemyDefinitions[monsterId].rank * 4 * rand01()) + 10;
-        player.gold += goldEarned;
-
-        memset(consoleMessage, 0, sizeof(consoleMessage));
-        snprintf(consoleMessage, sizeof(consoleMessage), "%.15s+%d", ultimaStrings[134], goldEarned);
-        uiConsole_queueMessage(consoleMessage);
-
-        if (enemyEncounter.number <= 0) {
-          enemyEncounter.monsterId = -1;
-          renderEnemy = false;
-          if (enemyGeometry != NULL) {
-            geometry_free(enemyGeometry);
-            free(enemyGeometry);
-            enemyGeometry = NULL;
-          }
-        } else {
-          enemyEncounter.hp = (int)(20 * rand01() + pow(rand01(), 2) * (int)(player.time / 1000.0f)) + 5;
-        }
-
-        uiConsole_updateStats();
-
-      }
+      playerOverworld_checkIfEnemiesDead();
 
       return true;
     }
@@ -619,7 +663,7 @@ static bool playerOverwolrd_cast() {
     snprintf(consoleMessage, sizeof(consoleMessage), "%.15s%.15s", ultimaStrings[145], spellNames[player.spell]);
     uiConsole_queueMessage(consoleMessage);
 
-    if (player.spell > 0 && player.spells[player.spell - 1] < 1) {
+    if (player.spell > 0 && player.spells[player.spell] < 1) {
       uiConsole_queueMessage(ultimaStrings[146]);
       snprintf(consoleMessage, sizeof(consoleMessage), "%.15s%.15s", spellNames[player.spell], ultimaStrings[147]);
       uiConsole_queueMessage(consoleMessage);
@@ -662,6 +706,25 @@ static bool playerOverwolrd_cast() {
         break;
 
       case 3:
+        if (enemyEncounter.monsterId < 1) {
+          uiConsole_queueMessage(ultimaStrings[153]);
+        } else {
+          memset(consoleMessage, 0, sizeof(consoleMessage));
+          snprintf(consoleMessage, sizeof(consoleMessage), "^T%.28s", ultimaStrings[154]);
+          uiConsole_queueMessage(consoleMessage);
+
+          int damage = (int)(player.wisdom / 2);
+          if (player.weapon > 7 && player.weapon < 12) {
+            damage += player.weapon * 2;
+          }
+
+          memset(consoleMessage, 0, sizeof(consoleMessage));
+          snprintf(consoleMessage, sizeof(consoleMessage), "%.10s%.10s%d", ultimaStrings[155], ultimaStrings[156], damage);
+          uiConsole_queueMessage(consoleMessage);
+
+          enemyEncounter.hp -= damage;
+          playerOverworld_checkIfEnemiesDead();
+        }
         break;
 
       case 10:
@@ -673,7 +736,7 @@ static bool playerOverwolrd_cast() {
         break;
     }
       
-    lagTime = 1.0f;
+    lagTime = 4.0f;
     return true;
   }
   return false;
