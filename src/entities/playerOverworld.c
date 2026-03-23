@@ -610,6 +610,64 @@ static bool playerOverworld_updateAttack() {
   return false;
 }
 
+static bool playerOverwolrd_cast() {
+  if (input.c == 1) {
+    input.c = 2;
+    waitingTime = 0.0f;
+
+    char consoleMessage[31] = {0};
+    snprintf(consoleMessage, sizeof(consoleMessage), "%.15s%.15s", ultimaStrings[145], spellNames[player.spell]);
+    uiConsole_queueMessage(consoleMessage);
+
+    if (player.spell > 0 && player.spells[player.spell - 1] < 1) {
+      uiConsole_queueMessage(ultimaStrings[146]);
+      snprintf(consoleMessage, sizeof(consoleMessage), "%.15s%.15s", spellNames[player.spell], ultimaStrings[147]);
+      uiConsole_queueMessage(consoleMessage);
+      return true;
+    }
+
+    player.spells[player.spell] -= 1;
+
+    // TODO: Text Speed typewritter
+    switch (player.spell) {
+      case 0:
+        uiConsole_queueMessage(ultimaStrings[148]);
+        // TODO: Text Speed normal
+        int randomEffect = rand01() * 3 + 1;
+        bool removedEnemies = false;
+        if (randomEffect == 1 && enemyEncounter.monsterId > 0) {
+          uiConsole_queueMessage(ultimaStrings[149]);
+          enemyEncounter.monsterId = 0;
+          renderEnemy = false;
+          removedEnemies = true;
+
+          if (player.gold > 20) {
+            player.gold -= 20;
+          }
+        }
+
+        if (!removedEnemies){
+          if (randomEffect < 3 && player.health < 10) {
+            player.health = 10;
+            uiConsole_queueMessage(ultimaStrings[150]);
+          } else if (player.food < 10) {
+            player.food = 10;
+            uiConsole_queueMessage(ultimaStrings[150]);
+          } else {
+            uiConsole_queueMessage(ultimaStrings[152]);
+          }
+        }
+        
+        uiConsole_updateStats();
+        lagTime = 1.0f;
+        break;
+    }
+
+    return true;
+  }
+  return false;
+}
+
 bool playerOverworld_update(float deltaTime) {
   bool acted = false;
 
@@ -625,6 +683,7 @@ bool playerOverworld_update(float deltaTime) {
         if (playerOverworld_drop()) { acted = true; } else
         if (playerOverworld_ready()) { acted = true; } else
         if (playerOverworld_updateAttack()) { acted = true; } else
+        if (playerOverwolrd_cast()) { acted = true; } else
         if (playerOverworld_updateMovement(deltaTime)) { acted = true; }
         break;
       case PLAYER_STATE_READY_TYPE:

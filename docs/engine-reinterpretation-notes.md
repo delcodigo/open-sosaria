@@ -217,6 +217,20 @@ where `rank` is the attacking monster rank.
 - `drop`, `get`, and `open` are not actually usable actions on the overworld.
 - Even so, the game still accepts those commands and prints a specific feedback message for each one.
 
+
+## Resurrection Behavior
+
+- Resurrection is triggered when the player's food or health drops to 0 or below.
+- Upon resurrection:
+	- All weapons are removed from the player's inventory.
+	- Health is set to 99.
+	- The player is dismounted from any vehicle.
+	- Gold is set to 0.
+	- Food is set to 20.
+	- The player is relocated to a random position on the map.
+		- In the original game, this could result in the player being stranded on water or a mountain, potentially leading to repeated starvation and death.
+		- In this reimplementation, the player is moved to a safer area to avoid such softlocks.
+
 ## Save/Load Map Snapshot Behavior
 
 - On save/load, the original behavior persists the current **64x64 map tile buffer**.
