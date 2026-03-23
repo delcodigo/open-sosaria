@@ -37,11 +37,15 @@ void worldMap_init() {
 
 }
 
+int worldMap_getTileAt(int tx, int ty) {
+  int x = (int)(tx % OS_BTERRA_MAP_WIDTH);
+  int y = (int)(ty % OS_BTERRA_MAP_HEIGHT);
+  int world = ((int)ty / OS_BTERRA_MAP_HEIGHT) * 2 + ((int)tx / OS_BTERRA_MAP_WIDTH);
+  return ultimaAssets.bterraMaps[world][y][x];
+}
+
 int worldMap_getPlayerTile() {
-  int tx = (int)(player.tx % OS_BTERRA_MAP_WIDTH);
-  int ty = (int)(player.ty % OS_BTERRA_MAP_HEIGHT);
-  int world = ((int)player.ty / OS_BTERRA_MAP_HEIGHT) * 2 + ((int)player.tx / OS_BTERRA_MAP_WIDTH);
-  return ultimaAssets.bterraMaps[world][ty][tx];
+  return worldMap_getTileAt(player.tx, player.ty);
 }
 
 void worldMap_update(float *viewMatrix) {

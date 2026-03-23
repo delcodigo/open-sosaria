@@ -15,6 +15,9 @@
 #include "utils.h"
 
 static bool playerActed = false;
+static bool respawnPlayer = false;
+static int respawnX = 0;
+static int respawnY = 0;
 
 EnemyEncounter enemyEncounter = { -1, 0, 0};
 float lagTime = 0.0f;
@@ -93,13 +96,63 @@ static void sceneOverworld_resolveEncounter() {
   }
 }
 
+static bool sceneOverworld_attemptResurrection() {
+  if (!player_isAlive()) {
+    char consoleMessage[31] = {0};
+    snprintf(consoleMessage, sizeof(consoleMessage), "%.15s%.14s", player.name, ultimaStrings[259]);
+    uiConsole_addMessage(consoleMessage);
+    uiConsole_addMessage(ultimaStrings[260]);
+
+    for (int i=0;i<OS_WEAPONS_COUNT;i++) {
+      player.weapons[i] = 0;
+    }
+
+    player.health = 99;
+    player.weapon = 0;
+    player.vehicle = 0;
+    player.gold = 0;
+    player.food = 20;
+    
+    int tx = (int)(rand01() * 64);
+    int ty = (int)(rand01() * 64);
+
+    // The original game doesn't check if the player is placed in a valid tile after resurrection, but we will to avoid softlocks.
+    int tile = (worldMap_getTileAt(tx, ty) >> 4) & 0xFF;
+    while (tile == 0 || tile >= 3) {
+      tx = (int)(rand01() * 64);
+      ty = (int)(rand01() * 64);
+      tile = (worldMap_getTileAt(tx, ty) >> 4) & 0xFF;
+    }
+
+    respawnX = tx;
+    respawnY = ty;
+
+    enemyEncounter.monsterId = -1;
+    playerActed = false;
+    respawnPlayer = true;
+
+    lagTime = 5.0f;
+
+    return true;
+  }
+
+  return false;
+}
+
 static void sceneOverworld_update(float deltaTime) {
   if (lagTime > 0) {
     lagTime -= deltaTime;
     if (lagTime < 0) { lagTime = 0; }
   }
   
-  if (!queuedMessagesCount && lagTime <= 0){
+  if (!queuedMessagesCount && lagTime <= 0 && !sceneOverworld_attemptResurrection()) {
+    if (respawnPlayer) {
+      player.tx = respawnX;
+      player.ty = respawnY;
+      respawnPlayer = false;
+      uiConsole_updateStats();
+    }
+
     if (ztatsActive){
       uiZtats_update(deltaTime);
       return;
@@ -108,10 +161,12 @@ static void sceneOverworld_update(float deltaTime) {
     if (playerActed) {
       playerActed = false;
       sceneOverworld_resolveEncounter();
-      uiConsole_addMessage(ultimaStrings[98]);
+      if (player_isAlive()) {
+        uiConsole_addMessage(ultimaStrings[98]);
+      }
     }
 
-    if (playerOverworld_update(deltaTime)) { 
+    if (player_isAlive() && playerOverworld_update(deltaTime)) { 
       playerActed = true; 
     }
   }

@@ -2,6 +2,7 @@
 #define OS_PLAYER_H
 
 #include "config.h"
+#include <stdbool.h>
 
 typedef struct {
   int health;
@@ -35,5 +36,6 @@ extern Player player;
 
 void player_consumeFood();
 void player_waitPenalty();
+bool player_isAlive();
 
 #endif

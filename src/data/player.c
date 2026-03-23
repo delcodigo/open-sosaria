@@ -14,3 +14,7 @@ void player_waitPenalty() {
   player.time += 0.5f;
   uiConsole_updateStats();
 }
+
+bool player_isAlive() {
+  return player.health > 0 && player.food > 0;
+}
