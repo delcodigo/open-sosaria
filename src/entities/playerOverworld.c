@@ -610,11 +610,6 @@ static bool playerOverworld_updateAttack() {
   return false;
 }
 
-/*static void playerOverworld_castDungeonSpell() {
-  uiConsole_queueMessage(ultimaStrings[160]);
-  uiConsole_queueMessage(ultimaStrings[161]);
-}*/
-
 static bool playerOverwolrd_cast() {
   if (input.c == 1) {
     input.c = 2;
@@ -664,10 +659,21 @@ static bool playerOverwolrd_cast() {
         }
         
         uiConsole_updateStats();
-        lagTime = 1.0f;
+        break;
+
+      case 3:
+        break;
+
+      case 10:
+        break;
+        
+      default:
+        uiConsole_queueMessage(ultimaStrings[160]);
+        uiConsole_queueMessage(ultimaStrings[161]);
         break;
     }
-
+      
+    lagTime = 1.0f;
     return true;
   }
   return false;
