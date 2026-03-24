@@ -824,6 +824,41 @@ static bool playerOverworld_updateBoard() {
   return false;
 }
 
+bool playerOverworld_updateExit() {
+  if (input.x == 1) {
+    input.x = 2;
+    waitingTime = 0.0f;
+
+    if (player.vehicle == 0) {
+      uiConsole_addMessage(ultimaStrings[233]);
+      return true;
+    }
+
+    int tile = (worldMap_getPlayerTile() >> 4) & 0xFF;
+    int vehicleTile = vehiclesMap[player.ty][player.tx];
+    if (tile > 2 || vehicleTile > 0) {
+      uiConsole_addMessage(ultimaStrings[234]);
+      uiConsole_addMessage(ultimaStrings[235]);
+      return true;
+    }
+
+    vehiclesMap[player.ty][player.tx] = player.vehicle;
+    
+    if (player.vehicle == 1 || player.vehicle == 2) {
+      uiConsole_addMessage(ultimaStrings[239]);
+    } else {
+      uiConsole_addMessage(ultimaStrings[240]);
+    }
+
+    player.vehicle = 0;
+    playerOverworld_updateGeometry();
+
+    return true;
+  
+  }
+  return false;
+}
+
 bool playerOverworld_update(float deltaTime) {
   bool acted = false;
 
@@ -841,6 +876,7 @@ bool playerOverworld_update(float deltaTime) {
         if (playerOverworld_updateAttack()) { acted = true; } else
         if (playerOverwolrd_cast()) { acted = true; } else
         if (playerOverworld_updateBoard()) { acted = true; } else
+        if (playerOverworld_updateExit()) { acted = true; } else
         if (playerOverworld_updateMovement(deltaTime)) { acted = true; }
         break;
       case PLAYER_STATE_READY_TYPE:
