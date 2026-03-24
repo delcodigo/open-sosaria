@@ -34,6 +34,9 @@ static void sceneOverworld_init() {
   // TODO: Test vehicles, delete this after testing
   vehiclesMap[38][38] = 1;
   vehiclesMap[38][40] = 2;
+  vehiclesMap[33][29] = 3;
+  vehiclesMap[32][28] = 4;
+  vehiclesMap[38][42] = 5;
 }
 
 static void sceneOverworld_spawnMonsters() {

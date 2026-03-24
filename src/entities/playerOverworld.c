@@ -16,6 +16,7 @@
 #include "scenes/sceneDiskLoader.h"
 #include "scenes/sceneOverworld.h"
 #include "maths/matrix4.h"
+#include "vehicleOverworld.h"
 #include "config.h"
 #include "utils.h"
 #include "memory.h"
@@ -41,6 +42,7 @@ void playerOverworld_init() {
   matrix4_setIdentity(transformationMatrix);
   matrix4_setIdentity(enemyTransformationMatrix);
   memset(&inputTextfieldBuffer, 0, sizeof(inputTextfieldBuffer));
+  camera_setPosition3f(&camera, (player.tx + 1) * OS_TILE_WIDTH - OS_SCREEN_WIDTH / 2, (player.ty + 1) * OS_TILE_HEIGHT - OS_SCREEN_HEIGHT / 2, 10);
   inputTextfieldBuffer.maxLength = 2;
 }
 
@@ -123,18 +125,33 @@ bool playerOverworld_updateMovement(float deltaTime) {
       return true;
     }
 
-    if (tile == 0) {
-      uiConsole_addMessage(ultimaStrings[122]);
-      keyRepeatDelay = 0.3f;
-      return true;
-    } else if (tile == 3) {
-      uiConsole_addMessage(ultimaStrings[123]);
-      keyRepeatDelay = 0.3f;
-      return true;
+    int vehicleTile = vehiclesMap[player.ty + moveY][player.tx + moveX];
+
+    if (vehicleTile == 0 || player.vehicle != 0) {
+      if (tile == 0 && (player.vehicle < 3 || player.vehicle > 5)) {
+        uiConsole_addMessage(ultimaStrings[122]);
+        keyRepeatDelay = 0.3f;
+        return true;
+      } else if (tile == 3) {
+        uiConsole_addMessage(ultimaStrings[123]);
+        keyRepeatDelay = 0.3f;
+        return true;
+      } else if (tile == 2 && player.vehicle == 5) {
+        uiConsole_addMessage(ultimaStrings[124]);
+        keyRepeatDelay = 0.3f;
+        return true;
+      } else if (tile > 0 && (player.vehicle == 3 || player.vehicle == 4)) {
+        char consoleMessage[31] = {0};
+        snprintf(consoleMessage, sizeof(consoleMessage), "%.14s%.15s", vehicleNames[player.vehicle], ultimaStrings[125]);
+        uiConsole_addMessage(consoleMessage);
+        keyRepeatDelay = 0.3f;
+        return true;
+      }
     }
 
     player.tx = (player.tx + moveX + OS_BTERRA_MAP_WIDTH * 2) % (OS_BTERRA_MAP_WIDTH * 2);
     player.ty = (player.ty + moveY + OS_BTERRA_MAP_HEIGHT * 2) % (OS_BTERRA_MAP_HEIGHT * 2);
+    camera_setPosition3f(&camera, (player.tx + 1) * OS_TILE_WIDTH - OS_SCREEN_WIDTH / 2, (player.ty + 1) * OS_TILE_HEIGHT - OS_SCREEN_HEIGHT / 2, 10);
     keyRepeatDelay = 0.1f;
 
     player_consumeFood();
@@ -752,6 +769,61 @@ static bool playerOverwolrd_cast() {
   return false;
 }
 
+static void playerOverworld_updateGeometry() {
+  if (playerOverworldGeometry.indexCount > 0){
+    geometry_free(&playerOverworldGeometry);
+  }
+
+  float tx1 = player.vehicle * OS_TILE_WIDTH / (float) ultimaAssets.overworldTiles.width;
+  float tx2 = tx1 + OS_TILE_WIDTH / (float) ultimaAssets.overworldTiles.width;
+  geometry_setSprite(&playerOverworldGeometry, OS_TILE_WIDTH, OS_TILE_HEIGHT, tx1, 0.5f, tx2, 1.0f);
+}
+
+static bool playerOverworld_updateBoard() {
+  if (input.b == 1) {
+    input.b = 2;
+    waitingTime = 0.0f;
+    
+    if (player.vehicle != 0) {
+      uiConsole_addMessage(ultimaStrings[136]);
+      uiConsole_addMessage(ultimaStrings[137]);
+      return true;
+    }
+
+    int vehicleTile = vehiclesMap[player.ty][player.tx];
+    if (vehicleTile == 0 || vehicleTile > 7) {
+      uiConsole_addMessage(ultimaStrings[138]);
+      return true;
+    }
+
+    if (vehicleTile == 1) {
+      player.vehicle = 1;
+      uiConsole_addMessage(ultimaStrings[139]);
+    } else if (vehicleTile == 2) {
+      player.vehicle = 2;
+      uiConsole_addMessage(ultimaStrings[140]);
+    } else if (vehicleTile == 3 || vehicleTile == 4 || vehicleTile == 5) {
+      player.vehicle = vehicleTile;
+      char consoleMessage[31] = {0};
+      snprintf(consoleMessage, sizeof(consoleMessage), "%.15s%.15s", ultimaStrings[144], vehicleNames[vehicleTile]);
+      uiConsole_addMessage(consoleMessage);
+    } else if (vehicleTile == 6) {
+      player.vehicle = 6;
+      uiConsole_addMessage(ultimaStrings[141]);
+    } else if (vehicleTile == 7) {
+      player.vehicle = 7;
+      uiConsole_addMessage(ultimaStrings[142]);
+    }
+
+    vehiclesMap[player.ty][player.tx] = 0;
+    playerOverworld_updateGeometry();
+
+    return true;
+  }
+
+  return false;
+}
+
 bool playerOverworld_update(float deltaTime) {
   bool acted = false;
 
@@ -768,6 +840,7 @@ bool playerOverworld_update(float deltaTime) {
         if (playerOverworld_ready()) { acted = true; } else
         if (playerOverworld_updateAttack()) { acted = true; } else
         if (playerOverwolrd_cast()) { acted = true; } else
+        if (playerOverworld_updateBoard()) { acted = true; } else
         if (playerOverworld_updateMovement(deltaTime)) { acted = true; }
         break;
       case PLAYER_STATE_READY_TYPE:
@@ -790,7 +863,6 @@ bool playerOverworld_update(float deltaTime) {
 
 void playerOverworld_render() {
   matrix4_setPosition(transformationMatrix, player.tx * OS_TILE_WIDTH, player.ty * OS_TILE_HEIGHT, 2);
-  camera_setPosition3f(&camera, (player.tx + 1) * OS_TILE_WIDTH - OS_SCREEN_WIDTH / 2, (player.ty + 1) * OS_TILE_HEIGHT - OS_SCREEN_HEIGHT / 2, 10);
   float *viewMatrix = camera_getViewProjectionMatrix(&camera);
 
   geometry_render(&playerOverworldGeometry, ultimaAssets.overworldTiles.textureId, transformationMatrix, viewMatrix);
