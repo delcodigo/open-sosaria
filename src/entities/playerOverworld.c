@@ -728,6 +728,16 @@ static bool playerOverwolrd_cast() {
         break;
 
       case 10:
+        if (enemyEncounter.monsterId < 1) {
+          uiConsole_queueMessage(ultimaStrings[153]);
+        } else {
+          char consoleMessage[31] = {0};
+          snprintf(consoleMessage, sizeof(consoleMessage), "^T%.28s", ultimaStrings[159]);
+          uiConsole_queueMessage(consoleMessage);
+
+          enemyEncounter.monsterId = -1;
+          renderEnemy = false;
+        }
         break;
         
       default:
