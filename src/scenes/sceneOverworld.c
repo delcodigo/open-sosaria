@@ -11,6 +11,7 @@
 #include "entities/playerOverworld.h"
 #include "entities/ui/uiConsole.h"
 #include "entities/ui/uiztats.h"
+#include "entities/vehicleOverworld.h"
 #include "engine/input.h"
 #include "utils.h"
 
@@ -27,7 +28,12 @@ static void sceneOverworld_init() {
   playerOverworld_init();
   uiConsole_init();
   uiConsole_addMessage(ultimaStrings[98]);
+  vehicleOverworld_init();
   playerActed = false;
+
+  // TODO: Test vehicles, delete this after testing
+  vehiclesMap[38][38] = 1;
+  vehiclesMap[38][40] = 2;
 }
 
 static void sceneOverworld_spawnMonsters() {
@@ -173,6 +179,7 @@ static void sceneOverworld_update(float deltaTime) {
   
   float *viewMatrix = camera_getViewProjectionMatrix(&camera);
   worldMap_update(viewMatrix);
+  vehicleOverworld_render(viewMatrix);
   playerOverworld_render();
   uiConsole_update(deltaTime);
 }
@@ -182,6 +189,7 @@ static void sceneOverworld_free() {
   playerOverworld_free();
   uiConsole_free();
   uiZtats_free();
+  vehicleOverworld_free();
 }
 
 Scene sceneOverworld = {
