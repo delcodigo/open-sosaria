@@ -303,7 +303,7 @@ static void sceneCharacterGenerator_update(float deltaTime) {
   text_render(&racesAndTypesTextGeometry, 77, 144);
   text_render(&selectedRaceTextGeometry, 133, 96);
   text_render(&selectedTypeTextGeometry, 133, 104);
-  text_render(&nameInputTextGeometry, 133, 112);
+  text_renderxyz(&nameInputTextGeometry, 133, 112, 2);
 
   for (int i=0;i<6;i++) {
     text_render(&statsTextGeometry[i], 77, 40 + i * 8);

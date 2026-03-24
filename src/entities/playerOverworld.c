@@ -86,7 +86,7 @@ bool playerOverworld_tryAndDodgeEnemies(int mx, int my) {
   float tx2 = tx1 + (OS_ENEMY_SPRITE_WIDTH / (float)ultimaAssets.enemySprites.width);
 
   enemyGeometry = (Geometry*) malloc(sizeof(Geometry));
-  matrix4_setPosition(enemyTransformationMatrix, (player.tx + mx) * OS_TILE_WIDTH, (player.ty + my) * OS_TILE_HEIGHT, 2.0f);
+  matrix4_setPosition(enemyTransformationMatrix, (player.tx + mx) * OS_TILE_WIDTH, (player.ty + my) * OS_TILE_HEIGHT, 3.0f);
   geometry_setSprite(enemyGeometry, OS_ENEMY_SPRITE_WIDTH, OS_ENEMY_SPRITE_HEIGHT, tx1, 0, tx2, 1);
 
   return false;
@@ -824,7 +824,7 @@ static bool playerOverworld_updateBoard() {
   return false;
 }
 
-bool playerOverworld_updateExit() {
+static bool playerOverworld_updateExit() {
   if (input.x == 1) {
     input.x = 2;
     waitingTime = 0.0f;
@@ -859,6 +859,56 @@ bool playerOverworld_updateExit() {
   return false;
 }
 
+static bool playerOverworld_updateFiring() {
+  if (input.f == 1) {
+    input.f = 2;
+    waitingTime = 0.0f;
+    lagTime = 1.5f;
+
+    char consoleMessage[31] = {0};
+    if (player.vehicle == 4) {
+      snprintf(consoleMessage, sizeof(consoleMessage), "%.15s%.15s", ultimaStrings[98], ultimaStrings[166]);
+    } else if (player.vehicle == 5) {
+      snprintf(consoleMessage, sizeof(consoleMessage), "%.15s%.15s", ultimaStrings[98], ultimaStrings[167]);
+    } else {
+      snprintf(consoleMessage, sizeof(consoleMessage), "%.15s%.15s", ultimaStrings[98], ultimaStrings[168]);
+      uiConsole_replaceLastMessage(consoleMessage);
+      return true;
+    }
+
+    uiConsole_replaceLastMessage(consoleMessage);
+
+    if (enemyEncounter.monsterId < 6 || enemyEncounter.monsterId > 20) {
+      memset(consoleMessage, 0, sizeof(consoleMessage));
+      snprintf(consoleMessage, sizeof(consoleMessage), "%.15s%.15s", ultimaStrings[98], ultimaStrings[169]);
+      uiConsole_addMessage(consoleMessage);
+      return true;
+    }
+
+    memset(consoleMessage, 0, sizeof(consoleMessage));
+    snprintf(consoleMessage, sizeof(consoleMessage), "%.15s%.15s", ultimaStrings[170], enemyDefinitions[enemyEncounter.monsterId].name);
+    uiConsole_queueMessage(consoleMessage);
+
+    if (rand01() > 0.8f) {
+      uiConsole_queueMessage(ultimaStrings[171]);
+      return true;
+    }
+
+    int damage = (int)(rand01() * 10 * player.vehicle) + 30;
+    enemyEncounter.hp -= damage;
+
+    memset(consoleMessage, 0, sizeof(consoleMessage));
+    snprintf(consoleMessage, sizeof(consoleMessage), "%.18s%d", ultimaStrings[172], damage);
+    uiConsole_queueMessage(consoleMessage);
+
+    playerOverworld_checkIfEnemiesDead();
+
+    return true;
+  }
+
+  return false;
+}
+
 bool playerOverworld_update(float deltaTime) {
   bool acted = false;
 
@@ -877,6 +927,7 @@ bool playerOverworld_update(float deltaTime) {
         if (playerOverwolrd_cast()) { acted = true; } else
         if (playerOverworld_updateBoard()) { acted = true; } else
         if (playerOverworld_updateExit()) { acted = true; } else
+        if (playerOverworld_updateFiring()) { acted = true; } else
         if (playerOverworld_updateMovement(deltaTime)) { acted = true; }
         break;
       case PLAYER_STATE_READY_TYPE:
