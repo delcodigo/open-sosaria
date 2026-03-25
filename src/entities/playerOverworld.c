@@ -15,6 +15,7 @@
 #include "ui/uiztats.h"
 #include "scenes/sceneDiskLoader.h"
 #include "scenes/sceneOverworld.h"
+#include "scenes/sceneTown.h"
 #include "maths/matrix4.h"
 #include "vehicleOverworld.h"
 #include "config.h"
@@ -217,9 +218,7 @@ static bool playerOverworld_updateInfo() {
     if (tile == 4) { uiConsole_addMessage(placesNames[world * 20 + tileType + 1]); } else
     if (tile == 5) { uiConsole_addMessage(placesNames[world * 20 + tileType + 3]); } else
     if (tile == 6) { 
-      char placeName[41] = {0};
-      snprintf(placeName, sizeof(placeName), "%s%s", ultimaStrings[180], placesNames[world * 20 + tileType + 13]);
-      uiConsole_addMessage(placeName);
+      uiConsole_addMessageFormat("%s%s", ultimaStrings[180], placesNames[world * 20 + tileType + 13]);
     } else
     if (tile == 7) { uiConsole_addMessage(placesNames[world * 20 + tileType + 5]); }
 
@@ -944,7 +943,11 @@ static bool playerOverworld_updateEnter() {
     input.e = 2;
     waitingTime = 0.0f;
 
-    int tile = (worldMap_getPlayerTile() >> 4) & 0x0F;
+    int tx = (int)(player.tx % OS_BTERRA_MAP_WIDTH);
+    int ty = (int)(player.ty % OS_BTERRA_MAP_HEIGHT);
+    int world = ((int)player.ty / OS_BTERRA_MAP_HEIGHT) * 2 + ((int)player.tx / OS_BTERRA_MAP_WIDTH);
+    int tile = (ultimaAssets.bterraMaps[world][ty][tx] >> 4) & 0x0F;
+    int tileType = ultimaAssets.bterraMaps[world][ty][tx] & 0x0F;
 
     if (tile < 4 || tile > 7) {
       uiConsole_replaceLastMessageFormat("%.10s%.10s", ultimaStrings[98], ultimaStrings[163]);
@@ -957,6 +960,11 @@ static bool playerOverworld_updateEnter() {
     if (tile == 5) {
       playerOverworld_enterSignpost();
 
+      return true;
+    } else if (tile == 6) {
+      uiConsole_queueMessageFormat("%s%s", ultimaStrings[180], placesNames[world * 20 + tileType + 13]);
+      uiConsole_queueMessageFormat(" ");
+      scene_load(&sceneTown);
       return true;
     }
   }

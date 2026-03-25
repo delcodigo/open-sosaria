@@ -8,6 +8,7 @@
 #include "engine/scene.h"
 #include "memory.h"
 #include "scenes/sceneDiskLoader.h"
+#include "entities/ui/uiConsole.h"
 #include "data/enemy.h"
 #include "data/bevery.h"
 #include <GLFW/glfw3.h>
@@ -26,6 +27,7 @@ int main(void)
   scene_load(&sceneDiskLoader);
 
   srand((unsigned int)time(NULL));
+  uiConsole_init();
 
   float lastTime = 0.0;
   while (!glfwWindowShouldClose(window)) {
@@ -48,6 +50,7 @@ int main(void)
     currentScene.scene_free();
   }
 
+  uiConsole_free();
   engine_cleanup();
   sceneDiskLoader_freeTextures();
   enemy_freeDefinitions();

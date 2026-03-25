@@ -26,7 +26,6 @@ float lagTime = 0.0f;
 static void sceneOverworld_init() {
   worldMap_init();
   playerOverworld_init();
-  uiConsole_init();
   uiConsole_addMessage(ultimaStrings[98]);
   vehicleOverworld_init();
   playerActed = false;
@@ -184,7 +183,6 @@ static void sceneOverworld_update(float deltaTime) {
 static void sceneOverworld_free() {
   worldMap_free();
   playerOverworld_free();
-  uiConsole_free();
   uiZtats_free();
   vehicleOverworld_free();
 }
