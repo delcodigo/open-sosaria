@@ -23,7 +23,7 @@ static float timeToNextMessage = 0.0f;
 static bool dequeuing = false;
 static float flashTime = 0.0f;
 static char flashChar = '0';
-static int typewriterIndex = 2;
+static int typewriterIndex = 3;
 static float typewriterTime = 0.0f;
 
 void uiConsole_init() {
@@ -147,21 +147,22 @@ void uiConsole_updateStats() {
 
 static void uiConsole_updateTypewriter(float deltaTime) {
   typewriterTime += deltaTime;
-  if (typewriterTime >= 0.15f) {
+  float speed = 0.15f / (float)(queuedMessages[0][2] - '0');
+  if (typewriterTime >= speed) {
     typewriterTime = 0;
     int length = strlen(queuedMessages[0]);
     if (typewriterIndex < length) {
       char currentLine[30] = {0};
-      strncpy(currentLine, queuedMessages[0], typewriterIndex + 1);
+      strncpy(currentLine, queuedMessages[0] + 3, typewriterIndex + 1);
       currentLine[typewriterIndex + 1] = '\0';
-      if (typewriterIndex <= 2) {
+      if (typewriterIndex <= 3) {
         uiConsole_addMessage(currentLine);
       } else {
         uiConsole_replaceLastMessage(currentLine);
       }
       typewriterIndex++;
     } else {
-      typewriterIndex = 2;
+      typewriterIndex = 3;
       timeToNextMessage = 0.15f;
       for (int i=0;i<queuedMessagesCount - 1;i++) {
         strncpy(queuedMessages[i], queuedMessages[i + 1], sizeof(queuedMessages[i]));
@@ -186,7 +187,7 @@ void uiConsole_update(float deltaTime) {
         }
         queuedMessagesCount--;
         typewriterTime = 0;
-        typewriterIndex = 2;
+        typewriterIndex = 3;
         timeToNextMessage = 0.15f;
       }
     }

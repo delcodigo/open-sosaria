@@ -693,7 +693,7 @@ static bool playerOverwolrd_cast() {
     switch (player.spell) {
       case 0:
         memset(consoleMessage, 0, sizeof(consoleMessage));
-        snprintf(consoleMessage, sizeof(consoleMessage), "^T%.28s", ultimaStrings[148]);
+        snprintf(consoleMessage, sizeof(consoleMessage), "^T1%.27s", ultimaStrings[148]);
         uiConsole_queueMessage(consoleMessage);
         int randomEffect = rand01() * 3 + 1;
         bool removedEnemies = false;
@@ -728,7 +728,7 @@ static bool playerOverwolrd_cast() {
           uiConsole_queueMessage(ultimaStrings[153]);
         } else {
           memset(consoleMessage, 0, sizeof(consoleMessage));
-          snprintf(consoleMessage, sizeof(consoleMessage), "^T%.28s", ultimaStrings[154]);
+          snprintf(consoleMessage, sizeof(consoleMessage), "^T1%.27s", ultimaStrings[154]);
           uiConsole_queueMessage(consoleMessage);
 
           int damage = (int)(player.wisdom / 2);
@@ -750,7 +750,7 @@ static bool playerOverwolrd_cast() {
           uiConsole_queueMessage(ultimaStrings[153]);
         } else {
           char consoleMessage[31] = {0};
-          snprintf(consoleMessage, sizeof(consoleMessage), "^T%.28s", ultimaStrings[159]);
+          snprintf(consoleMessage, sizeof(consoleMessage), "^T1%.27s", ultimaStrings[159]);
           uiConsole_queueMessage(consoleMessage);
 
           enemyEncounter.monsterId = -1;
@@ -911,7 +911,6 @@ static bool playerOverworld_updateFiring() {
 }
 
 static void playerOverworld_enterSignpost() {
-  char consoleMessage[31] = {0};
   int tx = (int)(player.tx % OS_BTERRA_MAP_WIDTH);
   int ty = (int)(player.ty % OS_BTERRA_MAP_HEIGHT);
   int world = ((int)player.ty / OS_BTERRA_MAP_HEIGHT) * 2 + ((int)player.tx / OS_BTERRA_MAP_WIDTH);
@@ -921,31 +920,30 @@ static void playerOverworld_enterSignpost() {
 
   if (player.quests[world * 2 + tileType] > 0 && tileType == 0) {
     player.quests[world * 2 + tileType] = -1;
-    snprintf(consoleMessage, sizeof(consoleMessage), "^T%.28s", ultimaStrings[271]);
-    uiConsole_queueMessage(consoleMessage);
+    uiConsole_queueMessageFormat("^T2%.27s", ultimaStrings[271]);
   }
 
   int postNumber = world * 2 + tileType + 1;
   int statToIncrease = -1;
   if (postNumber == 1) {
-    uiConsole_queueMessageFormat("^T%.28s", ultimaStrings[272]);
-    uiConsole_queueMessageFormat("^T%.28s", ultimaStrings[273]);
+    uiConsole_queueMessageFormat("^T2%.27s", ultimaStrings[272]);
+    uiConsole_queueMessageFormat("^T2%.27s", ultimaStrings[273]);
     statToIncrease = 6;
   } else if (postNumber == 2) {
-    uiConsole_queueMessageFormat("^T%.28s", ultimaStrings[274]);
-    uiConsole_queueMessageFormat("^T%.28s", ultimaStrings[275]);
+    uiConsole_queueMessageFormat("^T2%.27s", ultimaStrings[274]);
+    uiConsole_queueMessageFormat("^T2%.27s", ultimaStrings[275]);
     statToIncrease = 2;
   } else if (postNumber == 3) {
     for (int i=0;i<8;i++) {
-      uiConsole_queueMessageFormat("^T%.28s", ultimaStrings[276 + i]);
+      uiConsole_queueMessageFormat("^T2%.27s", ultimaStrings[276 + i]);
     }
     statToIncrease = 5;
   } else if (postNumber == 4) {
-    uiConsole_queueMessageFormat("^T%.28s", ultimaStrings[284]);
-    uiConsole_queueMessageFormat("^T%.28s", ultimaStrings[285]);
+    uiConsole_queueMessageFormat("^T2%.27s", ultimaStrings[284]);
+    uiConsole_queueMessageFormat("^T2%.27s", ultimaStrings[285]);
 
     if (lastSignpost == world * 2 + tileType) {
-      uiConsole_queueMessageFormat("^T%.28s", ultimaStrings[286]);
+      uiConsole_queueMessageFormat("^T2%.27s", ultimaStrings[286]);
       return;
     }
 
@@ -953,47 +951,47 @@ static void playerOverworld_enterSignpost() {
 
     for (int i=0;i<OS_WEAPONS_COUNT;i++) {
       if (player.weapons[i] == 0) {
-        uiConsole_queueMessageFormat("^T%.28s", ultimaStrings[288]);
-        uiConsole_queueMessageFormat("^T%.28s", weaponNames[i + 1]);
-        uiConsole_queueMessageFormat("^T%.28s", ultimaStrings[289]);
+        uiConsole_queueMessageFormat("^T2%.27s", ultimaStrings[288]);
+        uiConsole_queueMessageFormat("^T2%.27s", weaponNames[i + 1]);
+        uiConsole_queueMessageFormat("^T2%.27s", ultimaStrings[289]);
 
         player.weapons[i] = 1;
         return;
       }
     }
 
-    uiConsole_queueMessageFormat("^T%.28s", ultimaStrings[286]);
+    uiConsole_queueMessageFormat("^T2%.27s", ultimaStrings[286]);
     return;
   } else if (postNumber == 5) {
     for (int i=0;i<5;i++){
-      uiConsole_queueMessageFormat("^T%.28s", ultimaStrings[290 + i]);
+      uiConsole_queueMessageFormat("^T2%.27s", ultimaStrings[290 + i]);
     }
     statToIncrease = 3;
   } else if (postNumber == 6) {
     for (int i=0;i<3;i++){
-      uiConsole_queueMessageFormat("^T%.28s", ultimaStrings[295 + i]);
+      uiConsole_queueMessageFormat("^T2%.27s", ultimaStrings[295 + i]);
     }
     statToIncrease = 4;
   } else if (postNumber == 7) {
     for (int i=0;i<2;i++){
-      uiConsole_queueMessageFormat("^T%.28s", ultimaStrings[298 + i]);
+      uiConsole_queueMessageFormat("^T2%.27s", ultimaStrings[298 + i]);
     }
     statToIncrease = 3;
   } else if (postNumber == 8) {
     for (int i=0;i<2;i++){
-      uiConsole_queueMessageFormat("^T%.28s", ultimaStrings[300 + i]);
+      uiConsole_queueMessageFormat("^T2%.27s", ultimaStrings[300 + i]);
     }
     statToIncrease = 3;
   }
 
   if (lastSignpost == world * 2 + tileType) {
-    uiConsole_queueMessageFormat("^T%.28s", ultimaStrings[286]);
+    uiConsole_queueMessageFormat("^T2%.27s", ultimaStrings[286]);
     return;
   }
 
   lastSignpost = world * 2 + tileType;
   int statIncrase = (int)((99 - *(&player.health + statToIncrease)) / 10);
-  uiConsole_queueMessageFormat("^T%.15s+%d", statsNames[statToIncrease], statIncrase);
+  uiConsole_queueMessageFormat("^T2%.15s+%d", statsNames[statToIncrease], statIncrase);
   (*(&player.health + statToIncrease)) += statIncrase;
 
   uiConsole_updateStats();
