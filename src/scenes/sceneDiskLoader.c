@@ -571,11 +571,11 @@ static void sceneDiskLoader_decodeBterraMap(const uint8_t *dataRaw, uint32_t siz
 
   uint32_t size = 0;
   const uint8_t *data = sceneDiskLoader_maybeStripBloadHeader(dataRaw, sizeRaw, &size);
-  if (!data || size < OS_BTERRA_MAP_WIDTH * OS_BTERRA_MAP_HEIGHT) { return; }
+  if (!data || size < 64 * 64) { return; }
 
-  for (int y=0;y<OS_BTERRA_MAP_HEIGHT;y++) {
-    for (int x=0;x<OS_BTERRA_MAP_WIDTH;x++) {
-      int idx = y * OS_BTERRA_MAP_WIDTH + x;
+  for (int y=0;y<64;y++) {
+    for (int x=0;x<64;x++) {
+      int idx = y * 64 + x;
       map[y][x] = data[idx];
     }
   }
