@@ -429,6 +429,14 @@ static void sceneDiskLoader_emitQuotedStringsFromAppleBasicLine(const unsigned c
   while (i<lineLength) {
     if (lineData[i] == '"') {
       size_t start = i + 1;
+      bool isEmpty = true;
+      
+      while (lineData[start] == '\a') {
+        i++;
+        start++;
+        isEmpty = false;
+      }
+
       size_t end = start;
 
       while (end < lineLength && lineData[end] != '"') {
@@ -463,6 +471,8 @@ static void sceneDiskLoader_emitQuotedStringsFromAppleBasicLine(const unsigned c
           shouldAppend = false;
           printf("Extracted string: [%d] '%s'\n", ultimaStringCount - 1, ultimaStrings[ultimaStringCount - 1]);
         }
+      } else if (!isEmpty) {
+        ultimaStrings[ultimaStringCount++][0] = '\0';
       }
 
       i = end + 1;
@@ -640,7 +650,7 @@ static size_t sceneDiskLoader_findVariableOffset(const uint8_t *data, size_t dat
   int letters = 0;
 
   for (const char *p=varName;*p;++p) {
-    if (*p == '$') { continue; }
+    if (*p == '$'|| *p == '%') { continue; }
     if (isalpha((unsigned char)*p)) {
       if (letters == 0){ first = (char)toupper((unsigned char)*p); } else
       if (letters == 1){ second = (char)toupper((unsigned char)*p); }

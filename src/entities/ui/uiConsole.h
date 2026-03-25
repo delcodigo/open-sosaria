@@ -15,6 +15,7 @@ typedef struct {
 
 void uiConsole_init();
 void uiConsole_queueMessage(const char *message);
+void uiConsole_queueMessageFormat(const char *format, ...);
 void uiConsole_addMessage(const char *message);
 void uiConsole_replaceLastMessage(const char *message);
 void uiConsole_updateStats();

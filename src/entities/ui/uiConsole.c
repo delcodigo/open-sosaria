@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <string.h>
+#include <stdarg.h>
 #include "uiConsole.h"
 #include "engine/camera.h"
 #include "engine/texture.h"
@@ -63,6 +64,15 @@ void uiConsole_queueMessage(const char *message) {
     queuedMessages[queuedMessagesCount][29] = '\0';
     queuedMessagesCount++;
   }
+}
+
+void uiConsole_queueMessageFormat(const char *format, ...) {
+  char message[30] = {0};
+  va_list args;
+  va_start(args, format);
+  vsnprintf(message, sizeof(message), format, args);
+  va_end(args);
+  uiConsole_queueMessage(message);
 }
 
 static void uiConsole_detectFlashing(int index) {
@@ -147,7 +157,6 @@ static void uiConsole_updateTypewriter(float deltaTime) {
       if (typewriterIndex <= 2) {
         uiConsole_addMessage(currentLine);
       } else {
-        printf("Typewriter: %s index: %d\n", currentLine, typewriterIndex);
         uiConsole_replaceLastMessage(currentLine);
       }
       typewriterIndex++;

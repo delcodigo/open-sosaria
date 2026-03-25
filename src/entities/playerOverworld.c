@@ -36,6 +36,7 @@ static bool areKeysReleased = true;
 
 static float keyRepeatDelay = 0;
 static float waitingTime = 0.0f;
+static int lastSignpost = -1;
 
 void playerOverworld_init() {
   geometry_setSprite(&playerOverworldGeometry, OS_TILE_WIDTH, OS_TILE_HEIGHT, 0, 0.5f, 0.125f, 1.0f);
@@ -909,6 +910,121 @@ static bool playerOverworld_updateFiring() {
   return false;
 }
 
+static void playerOverworld_enterSignpost() {
+  char consoleMessage[31] = {0};
+  int tx = (int)(player.tx % OS_BTERRA_MAP_WIDTH);
+  int ty = (int)(player.ty % OS_BTERRA_MAP_HEIGHT);
+  int world = ((int)player.ty / OS_BTERRA_MAP_HEIGHT) * 2 + ((int)player.tx / OS_BTERRA_MAP_WIDTH);
+  int tileType = ultimaAssets.bterraMaps[world][ty][tx] & 0x0F;
+
+  uiConsole_queueMessage(placesNames[world * 20 + tileType + 3]);
+
+  if (player.quests[world * 2 + tileType] > 0 && tileType == 0) {
+    player.quests[world * 2 + tileType] = -1;
+    snprintf(consoleMessage, sizeof(consoleMessage), "^T%.28s", ultimaStrings[271]);
+    uiConsole_queueMessage(consoleMessage);
+  }
+
+  int postNumber = world * 2 + tileType + 1;
+  int statToIncrease = -1;
+  if (postNumber == 1) {
+    uiConsole_queueMessageFormat("^T%.28s", ultimaStrings[272]);
+    uiConsole_queueMessageFormat("^T%.28s", ultimaStrings[273]);
+    statToIncrease = 6;
+  } else if (postNumber == 2) {
+    uiConsole_queueMessageFormat("^T%.28s", ultimaStrings[274]);
+    uiConsole_queueMessageFormat("^T%.28s", ultimaStrings[275]);
+    statToIncrease = 2;
+  } else if (postNumber == 3) {
+    for (int i=0;i<8;i++) {
+      uiConsole_queueMessageFormat("^T%.28s", ultimaStrings[276 + i]);
+    }
+    statToIncrease = 5;
+  } else if (postNumber == 4) {
+    uiConsole_queueMessageFormat("^T%.28s", ultimaStrings[284]);
+    uiConsole_queueMessageFormat("^T%.28s", ultimaStrings[285]);
+
+    if (lastSignpost == world * 2 + tileType) {
+      uiConsole_queueMessageFormat("^T%.28s", ultimaStrings[286]);
+      return;
+    }
+
+    lastSignpost = world * 2 + tileType;
+
+    for (int i=0;i<OS_WEAPONS_COUNT;i++) {
+      if (player.weapons[i] == 0) {
+        uiConsole_queueMessageFormat("^T%.28s", ultimaStrings[288]);
+        uiConsole_queueMessageFormat("^T%.28s", weaponNames[i + 1]);
+        uiConsole_queueMessageFormat("^T%.28s", ultimaStrings[289]);
+
+        player.weapons[i] = 1;
+        return;
+      }
+    }
+
+    uiConsole_queueMessageFormat("^T%.28s", ultimaStrings[286]);
+    return;
+  } else if (postNumber == 5) {
+    for (int i=0;i<5;i++){
+      uiConsole_queueMessageFormat("^T%.28s", ultimaStrings[290 + i]);
+    }
+    statToIncrease = 3;
+  } else if (postNumber == 6) {
+    for (int i=0;i<3;i++){
+      uiConsole_queueMessageFormat("^T%.28s", ultimaStrings[295 + i]);
+    }
+    statToIncrease = 4;
+  } else if (postNumber == 7) {
+    for (int i=0;i<2;i++){
+      uiConsole_queueMessageFormat("^T%.28s", ultimaStrings[298 + i]);
+    }
+    statToIncrease = 3;
+  } else if (postNumber == 8) {
+    for (int i=0;i<2;i++){
+      uiConsole_queueMessageFormat("^T%.28s", ultimaStrings[300 + i]);
+    }
+    statToIncrease = 3;
+  }
+
+  if (lastSignpost == world * 2 + tileType) {
+    uiConsole_queueMessageFormat("^T%.28s", ultimaStrings[286]);
+    return;
+  }
+
+  lastSignpost = world * 2 + tileType;
+  int statIncrase = (int)((99 - *(&player.health + statToIncrease)) / 10);
+  uiConsole_queueMessageFormat("^T%.15s+%d", statsNames[statToIncrease], statIncrase);
+  (*(&player.health + statToIncrease)) += statIncrase;
+
+  uiConsole_updateStats();
+}
+
+static bool playerOverworld_updateEnter() {
+  if (input.e == 1) {
+    input.e = 2;
+    waitingTime = 0.0f;
+
+    int tile = (worldMap_getPlayerTile() >> 4) & 0x0F;
+
+    char consoleMessage[31] = {0};
+    if (tile < 4 || tile > 7) {
+      snprintf(consoleMessage, sizeof(consoleMessage), "%.10s%.10s%.10s", ultimaStrings[98], ultimaStrings[163], ultimaStrings[164]);
+      uiConsole_replaceLastMessage(consoleMessage);
+      return true;
+    }
+
+    snprintf(consoleMessage, sizeof(consoleMessage), "%.15s%.15s", ultimaStrings[98], ultimaStrings[163]);
+    uiConsole_replaceLastMessage(consoleMessage);
+
+    if (tile == 5) {
+      playerOverworld_enterSignpost();
+
+      return true;
+    }
+  }
+  return false;
+}
+
 bool playerOverworld_update(float deltaTime) {
   bool acted = false;
 
@@ -928,6 +1044,7 @@ bool playerOverworld_update(float deltaTime) {
         if (playerOverworld_updateBoard()) { acted = true; } else
         if (playerOverworld_updateExit()) { acted = true; } else
         if (playerOverworld_updateFiring()) { acted = true; } else
+        if (playerOverworld_updateEnter()) { acted = true; } else
         if (playerOverworld_updateMovement(deltaTime)) { acted = true; }
         break;
       case PLAYER_STATE_READY_TYPE:

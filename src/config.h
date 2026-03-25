@@ -23,5 +23,6 @@
 #define OS_WEAPONS_COUNT 15
 #define OS_SPELLS_COUNT 11
 #define OS_GEMS_COUNT 4
+#define OS_QUESTS_COUNT 10
 
 #endif
