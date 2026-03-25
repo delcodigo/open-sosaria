@@ -43,7 +43,7 @@ void playerOverworld_init() {
   matrix4_setIdentity(transformationMatrix);
   matrix4_setIdentity(enemyTransformationMatrix);
   memset(&inputTextfieldBuffer, 0, sizeof(inputTextfieldBuffer));
-  camera_setPosition3f(&camera, (player.tx + 1) * OS_TILE_WIDTH - OS_SCREEN_WIDTH / 2, (player.ty + 1) * OS_TILE_HEIGHT - OS_SCREEN_HEIGHT / 2, 10);
+  playerOverworld_setCameraFollow();
   inputTextfieldBuffer.maxLength = 2;
 }
 
@@ -150,7 +150,7 @@ bool playerOverworld_updateMovement(float deltaTime) {
 
     player.tx = (player.tx + moveX + OS_BTERRA_MAP_WIDTH * 2) % (OS_BTERRA_MAP_WIDTH * 2);
     player.ty = (player.ty + moveY + OS_BTERRA_MAP_HEIGHT * 2) % (OS_BTERRA_MAP_HEIGHT * 2);
-    camera_setPosition3f(&camera, (player.tx + 1) * OS_TILE_WIDTH - OS_SCREEN_WIDTH / 2, (player.ty + 1) * OS_TILE_HEIGHT - OS_SCREEN_HEIGHT / 2, 10);
+    playerOverworld_setCameraFollow();
     keyRepeatDelay = 0.1f;
 
     player_consumeFood();
@@ -724,7 +724,7 @@ static bool playerOverwolrd_cast() {
   return false;
 }
 
-static void playerOverworld_updateGeometry() {
+void playerOverworld_updateGeometry() {
   if (playerOverworldGeometry.indexCount > 0){
     geometry_free(&playerOverworldGeometry);
   }
@@ -960,6 +960,10 @@ static bool playerOverworld_updateEnter() {
     }
   }
   return false;
+}
+
+void playerOverworld_setCameraFollow() {
+  camera_setPosition3f(&camera, (player.tx + 1) * OS_TILE_WIDTH - OS_SCREEN_WIDTH / 2, (player.ty + 1) * OS_TILE_HEIGHT - OS_SCREEN_HEIGHT / 2, 10);
 }
 
 bool playerOverworld_update(float deltaTime) {

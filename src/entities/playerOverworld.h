@@ -25,5 +25,7 @@ void playerOverworld_init();
 bool playerOverworld_update(float deltaTime);
 void playerOverworld_render();
 void playerOverworld_free();
+void playerOverworld_updateGeometry();
+void playerOverworld_setCameraFollow();
 
 #endif

@@ -152,6 +152,8 @@ static void sceneOverworld_update(float deltaTime) {
       player.ty = respawnY;
       respawnPlayer = false;
       uiConsole_updateStats();
+      playerOverworld_updateGeometry();
+      playerOverworld_setCameraFollow();
     }
 
     if (ztatsActive){
