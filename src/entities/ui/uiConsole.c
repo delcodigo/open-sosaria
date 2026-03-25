@@ -126,11 +126,29 @@ void uiConsole_addMessage(const char *message) {
   text_update(&consoleLines[3].text, consoleLines[3].line);
 }
 
+void uiConsole_addMessageFormat(const char *format, ...) {
+  char message[30] = {0};
+  va_list args;
+  va_start(args, format);
+  vsnprintf(message, sizeof(message), format, args);
+  va_end(args);
+  uiConsole_addMessage(message);
+}
+
 void uiConsole_replaceLastMessage(const char *message) {
   strncpy(consoleLines[3].line, message, sizeof(consoleLines[3].line));
   consoleLines[3].line[29] = '\0';
   uiConsole_detectFlashing(3);
   text_update(&consoleLines[3].text, consoleLines[3].line);
+}
+
+void uiConsole_replaceLastMessageFormat(const char *format, ...) {
+  char message[30] = {0};
+  va_list args;
+  va_start(args, format);
+  vsnprintf(message, sizeof(message), format, args);
+  va_end(args);
+  uiConsole_replaceLastMessage(message);
 }
 
 void uiConsole_updateStats() {

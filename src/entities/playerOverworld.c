@@ -142,9 +142,7 @@ bool playerOverworld_updateMovement(float deltaTime) {
         keyRepeatDelay = 0.3f;
         return true;
       } else if (tile > 0 && (player.vehicle == 3 || player.vehicle == 4)) {
-        char consoleMessage[31] = {0};
-        snprintf(consoleMessage, sizeof(consoleMessage), "%.14s%.15s", vehicleNames[player.vehicle], ultimaStrings[125]);
-        uiConsole_addMessage(consoleMessage);
+        uiConsole_addMessageFormat("%.14s%.15s", vehicleNames[player.vehicle], ultimaStrings[125]);
         keyRepeatDelay = 0.3f;
         return true;
       }
@@ -293,23 +291,18 @@ static void playerOverworld_activateInput() {
 }
 
 static void playerOverworld_tryAndEquipSpell(int spellIndex, const char *charUsed) {
-  char consoleMessage[31] = {0};
-
   if (spellIndex < 0) {
-    snprintf(consoleMessage, sizeof(consoleMessage), "%.15s%s%.10s", ultimaStrings[214], charUsed, ultimaStrings[224]);
-    uiConsole_replaceLastMessage(consoleMessage);
+    uiConsole_replaceLastMessageFormat("%.15s%s%.10s", ultimaStrings[214], charUsed, ultimaStrings[224]);
     return;
   }
 
   if (spellIndex > 0 && player.spells[spellIndex - 1] < 1) {
-    snprintf(consoleMessage, sizeof(consoleMessage), "%.15s%s", ultimaStrings[225], spellNames[spellIndex]);
-    uiConsole_addMessage(consoleMessage);
+    uiConsole_addMessageFormat("%.15s%s", ultimaStrings[225], spellNames[spellIndex]);
     return;
   }
 
   player.spell = spellIndex;
-  snprintf(consoleMessage, sizeof(consoleMessage), "%.15s%s", ultimaStrings[226], spellNames[spellIndex]);
-  uiConsole_addMessage(consoleMessage);
+  uiConsole_addMessageFormat("%.15s%s", ultimaStrings[226], spellNames[spellIndex]);
 }
 
 static bool playerOverworld_readyStart() {
@@ -407,34 +400,27 @@ static bool playerOverworld_readyWeaponEquip() {
 static bool playerOverworld_readyArmorEquip() {
   if (inputTextfield->isDirty && inputTextfield->text[0] != '\0') {
     inputTextfield->isDirty = false;
-    char consoleMessage[31] = {0};
     char armorChar[2] = {(char)toupper(inputTextfield->text[0]), '\0'};
-    snprintf(consoleMessage, sizeof(consoleMessage), "%.14s%.1s", ultimaStrings[210], armorChar);
-    uiConsole_replaceLastMessage(consoleMessage);
+    uiConsole_replaceLastMessageFormat("%.14s%.1s", ultimaStrings[210], armorChar);
 
     readyStep = READY_STEP_RETURN_TO_IDLE;
     areKeysReleased = false;
 
-    memset(consoleMessage, 0, sizeof(consoleMessage));
-
     for (int i=0;i<OS_ARMORS_COUNT;i++) {
       if (armorNames[i][0] == armorChar[0]) {
         if (player.armors[i - 1] < 1 && i > 0) {
-          snprintf(consoleMessage, sizeof(consoleMessage), "%.15s%.15s", ultimaStrings[212], armorNames[i]);
-          uiConsole_addMessage(consoleMessage);
+          uiConsole_addMessageFormat("%.15s%.15s", ultimaStrings[212], armorNames[i]);
           return false;
         }
 
-        snprintf(consoleMessage, sizeof(consoleMessage), "%.15s%.15s", ultimaStrings[213], armorNames[i]);
-        uiConsole_addMessage(consoleMessage);
+        uiConsole_addMessageFormat("%.15s%.15s", ultimaStrings[213], armorNames[i]);
         inputTextfield = NULL;
         player.armor = i - 1;
         return false;
       }
     }
 
-    snprintf(consoleMessage, sizeof(consoleMessage), "%.1s%.15s", armorChar, ultimaStrings[211]);
-    uiConsole_addMessage(consoleMessage);
+    uiConsole_addMessageFormat("%.1s%.15s", armorChar, ultimaStrings[211]);
     return false;
   }
 
@@ -444,18 +430,15 @@ static bool playerOverworld_readyArmorEquip() {
 static bool playerOverworld_readySpellEquip() {
   if (inputTextfield->isDirty && inputTextfield->text[0] != '\0') {
     char selectedSpellChar[2] = {(char)toupper(inputTextfield->text[0]), '\0'};
-    char consoleMessage[31] = {0};
     inputTextfield->isDirty = false;
 
     if (selectedSpellChar[0] == 'L') {
-      snprintf(consoleMessage, sizeof(consoleMessage), "%.15sL %.10s", ultimaStrings[214], ultimaStrings[216]);
-      uiConsole_replaceLastMessage(consoleMessage);
+      uiConsole_replaceLastMessageFormat("%.15sL %.10s", ultimaStrings[214], ultimaStrings[216]);
       readyStep = READY_STEP_SPELL_LADDER;
       areKeysReleased = false;
       return false;
     } else if (selectedSpellChar[0] == 'P') {
-      snprintf(consoleMessage, sizeof(consoleMessage), "%.12sP[RAY/ROJ] (R/J)", ultimaStrings[214]);
-      uiConsole_replaceLastMessage(consoleMessage);
+      uiConsole_replaceLastMessageFormat("%.12sP[RAY/ROJ] (R/J)", ultimaStrings[214]);
       readyStep = READY_STEP_SPELL_PRAYER_OR_PROJECTILE;
       areKeysReleased = false;
       return false;
@@ -481,10 +464,8 @@ static bool playerOverworld_readySpellEquip() {
 static bool playerOverworld_readySpellLadder() {
   if (inputTextfield->isDirty && inputTextfield->text[0] != '\0') {
     char selectedSpellChar[3] = {'L', (char)toupper(inputTextfield->text[0]), '\0'};
-    char consoleMessage[31] = {0};
     inputTextfield->isDirty = false;
-    snprintf(consoleMessage, sizeof(consoleMessage), "%.15s%s", ultimaStrings[214], selectedSpellChar);
-    uiConsole_replaceLastMessage(consoleMessage);
+    uiConsole_replaceLastMessageFormat("%.15s%s", ultimaStrings[214], selectedSpellChar);
 
     readyStep = READY_STEP_RETURN_TO_IDLE;
     areKeysReleased = false;
@@ -516,10 +497,8 @@ static void playerOverworld_readyReturnToIdle() {
 static bool playerOverworld_readPrayerOrProjectile() {
   if (inputTextfield->isDirty && inputTextfield->text[0] != '\0') {
     char selectedSpellChar[3] = {'P', (char)toupper(inputTextfield->text[0]), '\0'};
-    char consoleMessage[31] = {0};
     inputTextfield->isDirty = false;
-    snprintf(consoleMessage, sizeof(consoleMessage), "%.15s%s", ultimaStrings[214], selectedSpellChar);
-    uiConsole_replaceLastMessage(consoleMessage);
+    uiConsole_replaceLastMessageFormat("%.15s%s", ultimaStrings[214], selectedSpellChar);
 
     readyStep = READY_STEP_RETURN_TO_IDLE;
     areKeysReleased = false;
@@ -582,7 +561,6 @@ static bool playerOverworld_ready() {
 
 static void playerOverworld_checkIfEnemiesDead() {
   if (enemyEncounter.hp < 0) {
-    char consoleMessage[31] = {0};
     int monsterId = enemyEncounter.monsterId;
 
     enemyEncounter.number -= 1;
@@ -591,9 +569,7 @@ static void playerOverworld_checkIfEnemiesDead() {
     int goldEarned = (int)(enemyDefinitions[monsterId].rank * 4 * rand01()) + 10;
     player.gold += goldEarned;
 
-    memset(consoleMessage, 0, sizeof(consoleMessage));
-    snprintf(consoleMessage, sizeof(consoleMessage), "%.15s+%d", ultimaStrings[134], goldEarned);
-    uiConsole_queueMessage(consoleMessage);
+    uiConsole_queueMessageFormat("%.15s+%d", ultimaStrings[134], goldEarned);
 
     if (enemyEncounter.number <= 0) {
       enemyEncounter.monsterId = -1;
@@ -608,7 +584,6 @@ static void playerOverworld_checkIfEnemiesDead() {
     }
 
     uiConsole_updateStats();
-
   }
 }
 
@@ -618,9 +593,7 @@ static bool playerOverworld_updateAttack() {
     waitingTime = 0.0f;
     lagTime = 1.5f;
 
-    char consoleMessage[31] = {0};
-    snprintf(consoleMessage, sizeof(consoleMessage), "%.11s^F^1%.12s^0", ultimaStrings[98], ultimaStrings[126]);
-    uiConsole_replaceLastMessage(consoleMessage);
+    uiConsole_replaceLastMessageFormat("%.11s^F^1%.12s^0", ultimaStrings[98], ultimaStrings[126]);
 
     int monsterId = enemyEncounter.monsterId;
 
@@ -629,23 +602,17 @@ static bool playerOverworld_updateAttack() {
       return true;
     }
 
-    memset(consoleMessage, 0, sizeof(consoleMessage));
-    snprintf(consoleMessage, sizeof(consoleMessage), "^F^1%s^0", enemyDefinitions[monsterId].name);
-    uiConsole_queueMessage(consoleMessage);
+    uiConsole_queueMessageFormat("^F^1%s^0", enemyDefinitions[monsterId].name);
 
     if ((monsterId < 10 || monsterId == 12) && (player.weapon < 7 || player.weapon == 11 || player.weapon == 13)) {
       uiConsole_queueMessage(ultimaStrings[128]);
       return true;
     }
 
-    memset(consoleMessage, 0, sizeof(consoleMessage));
-    snprintf(consoleMessage, sizeof(consoleMessage), "%.15s%s", ultimaStrings[129], weaponNames[player.weapon]);
-    uiConsole_queueMessage(consoleMessage);
+    uiConsole_queueMessageFormat("%.15s%s", ultimaStrings[129], weaponNames[player.weapon]);
 
     if (player.weapon > 7 && player.weapon < 12) {
-      memset(consoleMessage, 0, sizeof(consoleMessage));
-      snprintf(consoleMessage, sizeof(consoleMessage), "%.10s%.19s", weaponNames[player.weapon], ultimaStrings[135]);
-      uiConsole_queueMessage(consoleMessage);
+      uiConsole_queueMessageFormat("%.10s%.19s", weaponNames[player.weapon], ultimaStrings[135]);
       return true;
     }
 
@@ -653,9 +620,7 @@ static bool playerOverworld_updateAttack() {
     int defense = enemyDefinitions[monsterId].rank + 10;
     if (attack > defense || attack > 20) {
       int damage = (int)((player.strength + player.weapon) * rand01()) + 1;
-      memset(consoleMessage, 0, sizeof(consoleMessage));
-      snprintf(consoleMessage, sizeof(consoleMessage), "%.5s%.10s%d", ultimaStrings[131], ultimaStrings[132], damage);
-      uiConsole_queueMessage(consoleMessage);
+      uiConsole_queueMessageFormat("%.5s%.10s%d", ultimaStrings[131], ultimaStrings[132], damage);
 
       enemyEncounter.hp -= damage;
 
@@ -677,14 +642,11 @@ static bool playerOverwolrd_cast() {
     input.c = 2;
     waitingTime = 0.0f;
 
-    char consoleMessage[31] = {0};
-    snprintf(consoleMessage, sizeof(consoleMessage), "%.15s%.15s", ultimaStrings[145], spellNames[player.spell]);
-    uiConsole_queueMessage(consoleMessage);
+    uiConsole_queueMessageFormat("%.15s%.15s", ultimaStrings[145], spellNames[player.spell]);
 
     if (player.spell > 0 && player.spells[player.spell] < 1) {
       uiConsole_queueMessage(ultimaStrings[146]);
-      snprintf(consoleMessage, sizeof(consoleMessage), "%.15s%.15s", spellNames[player.spell], ultimaStrings[147]);
-      uiConsole_queueMessage(consoleMessage);
+      uiConsole_queueMessageFormat("%.15s%.15s", spellNames[player.spell], ultimaStrings[147]);
       return true;
     }
 
@@ -692,9 +654,7 @@ static bool playerOverwolrd_cast() {
 
     switch (player.spell) {
       case 0:
-        memset(consoleMessage, 0, sizeof(consoleMessage));
-        snprintf(consoleMessage, sizeof(consoleMessage), "^T1%.27s", ultimaStrings[148]);
-        uiConsole_queueMessage(consoleMessage);
+        uiConsole_queueMessageFormat("^T1%.27s", ultimaStrings[148]);
         int randomEffect = rand01() * 3 + 1;
         bool removedEnemies = false;
         if (randomEffect == 1 && enemyEncounter.monsterId > 0) {
@@ -727,18 +687,14 @@ static bool playerOverwolrd_cast() {
         if (enemyEncounter.monsterId < 1) {
           uiConsole_queueMessage(ultimaStrings[153]);
         } else {
-          memset(consoleMessage, 0, sizeof(consoleMessage));
-          snprintf(consoleMessage, sizeof(consoleMessage), "^T1%.27s", ultimaStrings[154]);
-          uiConsole_queueMessage(consoleMessage);
+          uiConsole_queueMessageFormat("^T1%.27s", ultimaStrings[154]);
 
           int damage = (int)(player.wisdom / 2);
           if (player.weapon > 7 && player.weapon < 12) {
             damage += player.weapon * 2;
           }
 
-          memset(consoleMessage, 0, sizeof(consoleMessage));
-          snprintf(consoleMessage, sizeof(consoleMessage), "%.10s%.10s%d", ultimaStrings[155], ultimaStrings[156], damage);
-          uiConsole_queueMessage(consoleMessage);
+          uiConsole_queueMessageFormat("%.10s%.10s%d", ultimaStrings[155], ultimaStrings[156], damage);
 
           enemyEncounter.hp -= damage;
           playerOverworld_checkIfEnemiesDead();
@@ -749,9 +705,7 @@ static bool playerOverwolrd_cast() {
         if (enemyEncounter.monsterId < 1) {
           uiConsole_queueMessage(ultimaStrings[153]);
         } else {
-          char consoleMessage[31] = {0};
-          snprintf(consoleMessage, sizeof(consoleMessage), "^T1%.27s", ultimaStrings[159]);
-          uiConsole_queueMessage(consoleMessage);
+          uiConsole_queueMessageFormat("^T1%.27s", ultimaStrings[159]);
 
           enemyEncounter.monsterId = -1;
           renderEnemy = false;
@@ -805,9 +759,7 @@ static bool playerOverworld_updateBoard() {
       uiConsole_addMessage(ultimaStrings[140]);
     } else if (vehicleTile == 3 || vehicleTile == 4 || vehicleTile == 5) {
       player.vehicle = vehicleTile;
-      char consoleMessage[31] = {0};
-      snprintf(consoleMessage, sizeof(consoleMessage), "%.15s%.15s", ultimaStrings[144], vehicleNames[vehicleTile]);
-      uiConsole_addMessage(consoleMessage);
+      uiConsole_addMessageFormat("%.15s%.15s", ultimaStrings[144], vehicleNames[vehicleTile]);
     } else if (vehicleTile == 6) {
       player.vehicle = 6;
       uiConsole_addMessage(ultimaStrings[141]);
@@ -866,29 +818,21 @@ static bool playerOverworld_updateFiring() {
     waitingTime = 0.0f;
     lagTime = 1.5f;
 
-    char consoleMessage[31] = {0};
     if (player.vehicle == 4) {
-      snprintf(consoleMessage, sizeof(consoleMessage), "%.15s%.15s", ultimaStrings[98], ultimaStrings[166]);
+      uiConsole_replaceLastMessageFormat("%.15s%.15s", ultimaStrings[98], ultimaStrings[166]);
     } else if (player.vehicle == 5) {
-      snprintf(consoleMessage, sizeof(consoleMessage), "%.15s%.15s", ultimaStrings[98], ultimaStrings[167]);
+      uiConsole_replaceLastMessageFormat("%.15s%.15s", ultimaStrings[98], ultimaStrings[167]);
     } else {
-      snprintf(consoleMessage, sizeof(consoleMessage), "%.15s%.15s", ultimaStrings[98], ultimaStrings[168]);
-      uiConsole_replaceLastMessage(consoleMessage);
+      uiConsole_replaceLastMessageFormat("%.15s%.15s", ultimaStrings[98], ultimaStrings[168]);
       return true;
     }
-
-    uiConsole_replaceLastMessage(consoleMessage);
 
     if (enemyEncounter.monsterId < 6 || enemyEncounter.monsterId > 20) {
-      memset(consoleMessage, 0, sizeof(consoleMessage));
-      snprintf(consoleMessage, sizeof(consoleMessage), "%.15s%.15s", ultimaStrings[98], ultimaStrings[169]);
-      uiConsole_addMessage(consoleMessage);
+      uiConsole_addMessageFormat("%.15s%.15s", ultimaStrings[98], ultimaStrings[169]);
       return true;
     }
 
-    memset(consoleMessage, 0, sizeof(consoleMessage));
-    snprintf(consoleMessage, sizeof(consoleMessage), "%.15s%.15s", ultimaStrings[170], enemyDefinitions[enemyEncounter.monsterId].name);
-    uiConsole_queueMessage(consoleMessage);
+    uiConsole_queueMessageFormat("%.15s%.15s", ultimaStrings[170], enemyDefinitions[enemyEncounter.monsterId].name);
 
     if (rand01() > 0.8f) {
       uiConsole_queueMessage(ultimaStrings[171]);
@@ -898,9 +842,7 @@ static bool playerOverworld_updateFiring() {
     int damage = (int)(rand01() * 10 * player.vehicle) + 30;
     enemyEncounter.hp -= damage;
 
-    memset(consoleMessage, 0, sizeof(consoleMessage));
-    snprintf(consoleMessage, sizeof(consoleMessage), "%.18s%d", ultimaStrings[172], damage);
-    uiConsole_queueMessage(consoleMessage);
+    uiConsole_queueMessageFormat("%.18s%d", ultimaStrings[172], damage);
 
     playerOverworld_checkIfEnemiesDead();
 
@@ -1004,15 +946,12 @@ static bool playerOverworld_updateEnter() {
 
     int tile = (worldMap_getPlayerTile() >> 4) & 0x0F;
 
-    char consoleMessage[31] = {0};
     if (tile < 4 || tile > 7) {
-      snprintf(consoleMessage, sizeof(consoleMessage), "%.10s%.10s%.10s", ultimaStrings[98], ultimaStrings[163], ultimaStrings[164]);
-      uiConsole_replaceLastMessage(consoleMessage);
+      uiConsole_replaceLastMessageFormat("%.10s%.10s%.10s", ultimaStrings[98], ultimaStrings[163], ultimaStrings[164]);
       return true;
     }
 
-    snprintf(consoleMessage, sizeof(consoleMessage), "%.15s%.15s", ultimaStrings[98], ultimaStrings[163]);
-    uiConsole_replaceLastMessage(consoleMessage);
+    uiConsole_replaceLastMessageFormat("%.15s%.15s", ultimaStrings[98], ultimaStrings[163]);
 
     if (tile == 5) {
       playerOverworld_enterSignpost();

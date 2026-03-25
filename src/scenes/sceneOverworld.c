@@ -67,13 +67,8 @@ static void sceneOverworld_resolveEncounter() {
     return;
   }
 
-  char consoleMessage[31] = {0};
-  snprintf(consoleMessage, sizeof(consoleMessage), "^1%.26s^0", ultimaStrings[252]);
-  uiConsole_queueMessage(consoleMessage);
-
-  char enemiesMsg[31] = {0};
-  snprintf(enemiesMsg, sizeof(enemiesMsg), "^1%.8s %d %s%s^0", ultimaStrings[253], enemyEncounter.number, enemyDefinitions[enemyEncounter.monsterId].name, enemyEncounter.number > 1 ? "s" : ""  );
-  uiConsole_queueMessage(enemiesMsg);
+  uiConsole_queueMessageFormat("^1%.26s^0", ultimaStrings[252]);
+  uiConsole_queueMessageFormat("^1%.8s %d %s%s^0", ultimaStrings[253], enemyEncounter.number, enemyDefinitions[enemyEncounter.monsterId].name, enemyEncounter.number > 1 ? "s" : ""  );
 
   int hits = 0;
   for (int i=1;i<=enemyEncounter.number;i++) {
@@ -95,8 +90,7 @@ static void sceneOverworld_resolveEncounter() {
     }
   }
 
-  snprintf(enemiesMsg, sizeof(enemiesMsg), "^1%.8s%d%.10s%d^0", ultimaStrings[256], hits, ultimaStrings[257], enemyEncounter.number - hits);
-  uiConsole_queueMessage(enemiesMsg);
+  uiConsole_queueMessageFormat("^1%.8s%d%.10s%d^0", ultimaStrings[256], hits, ultimaStrings[257], enemyEncounter.number - hits);
 
   uiConsole_updateStats();
 
@@ -107,9 +101,7 @@ static void sceneOverworld_resolveEncounter() {
 
 static bool sceneOverworld_attemptResurrection() {
   if (!player_isAlive()) {
-    char consoleMessage[31] = {0};
-    snprintf(consoleMessage, sizeof(consoleMessage), "%.15s%.14s", player.name, ultimaStrings[259]);
-    uiConsole_addMessage(consoleMessage);
+    uiConsole_addMessageFormat("%.15s%.14s", player.name, ultimaStrings[259]);
     uiConsole_addMessage(ultimaStrings[260]);
 
     for (int i=0;i<OS_WEAPONS_COUNT;i++) {
