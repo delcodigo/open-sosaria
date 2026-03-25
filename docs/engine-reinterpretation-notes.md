@@ -151,6 +151,7 @@ $$
 ## Overworld
 
 - The overworld map is divided into **4 chunks**: `bterra0`, `bterra1`, `bterra2`, `bterra3`.
+- Although each realm's playable area is a **64x64** chunk, the underlying data for each chunk is actually **86x86** tiles. The additional outer area is filled with water tiles, effectively increasing the separation and travel distance between the different realms.
 
 ## Overworld Combat Flow
 
@@ -216,6 +217,9 @@ where `rank` is the attacking monster rank.
 
 - `drop`, `get`, and `open` are not actually usable actions on the overworld.
 - Even so, the game still accepts those commands and prints a specific feedback message for each one.
+
+## Signpost Upgrade Spam Prevention
+- To prevent players from repeatedly receiving upgrades from the same signpost, the engine tracks the last signpost interacted with and temporarily blocks duplicate rewards until a different signpost is checked.
 
 
 ## Resurrection Behavior

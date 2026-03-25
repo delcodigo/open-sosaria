@@ -947,7 +947,8 @@ static bool playerOverworld_updateEnter() {
     int tile = (worldMap_getPlayerTile() >> 4) & 0x0F;
 
     if (tile < 4 || tile > 7) {
-      uiConsole_replaceLastMessageFormat("%.10s%.10s%.10s", ultimaStrings[98], ultimaStrings[163], ultimaStrings[164]);
+      uiConsole_replaceLastMessageFormat("%.10s%.10s", ultimaStrings[98], ultimaStrings[163]);
+      uiConsole_addMessage(ultimaStrings[164]);
       return true;
     }
 
