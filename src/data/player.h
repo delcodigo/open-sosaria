@@ -38,6 +38,7 @@ typedef struct {
 extern Player player;
 
 void player_consumeFood();
+void player_consumeTownFood();
 void player_waitPenalty();
 bool player_isAlive();
 

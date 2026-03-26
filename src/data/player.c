@@ -9,6 +9,12 @@ void player_consumeFood() {
   uiConsole_updateStats();
 }
 
+void player_consumeTownFood() {
+  player.food -= 0.01f;
+  player.time += 0.1f;
+  uiConsole_updateStats();
+}
+
 void player_waitPenalty() {
   player.food -= 0.05f;
   player.time += 0.5f;

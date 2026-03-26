@@ -27,7 +27,8 @@ void sceneTown_update(float deltaTime) {
   float *viewMatrix = camera_getViewProjectionMatrix(&camera);
   geometry_render(&townGeometry, ultimaAssets.townScreen.textureId, townTransform, viewMatrix);
 
-  playerTown_update(deltaTime, viewMatrix);
+  playerTown_update(deltaTime);
+  playerTown_render(viewMatrix);
   uiConsole_update(deltaTime);
 }
 
