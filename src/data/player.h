@@ -31,6 +31,8 @@ typedef struct {
   int spells[OS_SPELLS_COUNT];
   int gems[OS_GEMS_COUNT];
   int quests[OS_QUESTS_COUNT];
+  int px;
+  int py;
 } Player;
 
 extern Player player;
