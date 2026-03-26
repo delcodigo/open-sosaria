@@ -963,7 +963,7 @@ static bool playerOverworld_updateEnter() {
     } else if (tile == 6) {
       uiConsole_queueMessageFormat("%s%s", ultimaStrings[180], placesNames[world * 20 + tileType + 13]);
       uiConsole_queueMessageFormat(" ");
-      vmExecuter_createSceneTransition(2, &sceneTown);
+      vmExecuter_createSceneTransition(1.5f, &sceneTown);
       
       return true;
     }

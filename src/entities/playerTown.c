@@ -40,6 +40,12 @@ static bool playerTown_updateMovement(float deltaTime) {
     waitingTime = 0.0f;
     uiConsole_replaceLastMessageFormat("%.14s%.15s", ultimaStrings[98], ultimaStrings[movementStringIndex]);
 
+    if (ultimaAssets.townCollisionMap[player.py + moveY][player.px + moveX]) {
+      uiConsole_addMessage(ultimaStrings[341]);
+      keyRepeatDelay = 0.3f;
+      return true;
+    }
+
     player.px = player.px + moveX;
     player.py = player.py + moveY;
     keyRepeatDelay = 0.1f;

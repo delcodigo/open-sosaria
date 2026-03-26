@@ -1003,6 +1003,30 @@ static void sceneDiskLoader_freeShapeTable(ShapeTable *table) {
   }
 }
 
+static void sceneDiskLoader_loadTownCollisionsMap(uint8_t *disk) {
+  Buffer *fileBuffer = sceneDiskLoader_readDos33FileByName(disk, "BTWN");
+  if (fileBuffer && fileBuffer->data) {
+    uint32_t size = 0;
+    const uint8_t *data = sceneDiskLoader_maybeStripBloadHeader(fileBuffer->data, fileBuffer->size, &size);
+
+    if (!data || size < OS_TOWN_SIZE_WIDTH * OS_TOWN_SIZE_HEIGHT) {
+      free(fileBuffer->data);
+      free(fileBuffer);
+      return;
+    }
+
+    uint8_t *ptr = (uint8_t *)data;
+    for (int x=0;x<OS_TOWN_SIZE_WIDTH;x++) {
+      for (int y=0;y<OS_TOWN_SIZE_HEIGHT;y++) {
+        ultimaAssets.townCollisionMap[y][x] = *ptr++;
+      }
+    }
+    
+    free(fileBuffer->data);
+    free(fileBuffer);
+  }
+}
+
 static int sceneDiskLoader_verifyUltimaDisks() {
   if (!file_exists("disk1.dsk")) {
     strcpy(diskMsgText, "'disk1.dsk' not found!");
@@ -1215,6 +1239,10 @@ void sceneDiskLoader_extractUltimaAssets() {
   // BASIC files strings
   sceneDiskLoader_extractBasicStrings(disk1, "INIT DISPLAY");
   sceneDiskLoader_extractBasicStrings(disk1, "OUT MOVE");
+  sceneDiskLoader_extractBasicStrings(disk1, "TWN MOVE");
+
+  // Load town collisions map
+  sceneDiskLoader_loadTownCollisionsMap(disk2);
 
   // BEVERY
   Buffer *beveryBuffer = sceneDiskLoader_readDos33FileByName(disk2, "BEVERY");
