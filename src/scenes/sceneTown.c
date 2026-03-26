@@ -19,15 +19,31 @@ void sceneTown_init() {
   player.px = 20;
   player.py = 20;
   playerTown_init();
-
-  uiConsole_addMessage(ultimaStrings[98]);
 }
 
 void sceneTown_update(float deltaTime) {
+  if (lagTime > 0) {
+    lagTime -= deltaTime;
+    if (lagTime < 0) { lagTime = 0; }
+  }
+  
+  if (!queuedMessagesCount && lagTime <= 0) {
+    if (playerActed) {
+      playerActed = false;
+      
+      if (player_isAlive()) {
+        uiConsole_addMessage(ultimaStrings[98]);
+      }
+    }
+
+    if (player_isAlive() && playerTown_update(deltaTime)) {
+      playerActed = true;
+    }
+  }
+
   float *viewMatrix = camera_getViewProjectionMatrix(&camera);
   geometry_render(&townGeometry, ultimaAssets.townScreen.textureId, townTransform, viewMatrix);
 
-  playerTown_update(deltaTime);
   playerTown_render(viewMatrix);
   uiConsole_update(deltaTime);
 }

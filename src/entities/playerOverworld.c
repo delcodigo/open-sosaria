@@ -35,8 +35,6 @@ static Textfield inputTextfieldBuffer;
 static char selectedWeapon[3] = {0};
 static bool areKeysReleased = true;
 
-static float keyRepeatDelay = 0;
-static float waitingTime = 0.0f;
 static int lastSignpost = -1;
 
 void playerOverworld_init() {

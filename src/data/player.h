@@ -36,6 +36,13 @@ typedef struct {
 } Player;
 
 extern Player player;
+extern bool playerActed;
+extern bool respawnPlayer;
+extern int respawnX;
+extern int respawnY;
+extern float keyRepeatDelay;
+extern float waitingTime;
+extern float lagTime;
 
 void player_consumeFood();
 void player_consumeTownFood();

@@ -9,8 +9,6 @@
 
 static Geometry playerTownGeometry;
 static float transformMatrix[16];
-static float waitingTime = 0.0f;
-static float keyRepeatDelay = 0.0f;
 
 void playerTown_init() {
   float tx1 = (6.0f * OS_TOWN_CASTLE_SPRITE_WIDTH) / (float)ultimaAssets.townCastleSprites.width;
@@ -62,15 +60,19 @@ static bool playerTown_updateMovement(float deltaTime) {
   return false;
 }
 
-void playerTown_update(float deltaTime) {
+bool playerTown_update(float deltaTime) {
+  bool acted = false;
+  
   if (keyRepeatDelay <= 0) {
-    playerTown_updateMovement(deltaTime);
+    if (playerTown_updateMovement(deltaTime)) { acted = true; }
   } else {
     keyRepeatDelay -= deltaTime;
     if (keyRepeatDelay < 0) {
       keyRepeatDelay = 0;
     }
   }
+
+  return acted;
 }
 
 void playerTown_render(float *viewMatrix) {

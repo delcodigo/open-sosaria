@@ -15,13 +15,7 @@
 #include "engine/input.h"
 #include "utils.h"
 
-static bool playerActed = false;
-static bool respawnPlayer = false;
-static int respawnX = 0;
-static int respawnY = 0;
-
 EnemyEncounter enemyEncounter = { -1, 0, 0};
-float lagTime = 0.0f;
 
 static void sceneOverworld_init() {
   worldMap_init();

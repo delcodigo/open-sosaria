@@ -11,6 +11,5 @@ typedef struct {
 
 extern Scene sceneOverworld;
 extern EnemyEncounter enemyEncounter;
-extern float lagTime;
 
 #endif
