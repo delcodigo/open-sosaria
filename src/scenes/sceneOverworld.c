@@ -12,6 +12,7 @@
 #include "entities/ui/uiConsole.h"
 #include "entities/ui/uiztats.h"
 #include "entities/vehicleOverworld.h"
+#include "entities/vmExecuter.h"
 #include "engine/input.h"
 #include "utils.h"
 
@@ -139,7 +140,7 @@ static void sceneOverworld_update(float deltaTime) {
     if (lagTime < 0) { lagTime = 0; }
   }
   
-  if (!queuedMessagesCount && lagTime <= 0 && !sceneOverworld_attemptResurrection()) {
+  if (!queuedMessagesCount && lagTime <= 0 && !sceneOverworld_attemptResurrection() && !vmExecuter_update(deltaTime)) {
     if (respawnPlayer) {
       player.tx = respawnX;
       player.ty = respawnY;

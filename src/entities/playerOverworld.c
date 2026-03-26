@@ -20,6 +20,7 @@
 #include "vehicleOverworld.h"
 #include "config.h"
 #include "utils.h"
+#include "vmExecuter.h"
 #include "memory.h"
 
 static PLAYER_STATE playerState = PLAYER_STATE_IDLE;
@@ -962,7 +963,8 @@ static bool playerOverworld_updateEnter() {
     } else if (tile == 6) {
       uiConsole_queueMessageFormat("%s%s", ultimaStrings[180], placesNames[world * 20 + tileType + 13]);
       uiConsole_queueMessageFormat(" ");
-      scene_load(&sceneTown);
+      vmExecuter_createSceneTransition(2, &sceneTown);
+      
       return true;
     }
   }
