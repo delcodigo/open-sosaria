@@ -27,12 +27,12 @@ static int ultimaStringCount = 0;
 UltimaAssets ultimaAssets = {0};
 float loaderTime = 0.0f;
 
-static int colorBlack[3] = {0, 0, 0};
-static int colorBlue[3] = {0, 146, 255};
-static int colorPurple[3] = {146, 0, 255};
-static int colorGreen[3] = {36, 182, 0};
-static int colorWhite[3] = {255, 255, 255};
-static int colorOrange[3] = {255, 86, 0};
+static uint8_t colorBlack[3] = {0, 0, 0};
+static uint8_t colorBlue[3] = {0, 146, 255};
+static uint8_t colorPurple[3] = {146, 0, 255};
+static uint8_t colorGreen[3] = {36, 182, 0};
+static uint8_t colorWhite[3] = {255, 255, 255};
+static uint8_t colorOrange[3] = {255, 86, 0};
 
 typedef struct {
   uint8_t *data;
@@ -839,82 +839,10 @@ bool sceneDiskLoader_parseShapeTable(const uint8_t *dataRaw, uint32_t sizeRaw, S
   return false;
 }
 
-static bool sceneDiskLoader_renderEnemiesShapeTable(const ShapeTable *table, UltimaImage *outImage, int tileWidth, int tileHeight) {
-  if (!table || !outImage) { return false; }
-
-  const int cols = 8;
-  const int rows = (int) ceil((float)table->count / (float)cols);
-  const int originalWidth = cols * tileWidth;
-  const int originalHeight = rows * tileHeight;
-
-  *outImage = sceneDiskLoader_createImage(originalWidth, originalHeight, 255, 0, 0);
-  if (!outImage->data) { return false; }
-
-  // Direction vectors: up, right, down, left
-  const int dirs[4][2] = {
-    {0, -1},
-    {1, 0},
-    {0, 1},
-    {-1, 0}
-  };
-
-  for (int s=table->count-1;s>=0;s--) {
-    int sind = (s >= table->count / 2) ? s - table->count / 2 : s;
-    int cx = (sind % cols) * tileWidth;
-    int cy = (sind / cols) * tileHeight;
-    int x = cx;
-    int y = cy;
-
-    uint16_t start = table->starts[s];
-    uint16_t end = table->ends[s];
-
-    for (uint16_t i=start;i<end && i<table->data_size;i++) {
-      uint8_t byte = table->data[i];
-      if (byte == 0) { continue; }
-
-      // Apple II shape table format
-      int aDir = byte & 0x03;
-      bool aPlot = ((byte>>2) & 0x01) != 0;
-      int bDir = (byte >> 3) & 0x03;
-      bool bPlot = ((byte >> 5) & 0x01) != 0;
-      int cDir = (byte >> 6) & 0x03;
-
-      int *color = (s >= table->count / 2) ? colorBlack : colorWhite;
-
-      if (aPlot) { sceneDiskLoader_setPixel(outImage, x, y, color[0], color[1], color[2]); }
-      x += dirs[aDir][0];
-      y += dirs[aDir][1];
-
-      if (!(bDir == 0 && !bPlot && cDir == 0)) {
-        if (bPlot) { sceneDiskLoader_setPixel(outImage, x, y, color[0], color[1], color[2]); }
-        x += dirs[bDir][0];
-        y += dirs[bDir][1];
-      }
-
-      if (cDir != 0) {
-        x += dirs[cDir][0];
-        y += dirs[cDir][1];
-      }
-    }
-  }
-
-  for (int y=0;y<originalHeight;y++) {
-    for (int x=0;x<originalWidth;x++) {
-      uint32_t index = (y * originalWidth + x) * 4;
-      if (outImage->data[index] == 255 && outImage->data[index + 1] == 0 && outImage->data[index + 2] == 0) {
-        outImage->data[index + 0] = 0;
-        outImage->data[index + 1] = 0;
-        outImage->data[index + 2] = 0;
-        outImage->data[index + 3] = 0;
-        continue;
-      }
-    }
-  }
-
-  // HGR coloring
-  for (int y=0;y<originalHeight;y++) {
-    for (int x=0;x<originalWidth;x++) {
-      uint32_t index = (y * originalWidth + x) * 4;
+static void sceneDiskLoader_colorHGRShapeTable(int width, int height, UltimaImage *outImage) {
+  for (int y=0;y<height;y++) {
+    for (int x=0;x<width;x++) {
+      uint32_t index = (y * width + x) * 4;
       
       bool isLit = outImage->data[index] != 0 || outImage->data[index + 1] != 0 || outImage->data[index + 2] != 0;
       if (!isLit) { continue; }
@@ -923,7 +851,7 @@ static bool sceneDiskLoader_renderEnemiesShapeTable(const ShapeTable *table, Ult
       bool rightLit = false;
       
       if (x > 0) { leftLit = outImage->data[index - 4] != 0 || outImage->data[index - 3] != 0 || outImage->data[index - 2] != 0; }
-      if (x < originalWidth - 1) { rightLit = outImage->data[index + 4] != 0 || outImage->data[index + 5] != 0 || outImage->data[index + 6] != 0; }
+      if (x < width - 1) { rightLit = outImage->data[index + 4] != 0 || outImage->data[index + 5] != 0 || outImage->data[index + 6] != 0; }
 
       if (!leftLit && !rightLit) {
         // isolated lit pixel -> NTSC artifact color (shape tables have no hi-bit, default ph=0)
@@ -941,6 +869,121 @@ static bool sceneDiskLoader_renderEnemiesShapeTable(const ShapeTable *table, Ult
   }
 
   sceneDiskLoader_fillHGRGaps(outImage);
+}
+
+static void sceneDiskLoader_plotShapeTable(uint8_t byte, int *x, int *y, uint8_t *color, UltimaImage *outImage) {
+  // Direction vectors: up, right, down, left
+  const int dirs[4][2] = {
+    {0, -1},
+    {1, 0},
+    {0, 1},
+    {-1, 0}
+  };
+
+  // Apple II shape table format
+  int aDir = byte & 0x03;
+  bool aPlot = ((byte>>2) & 0x01) != 0;
+  int bDir = (byte >> 3) & 0x03;
+  bool bPlot = ((byte >> 5) & 0x01) != 0;
+  int cDir = (byte >> 6) & 0x03;
+
+  if (aPlot) { sceneDiskLoader_setPixel(outImage, *x, *y, color[0], color[1], color[2]); }
+  *x += dirs[aDir][0];
+  *y += dirs[aDir][1];
+
+  if (!(bDir == 0 && !bPlot && cDir == 0)) {
+    if (bPlot) { sceneDiskLoader_setPixel(outImage, *x, *y, color[0], color[1], color[2]); }
+    *x += dirs[bDir][0];
+    *y += dirs[bDir][1];
+  }
+
+  if (cDir != 0) {
+    *x += dirs[cDir][0];
+    *y += dirs[cDir][1];
+  }
+}
+
+static bool sceneDiskLoader_renderEnemiesShapeTable(const ShapeTable *table, UltimaImage *outImage, int tileWidth, int tileHeight) {
+  if (!table || !outImage) { return false; }
+
+  const int cols = 8;
+  const int rows = (int) ceil((float)table->count / (float)cols);
+  const int originalWidth = cols * tileWidth;
+  const int originalHeight = rows * tileHeight;
+
+  *outImage = sceneDiskLoader_createImage(originalWidth, originalHeight, 255, 0, 0);
+  if (!outImage->data) { return false; }
+
+  for (int s=table->count-1;s>=0;s--) {
+    int sind = (s >= table->count / 2) ? s - table->count / 2 : s;
+    int cx = (sind % cols) * tileWidth;
+    int cy = (sind / cols) * tileHeight;
+    int x = cx;
+    int y = cy;
+
+    uint16_t start = table->starts[s];
+    uint16_t end = table->ends[s];
+
+    for (uint16_t i=start;i<end && i<table->data_size;i++) {
+      uint8_t byte = table->data[i];
+      if (byte == 0) { continue; }
+
+      uint8_t *color = (s >= table->count / 2) ? colorBlack : colorWhite;
+
+      sceneDiskLoader_plotShapeTable(byte, &x, &y, color, outImage);
+    }
+  }
+
+  for (int y=0;y<originalHeight;y++) {
+    for (int x=0;x<originalWidth;x++) {
+      uint32_t index = (y * originalWidth + x) * 4;
+      if (outImage->data[index] == 255 && outImage->data[index + 1] == 0 && outImage->data[index + 2] == 0) {
+        outImage->data[index + 0] = 0;
+        outImage->data[index + 1] = 0;
+        outImage->data[index + 2] = 0;
+        outImage->data[index + 3] = 0;
+        continue;
+      }
+    }
+  }
+
+  sceneDiskLoader_colorHGRShapeTable(originalWidth, originalHeight, outImage);
+
+  outImage->textureId = texture_load(outImage->width, outImage->height, outImage->data);
+  sceneDiskLoader_freeImage(outImage);
+
+  return true;
+}
+
+static bool sceneDiskLoader_renderShapeTable(const ShapeTable *table, UltimaImage *outImage, int tileWidth, int tileHeight) {
+  if (!table || !outImage) { return false; }
+
+  const int cols = 8;
+  const int rows = (int) ceil((float)table->count / (float)cols);
+  const int originalWidth = cols * tileWidth;
+  const int originalHeight = rows * tileHeight;
+
+  *outImage = sceneDiskLoader_createImage(originalWidth, originalHeight, 0, 0, 0);
+  if (!outImage->data) { return false; }
+
+  for (int s=0;s<table->count;s++) {
+    int cx = (s % cols) * tileWidth;
+    int cy = (s / cols) * tileHeight;
+    int x = cx;
+    int y = cy;
+
+    uint16_t start = table->starts[s];
+    uint16_t end = table->ends[s];
+
+    for (uint16_t i=start;i<end && i<table->data_size;i++) {
+      uint8_t byte = table->data[i];
+      if (byte == 0) { continue; }
+
+      sceneDiskLoader_plotShapeTable(byte, &x, &y, colorWhite, outImage);
+    }
+  }
+
+  sceneDiskLoader_colorHGRShapeTable(originalWidth, originalHeight, outImage);
 
   outImage->textureId = texture_load(outImage->width, outImage->height, outImage->data);
   sceneDiskLoader_freeImage(outImage);
@@ -1139,6 +1182,19 @@ void sceneDiskLoader_extractUltimaAssets() {
 
     free(outShapesBuffer->data);
     free(outShapesBuffer);
+  }
+
+  // Extract town/castle sprites
+  Buffer *twnCasShapesBuffer = sceneDiskLoader_readDos33FileByName(disk1, "TWN.CAS.SHAPES");
+  if (twnCasShapesBuffer && twnCasShapesBuffer->data) {
+    ShapeTable table = {0};
+    if (sceneDiskLoader_parseShapeTable(twnCasShapesBuffer->data, twnCasShapesBuffer->size, &table)) {
+      sceneDiskLoader_renderShapeTable(&table, &ultimaAssets.townCastleSprites, OS_TOWN_CASTLE_SPRITE_WIDTH, OS_TOWN_CASTLE_SPRITE_HEIGHT);
+      sceneDiskLoader_freeShapeTable(&table);
+    }
+
+    free(twnCasShapesBuffer->data);
+    free(twnCasShapesBuffer);
   }
 
   // Extract Bterra maps
