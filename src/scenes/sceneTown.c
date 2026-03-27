@@ -8,20 +8,14 @@
 #include "entities/playerTown.h"
 #include "entities/vmExecuter.h"
 #include "entities/guardTown.h"
+#include "utils.h"
 #include "config.h"
 
 #define OS_TOWN_MERCHANTS_COUNT 6
 
-static Vector2 merchantsPositions[OS_TOWN_MERCHANTS_COUNT] = {
-  {  6,  4 },
-  {  7, 17 },
-  { 14, 17 },
-  { 25,  4 },
-  { 26, 14 },
-  { 32,  4 }
-};
-static Vector2 wenchPosition = { 35, 7 };
-static Vector2 bardPosition = { 15, 6 };
+static Vector2 merchantsPositions[OS_TOWN_MERCHANTS_COUNT] = { 0 };
+static Vector2 wenchPosition = { 0 };
+static Vector2 bardPosition = { 0 };
 static Geometry merchantGeometry;
 static Geometry wenchGeometry;
 static Geometry bardGeometry;
@@ -36,13 +30,25 @@ static void sceneTown_initializeGeometry(int spriteIndex, Geometry *geometry) {
   geometry_setSprite(geometry, OS_TOWN_CASTLE_SPRITE_WIDTH, OS_TOWN_CASTLE_SPRITE_HEIGHT, tx1, 0.0f, tx2, 1.0f);
 }
 
+static void sceneTown_initializePositions() {
+  wenchPosition.x = 35; wenchPosition.y = 7;
+  bardPosition.x = 15; bardPosition.y = 6;
+
+  merchantsPositions[0].x = 6; merchantsPositions[0].y = 4;
+  merchantsPositions[1].x = 7; merchantsPositions[1].y = 17;
+  merchantsPositions[2].x = 14; merchantsPositions[2].y = 17;
+  merchantsPositions[3].x = 25; merchantsPositions[3].y = 4;
+  merchantsPositions[4].x = 26; merchantsPositions[4].y = 14;
+  merchantsPositions[5].x = 32; merchantsPositions[5].y = 4;
+}
+
 static void sceneTown_init() {
   geometry_setSprite(&townGeometry, OS_SCREEN_WIDTH, OS_SCREEN_HEIGHT, 0.0f, 0.0f, 1.0f, 1.0f);
   matrix4_setIdentity(townTransform);
 
   sceneTown_initializeGeometry(4, &merchantGeometry);
   sceneTown_initializeGeometry(5, &wenchGeometry);
-  sceneTown_initializeGeometry(6, &bardGeometry);
+  sceneTown_initializeGeometry(2, &bardGeometry);
   matrix4_setIdentity(personTransform);
 
   camera_setPosition3f(&camera, 0.0f, 0.0f, 10.0f);
@@ -51,6 +57,7 @@ static void sceneTown_init() {
   player.py = 20;
   playerTown_init();
   guardTown_init();
+  sceneTown_initializePositions();
 }
 
 bool sceneTown_isSolid(int x, int y) {
@@ -86,6 +93,41 @@ static void sceneTown_renderPerson(Geometry *geometry, Vector2 *position, float 
   geometry_render(geometry, ultimaAssets.townCastleSprites.textureId, transform, viewMatrix);
 }
 
+static void sceneTown_updateBard() {
+  if (bardPosition.x < 0) { return; }
+
+  int dx = (int)(rand01() * 3) - 1;
+  int dy = (int)(rand01() * 3) - 1;
+
+  if (dx == 0 && dy == 0) { return; }
+  if (bardPosition.y + dy > 20) { return; }
+
+  if (sceneTown_isSolid(bardPosition.x + dx, bardPosition.y + dy)) { 
+    if (rand01() > 0.7f){
+      uiConsole_addMessage(ultimaStrings[596]);
+      uiConsole_addMessage(ultimaStrings[597]);
+    }
+
+    return;
+  }
+
+  if (bardPosition.x + dx != player.px || bardPosition.y + dy != player.py) {
+    bardPosition.x += dx;
+    bardPosition.y += dy;
+    return;
+  }
+
+  for (int i=0;i<OS_WEAPONS_COUNT;i++) {
+    if (player.weapons[i] > 0 && player.weapon - 1 != i) {
+      player.weapons[i] -= 1;
+    }
+  }
+
+  if (rand01() * 50 < player.wisdom) {
+    uiConsole_addMessage(ultimaStrings[598]);
+  }
+}
+
 static void sceneTown_update(float deltaTime) {
   if (lagTime > 0) {
     lagTime -= deltaTime;
@@ -95,6 +137,8 @@ static void sceneTown_update(float deltaTime) {
   if (!queuedMessagesCount && lagTime <= 0 && !vmExecuter_update(deltaTime)) {
     if (playerActed) {
       playerActed = false;
+
+      sceneTown_updateBard();
       
       if (player_isAlive()) {
         uiConsole_addMessage(ultimaStrings[98]);
