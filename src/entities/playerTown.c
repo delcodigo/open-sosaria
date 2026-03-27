@@ -7,6 +7,7 @@
 #include "scenes/sceneTown.h"
 #include "data/player.h"
 #include "maths/matrix4.h"
+#include "playerCommons.h"
 #include "vmExecuter.h"
 #include "config.h"
 
@@ -86,6 +87,9 @@ bool playerTown_update(float deltaTime) {
   bool acted = false;
   
   if (keyRepeatDelay <= 0) {
+    if (playerCommons_updateZtats()) { acted = true; } else
+    if (playerCommons_updateWait()) { acted = true; } else
+    if (playerCommons_updateReady()) { acted = true; } else
     if (playerTown_updateMovement(deltaTime)) { acted = true; }
   } else {
     keyRepeatDelay -= deltaTime;

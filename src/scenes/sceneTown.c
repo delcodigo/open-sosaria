@@ -5,6 +5,7 @@
 #include "maths/matrix4.h"
 #include "maths/vector2.h"
 #include "entities/ui/uiConsole.h"
+#include "entities/ui/uiztats.h"
 #include "entities/playerTown.h"
 #include "entities/vmExecuter.h"
 #include "entities/guardTown.h"
@@ -150,6 +151,11 @@ static void sceneTown_update(float deltaTime) {
   }
   
   if (!queuedMessagesCount && lagTime <= 0 && !vmExecuter_update(deltaTime)) {
+    if (ztatsActive){
+      uiZtats_update(deltaTime);
+      return;
+    }
+    
     if (playerActed) {
       playerActed = false;
 
