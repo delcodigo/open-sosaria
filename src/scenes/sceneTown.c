@@ -5,6 +5,7 @@
 #include "maths/matrix4.h"
 #include "entities/ui/uiConsole.h"
 #include "entities/playerTown.h"
+#include "entities/vmExecuter.h"
 #include "config.h"
 
 static Geometry townGeometry;
@@ -27,7 +28,7 @@ void sceneTown_update(float deltaTime) {
     if (lagTime < 0) { lagTime = 0; }
   }
   
-  if (!queuedMessagesCount && lagTime <= 0) {
+  if (!queuedMessagesCount && lagTime <= 0 && !vmExecuter_update(deltaTime)) {
     if (playerActed) {
       playerActed = false;
       

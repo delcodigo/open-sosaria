@@ -39,7 +39,7 @@ static bool areKeysReleased = true;
 static int lastSignpost = -1;
 
 void playerOverworld_init() {
-  geometry_setSprite(&playerOverworldGeometry, OS_TILE_WIDTH, OS_TILE_HEIGHT, 0, 0.5f, 0.125f, 1.0f);
+  playerOverworld_updateGeometry();
   matrix4_setIdentity(transformationMatrix);
   matrix4_setIdentity(enemyTransformationMatrix);
   memset(&inputTextfieldBuffer, 0, sizeof(inputTextfieldBuffer));

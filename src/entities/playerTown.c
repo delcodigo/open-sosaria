@@ -3,8 +3,10 @@
 #include "engine/input.h"
 #include "entities/ui/uiConsole.h"
 #include "scenes/sceneDiskLoader.h"
+#include "scenes/sceneOverworld.h"
 #include "data/player.h"
 #include "maths/matrix4.h"
+#include "vmExecuter.h"
 #include "config.h"
 
 static Geometry playerTownGeometry;
@@ -15,6 +17,15 @@ void playerTown_init() {
   float tx2 = (7.0f * OS_TOWN_CASTLE_SPRITE_WIDTH) / (float)ultimaAssets.townCastleSprites.width;
 
   geometry_setSprite(&playerTownGeometry, OS_TOWN_CASTLE_SPRITE_WIDTH, OS_TOWN_CASTLE_SPRITE_HEIGHT, tx1, 0, tx2, 1);
+}
+
+static bool playerTown_checkExit(int moveY) {
+  if (player.py + moveY > 21) {
+    vmExecuter_createSceneTransition(0.5f, &sceneOverworld);
+    return true;
+  }
+
+  return false;
 }
 
 static bool playerTown_updateMovement(float deltaTime) {
@@ -43,6 +54,10 @@ static bool playerTown_updateMovement(float deltaTime) {
     if (ultimaAssets.townCollisionMap[player.py + moveY][player.px + moveX]) {
       uiConsole_addMessage(ultimaStrings[341]);
       keyRepeatDelay = 0.3f;
+      return true;
+    }
+    
+    if (playerTown_checkExit(moveY)) {
       return true;
     }
 
