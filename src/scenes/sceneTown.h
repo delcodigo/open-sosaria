@@ -6,4 +6,6 @@
 
 extern Scene sceneTown;
 
+bool sceneTown_isSolid(int x, int y);
+
 #endif

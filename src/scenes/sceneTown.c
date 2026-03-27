@@ -6,12 +6,13 @@
 #include "entities/ui/uiConsole.h"
 #include "entities/playerTown.h"
 #include "entities/vmExecuter.h"
+#include "entities/guardTown.h"
 #include "config.h"
 
 static Geometry townGeometry;
 static float townTransform[16];
 
-void sceneTown_init() {
+static void sceneTown_init() {
   geometry_setSprite(&townGeometry, OS_SCREEN_WIDTH, OS_SCREEN_HEIGHT, 0.0f, 0.0f, 1.0f, 1.0f);
   matrix4_setIdentity(townTransform);
 
@@ -20,9 +21,24 @@ void sceneTown_init() {
   player.px = 20;
   player.py = 20;
   playerTown_init();
+  guardTown_init();
 }
 
-void sceneTown_update(float deltaTime) {
+bool sceneTown_isSolid(int x, int y) {
+  if (ultimaAssets.townCollisionMap[y][x]) {
+    return true;
+  }
+
+  for (int i=0; i<OS_GUARD_TOWN_COUNT; i++) {
+    if (guardTowns[i].x == x && guardTowns[i].y == y) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+static void sceneTown_update(float deltaTime) {
   if (lagTime > 0) {
     lagTime -= deltaTime;
     if (lagTime < 0) { lagTime = 0; }
@@ -46,12 +62,14 @@ void sceneTown_update(float deltaTime) {
   geometry_render(&townGeometry, ultimaAssets.townScreen.textureId, townTransform, viewMatrix);
 
   playerTown_render(viewMatrix);
+  guardTown_render(viewMatrix);
   uiConsole_update(deltaTime);
 }
 
-void sceneTown_free() {
+static void sceneTown_free() {
   geometry_free(&townGeometry);
   playerTown_free();
+  guardTown_free();
 }
 
 Scene sceneTown = {

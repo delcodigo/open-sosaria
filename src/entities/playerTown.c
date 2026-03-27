@@ -4,6 +4,7 @@
 #include "entities/ui/uiConsole.h"
 #include "scenes/sceneDiskLoader.h"
 #include "scenes/sceneOverworld.h"
+#include "scenes/sceneTown.h"
 #include "data/player.h"
 #include "maths/matrix4.h"
 #include "vmExecuter.h"
@@ -51,7 +52,7 @@ static bool playerTown_updateMovement(float deltaTime) {
     waitingTime = 0.0f;
     uiConsole_replaceLastMessageFormat("%.14s%.15s", ultimaStrings[98], ultimaStrings[movementStringIndex]);
 
-    if (ultimaAssets.townCollisionMap[player.py + moveY][player.px + moveX]) {
+    if (sceneTown_isSolid(player.px + moveX, player.py + moveY)) {
       uiConsole_addMessage(ultimaStrings[341]);
       keyRepeatDelay = 0.3f;
       return true;
