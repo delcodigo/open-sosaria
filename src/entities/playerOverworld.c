@@ -196,7 +196,7 @@ static bool playerOverworld_updateInfo() {
   return false;
 }
 
-static bool playerOverworld_get() {
+static bool playerOverworld_updateGet() {
   if (input.g == 1) {
     input.g = 2;
     waitingTime = 0.0f;
@@ -213,7 +213,7 @@ static bool playerOverworld_get() {
   return false;
 }
 
-static bool playerOverworld_open() {
+static bool playerOverworld_updateOpen() {
   if (input.o == 1) {
     input.o = 2;
     waitingTime = 0.0f;
@@ -230,7 +230,7 @@ static bool playerOverworld_open() {
   return false;
 }
 
-static bool playerOverworld_drop() {
+static bool playerOverworld_updateDrop() {
   if (input.d == 1) {
     input.d = 2;
     waitingTime = 0.0f;
@@ -324,7 +324,7 @@ static bool playerOverworld_updateAttack() {
   return false;
 }
 
-static bool playerOverwolrd_cast() {
+static bool playerOverwolrd_updateCast() {
   if (input.c == 1) {
     input.c = 2;
     waitingTime = 0.0f;
@@ -672,14 +672,14 @@ bool playerOverworld_update(float deltaTime) {
       case PLAYER_STATE_IDLE:
         if (playerCommons_updateZtats()) { acted = true; } else
         if (playerCommons_updateWait()) { acted = true; } else
+        if (playerCommons_updateReady()) { acted = true; } else
         if (playerOverworld_updateSave()) { acted = true; } else 
         if (playerOverworld_updateInfo()) { acted = true; } else
-        if (playerOverworld_get()) { acted = true; } else
-        if (playerOverworld_open()) { acted = true; } else
-        if (playerOverworld_drop()) { acted = true; } else
-        if (playerCommons_updateReady()) { acted = true; } else
+        if (playerOverworld_updateGet()) { acted = true; } else
+        if (playerOverworld_updateOpen()) { acted = true; } else
+        if (playerOverworld_updateDrop()) { acted = true; } else
         if (playerOverworld_updateAttack()) { acted = true; } else
-        if (playerOverwolrd_cast()) { acted = true; } else
+        if (playerOverwolrd_updateCast()) { acted = true; } else
         if (playerOverworld_updateBoard()) { acted = true; } else
         if (playerOverworld_updateExit()) { acted = true; } else
         if (playerOverworld_updateFiring()) { acted = true; } else
