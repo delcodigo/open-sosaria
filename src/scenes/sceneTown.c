@@ -128,6 +128,21 @@ static void sceneTown_updateBard() {
   }
 }
 
+static void sceneTown_updateWench() {
+  if (wenchPosition.x < 0) { return; }
+
+  int dx = (int)(rand01() * 3) - 1;
+  int dy = (int)(rand01() * 3) - 1;
+
+  if (dx == 0 && dy == 0) { return; }
+  if (wenchPosition.y + dy > 8) { return; }
+  if (sceneTown_isSolid(wenchPosition.x + dx, wenchPosition.y + dy)) { return; }
+  if (wenchPosition.x + dx != player.px || wenchPosition.y + dy != player.py) {
+    wenchPosition.x += dx;
+    wenchPosition.y += dy;
+  }
+}
+
 static void sceneTown_update(float deltaTime) {
   if (lagTime > 0) {
     lagTime -= deltaTime;
@@ -139,6 +154,7 @@ static void sceneTown_update(float deltaTime) {
       playerActed = false;
 
       sceneTown_updateBard();
+      sceneTown_updateWench();
       
       if (player_isAlive()) {
         uiConsole_addMessage(ultimaStrings[98]);
