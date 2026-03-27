@@ -6,6 +6,7 @@
 #include "scenes/sceneOverworld.h"
 #include "scenes/sceneTown.h"
 #include "data/player.h"
+#include "data/bevery.h"
 #include "maths/matrix4.h"
 #include "playerCommons.h"
 #include "vmExecuter.h"
@@ -83,6 +84,66 @@ static bool playerTown_updateMovement(float deltaTime) {
   return false;
 }
 
+static bool playerTown_updateCast() {
+  if (input.c == 1) {
+    input.c = 2;
+    waitingTime = 0.0f;
+
+    uiConsole_replaceLastMessageFormat("%.15s%.15s", ultimaStrings[98], ultimaStrings[359]);
+    uiConsole_queueMessage(ultimaStrings[360]);
+    uiConsole_queueMessage(ultimaStrings[361]);
+
+    return true;
+  }
+
+  return false;
+}
+
+static bool playerTown_updateGet() {
+  if (input.g == 1) {
+    input.g = 2;
+    waitingTime = 0.0f;
+
+    uiConsole_replaceLastMessageFormat("%.14s%.15s", ultimaStrings[98], ultimaStrings[383]);
+
+    return true;
+  }
+
+  return false;
+}
+
+static bool playerTown_updateInfo() {
+  if (input.i == 1) {
+    input.i = 2;
+    waitingTime = 0.0f;
+
+    int tx = (int)(player.tx % OS_BTERRA_MAP_WIDTH);
+    int ty = (int)(player.ty % OS_BTERRA_MAP_HEIGHT);
+    int world = ((int)player.ty / OS_BTERRA_MAP_HEIGHT) * 2 + ((int)player.tx / OS_BTERRA_MAP_WIDTH);
+    int tileType = ultimaAssets.bterraMaps[world][ty][tx] & 0x0F;
+
+    uiConsole_replaceLastMessageFormat("%.14s%.15s", ultimaStrings[98], ultimaStrings[384]);
+    uiConsole_queueMessage(ultimaStrings[385]);
+    uiConsole_queueMessageFormat("%.15s%.15s", ultimaStrings[386], placesNames[world * 20 + tileType + 13]);
+    uiConsole_queueMessage(ultimaStrings[387]);
+
+    return true;
+  }
+
+  return false;
+}
+
+bool playerTown_updateSave() {
+  if (input.q == 1) {
+    input.q = 2;
+    uiConsole_replaceLastMessageFormat("%.14s%.15s", ultimaStrings[98], ultimaStrings[389]);
+    uiConsole_queueMessage(ultimaStrings[390]);
+    return true;
+  }
+
+  return false;
+}
+
 bool playerTown_update(float deltaTime) {
   bool acted = false;
   
@@ -90,6 +151,10 @@ bool playerTown_update(float deltaTime) {
     if (playerCommons_updateZtats()) { acted = true; } else
     if (playerCommons_updateWait()) { acted = true; } else
     if (playerCommons_updateReady()) { acted = true; } else
+    if (playerTown_updateCast()) { acted = true; } else
+    if (playerTown_updateGet()) { acted = true; } else
+    if (playerTown_updateInfo()) { acted = true; } else
+    if (playerTown_updateSave()) { acted = true; } else
     if (playerTown_updateMovement(deltaTime)) { acted = true; }
   } else {
     keyRepeatDelay -= deltaTime;
