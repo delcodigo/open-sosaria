@@ -2,6 +2,7 @@
 #include "engine/engine.h"
 #include "merchantTown.h"
 #include "data/player.h"
+#include "data/bevery.h"
 #include "engine/input.h"
 #include "scenes/sceneDiskLoader.h"
 #include "scenes/sceneOverworld.h"
@@ -17,6 +18,11 @@ static int wx = 0;
 static int wy = 0;
 static int lx = 0;
 static int ly = 0;
+
+static void merchantTown_endTransact() {
+  transactStep = TRANSACT_STEP_START;
+  playerState = PLAYER_STATE_IDLE;
+}
 
 static bool merchantTown_updateTransactStart() {
   if (input.t == 1) {
@@ -65,6 +71,7 @@ static bool merchantTown_updateTransactSelectTransaction() {
     if (player.px > 3 && player.px < 10 && player.py > 3 && player.py < 8) {
       uiConsole_queueMessage(ultimaStrings[425]);
       uiConsole_queueMessage(ultimaStrings[426]);
+      uiConsole_queueMessage("");
       vmExecuter_createWait(1.0f);
       merchantType = MERCHANT_TYPE_TRANSPORT;
     }
@@ -72,8 +79,7 @@ static bool merchantTown_updateTransactSelectTransaction() {
     return false;
   } else if (lastKey != 0 && lastKey != GLFW_KEY_T) {
     uiConsole_queueMessage(ultimaStrings[424]);
-    transactStep = TRANSACT_STEP_START;
-    playerState = PLAYER_STATE_IDLE;
+    merchantTown_endTransact();
     return true;
   }
 
@@ -127,8 +133,7 @@ static bool merchantTown_updateTransactSellItem() {
     uiConsole_queueMessage(ultimaStrings[568]);
     uiConsole_queueMessage(ultimaStrings[569]);
 
-    transactStep = TRANSACT_STEP_START;
-    playerState = PLAYER_STATE_IDLE;
+    merchantTown_endTransact();
 
     return true;
   }
@@ -143,24 +148,23 @@ static bool merchantTown_updateTransactSelectItem() {
     }
 
     int keyNumber = lastKey - GLFW_KEY_0;
-    if ((keyNumber > 2 && keyNumber < 5 && wx == 0 && wy == 0) || (player.time < 3000 && keyNumber > 4)) {
+    uiConsole_replaceLastMessageFormat("%s%d", ultimaStrings[576], keyNumber);
+
+    if ((keyNumber > 2 && keyNumber < 5 && wx == 0 && wy == 0) || (player.time < 3000 && keyNumber > 4 && keyNumber < 7)) {
       uiConsole_queueMessage(ultimaStrings[577]);
-      transactStep = TRANSACT_STEP_START;
-      playerState = PLAYER_STATE_IDLE;
+      merchantTown_endTransact();
       return true;
     }
-
+    
     if ((keyNumber < 1 || keyNumber > 6)) {
-      uiConsole_queueMessage(ultimaStrings[578]);
-      transactStep = TRANSACT_STEP_START;
-      playerState = PLAYER_STATE_IDLE;
+      uiConsole_queueMessageFormat("%d%s", keyNumber, ultimaStrings[578]);
+      merchantTown_endTransact();
       return true;
     }
 
     if (player.gold < merchantTown_getTransportCost(keyNumber)) {
       uiConsole_queueMessage(ultimaStrings[579]);
-      transactStep = TRANSACT_STEP_START;
-      playerState = PLAYER_STATE_IDLE;
+      merchantTown_endTransact();
       return true;
     }
 
@@ -173,8 +177,7 @@ static bool merchantTown_updateTransactSelectItem() {
 
     if (dx == 0 && dy == 0) {
       uiConsole_queueMessage(ultimaStrings[580]);
-      transactStep = TRANSACT_STEP_START;
-      playerState = PLAYER_STATE_IDLE;
+      merchantTown_endTransact();
       return true;
     }
 
@@ -182,9 +185,8 @@ static bool merchantTown_updateTransactSelectItem() {
     player.vehicles[keyNumber - 1] += 1;
     vehiclesMap[dy][dx] = (unsigned char) keyNumber;
 
-    uiConsole_queueMessage(ultimaStrings[581]);
-    transactStep = TRANSACT_STEP_START;
-    playerState = PLAYER_STATE_IDLE;
+    uiConsole_queueMessageFormat("%s%s", vehicleNames[keyNumber], ultimaStrings[581]);
+    merchantTown_endTransact();
     return true;
   }
 
