@@ -37,10 +37,12 @@ typedef struct {
   int x;
   int f;
   int e;
+  int t;
 } SosariaInput;
 
 extern Textfield *inputTextfield;
 extern SosariaInput input;
+extern int lastKey;
 
 void input_charCallback(GLFWwindow* window, unsigned int codepoint);
 void input_keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);

@@ -53,3 +53,10 @@ void vmExecuter_createSceneTransition(float waitTime, Scene *nextScene) {
   instructions[1].changeScene.scene = nextScene;
   vmExecuter_init(instructions, 2);
 }
+
+void vmExecuter_createWait(float waitTime) {
+  VMInstruction *instructions = malloc(sizeof(VMInstruction));
+  instructions[0].type = VM_INSTRUCTION_TYPE_WAIT;
+  instructions[0].wait.duration = waitTime;
+  vmExecuter_init(instructions, 1);
+}

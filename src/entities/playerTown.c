@@ -5,6 +5,7 @@
 #include "scenes/sceneDiskLoader.h"
 #include "scenes/sceneOverworld.h"
 #include "scenes/sceneTown.h"
+#include "merchantTown.h"
 #include "data/player.h"
 #include "data/bevery.h"
 #include "maths/matrix4.h"
@@ -20,6 +21,8 @@ void playerTown_init() {
   float tx2 = (7.0f * OS_TOWN_CASTLE_SPRITE_WIDTH) / (float)ultimaAssets.townCastleSprites.width;
 
   geometry_setSprite(&playerTownGeometry, OS_TOWN_CASTLE_SPRITE_WIDTH, OS_TOWN_CASTLE_SPRITE_HEIGHT, tx1, 0, tx2, 1);
+  
+  enemyEncounter.monsterId = -1;
 }
 
 static bool playerTown_checkExit(int moveY) {
@@ -133,7 +136,7 @@ static bool playerTown_updateInfo() {
   return false;
 }
 
-bool playerTown_updateSave() {
+static bool playerTown_updateSave() {
   if (input.q == 1) {
     input.q = 2;
     uiConsole_replaceLastMessageFormat("%.14s%.15s", ultimaStrings[98], ultimaStrings[389]);
@@ -148,14 +151,24 @@ bool playerTown_update(float deltaTime) {
   bool acted = false;
   
   if (keyRepeatDelay <= 0) {
-    if (playerCommons_updateZtats()) { acted = true; } else
-    if (playerCommons_updateWait()) { acted = true; } else
-    if (playerCommons_updateReady()) { acted = true; } else
-    if (playerTown_updateCast()) { acted = true; } else
-    if (playerTown_updateGet()) { acted = true; } else
-    if (playerTown_updateInfo()) { acted = true; } else
-    if (playerTown_updateSave()) { acted = true; } else
-    if (playerTown_updateMovement(deltaTime)) { acted = true; }
+    switch (playerState) {
+      case PLAYER_STATE_IDLE:
+        if (playerCommons_updateZtats()) { acted = true; } else
+        if (playerCommons_updateWait()) { acted = true; } else
+        if (playerCommons_updateReady()) { acted = true; } else
+        if (playerTown_updateCast()) { acted = true; } else
+        if (playerTown_updateGet()) { acted = true; } else
+        if (playerTown_updateInfo()) { acted = true; } else
+        if (playerTown_updateSave()) { acted = true; } else
+        if (merchantTown_updateTransact()) { acted = true; } else
+        if (playerTown_updateMovement(deltaTime)) { acted = true; }
+        break;
+      case PLAYER_STATE_TRANSACT:
+        if (merchantTown_updateTransact()) { acted = true; }
+        break;
+      default:
+        break;
+    }
   } else {
     keyRepeatDelay -= deltaTime;
     if (keyRepeatDelay < 0) {

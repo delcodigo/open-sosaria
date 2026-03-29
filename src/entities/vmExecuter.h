@@ -21,5 +21,6 @@ typedef struct {
 void vmExecuter_init(VMInstruction *instructions, int instructionCount);
 bool vmExecuter_update(float deltaTime);
 void vmExecuter_createSceneTransition(float waitTime, Scene *nextScene);
+void vmExecuter_createWait(float waitTime);
 
 #endif

@@ -4,6 +4,7 @@
 
 Textfield *inputTextfield = NULL;
 SosariaInput input = {0};
+int lastKey = 0;
 
 void input_charCallback(GLFWwindow* window, unsigned int codepoint) {
   (void) window;
@@ -53,6 +54,12 @@ void input_keyCallback(GLFWwindow* window, int key, int scancode, int action, in
         inputTextfield->lastKey = key;
       }
     }
+  }
+
+  if (action == GLFW_PRESS) {
+    lastKey = key;
+  } else if (action == GLFW_RELEASE && lastKey == key) {
+    lastKey = 0;
   }
 
   switch (key) {
@@ -194,6 +201,13 @@ void input_keyCallback(GLFWwindow* window, int key, int scancode, int action, in
         input.e = 0;
       } else if (input.e == 0 && action == GLFW_PRESS) {
         input.e = 1;
+      }
+      break;
+    case GLFW_KEY_T:
+      if (action == GLFW_RELEASE) {
+        input.t = 0;
+      } else if (input.t == 0 && action == GLFW_PRESS) {
+        input.t = 1;
       }
       break;
   }

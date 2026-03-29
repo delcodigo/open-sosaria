@@ -689,6 +689,8 @@ bool playerOverworld_update(float deltaTime) {
       case PLAYER_STATE_READY_TYPE:
         if (playerCommons_updateReady()) { acted = true; }
         break;
+      default:
+        break;
     }
   } else {
     keyRepeatDelay -= deltaTime;
