@@ -22,6 +22,7 @@ static int wy = 0;
 static int lx = 0;
 static int ly = 0;
 static bool buyingLadder = false;
+static int selectedItemId = -1;
 int drunkLevel = 0;
 
 static void merchantTown_endTransact() {
@@ -84,6 +85,10 @@ static bool merchantTown_updateTransactSelectTransaction() {
     } else if (player.px > 29 && player.px < 36 && player.py > 3 && player.py < 8) {
       uiConsole_queueMessage(ultimaStrings[429]);
       merchantType = MERCHANT_TYPE_PUB;
+    } else if (player.px > 3 && player.px < 10 && player.py > 13 && player.py < 18) {
+      uiConsole_queueMessage(ultimaStrings[430]);
+      uiConsole_queueMessage(ultimaStrings[431]);
+      merchantType = MERCHANT_TYPE_ARMORY;
     }
 
     uiConsole_queueMessage("");
@@ -105,6 +110,10 @@ static int merchantTown_getTransportCost(int vehicleId) {
 
 static int merchantTown_getSpellCost(int spellId) {
   return (int)((200 - player.wisdom) / 200.0f * spellId * 5);
+}
+
+static int merchantTown_getArmorCost(int armorId) {
+  return (int)((200 - player.intelligence) / 200.0f * 50 * armorId);
 }
 
 static bool merchantTown_updateTransactBuyItem() {
@@ -168,6 +177,17 @@ static bool merchantTown_updateTransactBuyItem() {
     vmExecuter_createWait(1.0f);
 
     transactStep = TRANSACT_STEP_DRINK_AT_PUB;
+  } else if (merchantType == MERCHANT_TYPE_ARMORY) {
+    uiConsole_queueMessageFormat("%s%d%s%d", ultimaStrings[547], merchantTown_getArmorCost(1), ultimaStrings[548], merchantTown_getArmorCost(2));
+    uiConsole_queueMessageFormat("%s%d", ultimaStrings[549], merchantTown_getArmorCost(3));
+
+    if (player.time > 2000) {
+      uiConsole_queueMessageFormat("%s%d%s%d", ultimaStrings[550], merchantTown_getArmorCost(4), ultimaStrings[551], merchantTown_getArmorCost(5));
+    }
+
+    uiConsole_queueMessage(ultimaStrings[552]);
+
+    transactStep = TRANSACT_STEP_SELECT_ITEM;
   }
 
   return false;
@@ -193,6 +213,11 @@ static bool merchantTown_updateTransactSellItem() {
     merchantTown_endTransact();
 
     return true;
+  } else if (merchantType == MERCHANT_TYPE_ARMORY) {
+    uiConsole_queueMessage(ultimaStrings[558]);
+
+    lastKey = 0;
+    transactStep = TRANSACT_STEP_SELECT_SELL_ITEM;
   }
 
   return false;
@@ -310,6 +335,48 @@ static bool merchantTown_updateTransactSelectItem() {
     uiConsole_queueMessageFormat("%s%s", spellNames[selectedSpellId], ultimaStrings[497]);
     merchantTown_endTransact();
     return true;
+  } else if (merchantType == MERCHANT_TYPE_ARMORY) {
+    if (lastKey != 0) {
+      int selectedArmorId = -1;
+      for (int i=1;i<OS_ARMORS_COUNT;i++) {
+        if (lastKey == armorNames[i][0]) {
+          selectedArmorId = i;
+          break;
+        }
+      }
+
+      if (selectedArmorId == -1) {
+        uiConsole_queueMessageFormat("%c%s", (char) lastKey, ultimaStrings[553]);
+        merchantTown_endTransact();
+        return true;
+      }
+
+      if (selectedArmorId > 3 && player.time < 2000) {
+        uiConsole_queueMessageFormat("%s%s", armorNames[selectedArmorId], ultimaStrings[554]);
+        merchantTown_endTransact();
+        return true;
+      }
+
+      if (player.gold < merchantTown_getArmorCost(selectedArmorId)) {
+        uiConsole_queueMessage(ultimaStrings[555]);
+        merchantTown_endTransact();
+        return true;
+      }
+
+      if (player_getEncumbrance() > 0) {
+        uiConsole_queueMessage(ultimaStrings[556]);
+        merchantTown_endTransact();
+        return true;
+      }
+
+      player.gold -= merchantTown_getArmorCost(selectedArmorId);
+      player.armors[selectedArmorId - 1] += 1;
+
+      uiConsole_queueMessageFormat("%s%s", armorNames[selectedArmorId], ultimaStrings[557]);
+      merchantTown_endTransact();
+
+      return true;
+    }
   }
 
   return false;
@@ -389,6 +456,68 @@ static bool merchantTown_updateDrinkAtPub() {
   return true;
 }
 
+bool merchantTown_updateSelectSellItem() {
+  if (merchantType == MERCHANT_TYPE_ARMORY) {
+    if (lastKey != 0) {
+      for (int i=1;i<OS_ARMORS_COUNT;i++) {
+        if (lastKey == armorNames[i][0]) {
+          selectedItemId = i;
+          break;
+        }
+      }
+
+      uiConsole_replaceLastMessageFormat("%s%c", ultimaStrings[558], (char) lastKey);
+
+      if (selectedItemId == -1) {
+        uiConsole_queueMessageFormat("%c%s", (char) lastKey, ultimaStrings[559]);
+        merchantTown_endTransact();
+        return true;
+      }
+
+      int price = (int)((float) player.charisma / 50.0f * merchantTown_getArmorCost(selectedItemId));
+
+      uiConsole_queueMessageFormat("%s%s", ultimaStrings[560], armorNames[selectedItemId]);
+      uiConsole_queueMessageFormat("%s%d%s", ultimaStrings[561], price, ultimaStrings[562]);
+
+      lastKey = 0;
+      transactStep = TRANSACT_STEP_CONFIRM_SELL_ITEM;
+    }
+  }
+
+  return false;
+}
+
+bool merchantTown_updateConfirmSellItem() {
+  if (merchantType == MERCHANT_TYPE_ARMORY && lastKey != 0) {
+    if (lastKey == GLFW_KEY_Y) {
+      if (player.armors[selectedItemId - 1] <= 0) {
+        uiConsole_queueMessage(ultimaStrings[565]);
+        uiConsole_queueMessageFormat("%s%s", armorNames[selectedItemId], ultimaStrings[566]);
+        merchantTown_endTransact();
+        return true;
+      }
+
+      int price = (int)((float) player.charisma / 50.0f * merchantTown_getArmorCost(selectedItemId));
+
+      player.gold += price;
+      player.armors[selectedItemId - 1] -= 1;
+
+      uiConsole_replaceLastMessageFormat("%s%d%s Y", ultimaStrings[561], price, ultimaStrings[562]);
+
+      if (player.armor == selectedItemId - 1 && player.armors[selectedItemId - 1] < 1) {
+        player.armor = 0;
+      }
+    } else {
+      uiConsole_queueMessage(ultimaStrings[564]);
+    }
+
+    merchantTown_endTransact();
+    return true;
+  }
+
+  return false;
+}
+
 bool merchantTown_updateTransact() {
   if (transactStep == TRANSACT_STEP_START) {
     return merchantTown_updateTransactStart();
@@ -402,6 +531,10 @@ bool merchantTown_updateTransact() {
     return merchantTown_updateTransactSelectItem();
   } else if (transactStep == TRANSACT_STEP_DRINK_AT_PUB) {
     return merchantTown_updateDrinkAtPub();
+  } else if (transactStep == TRANSACT_STEP_SELECT_SELL_ITEM) {
+    return merchantTown_updateSelectSellItem();
+  } else if (transactStep == TRANSACT_STEP_CONFIRM_SELL_ITEM) {
+    return merchantTown_updateConfirmSellItem();
   }
 
   return false;

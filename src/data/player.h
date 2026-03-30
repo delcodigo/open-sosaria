@@ -49,5 +49,6 @@ void player_consumeFood();
 void player_consumeTownFood();
 void player_waitPenalty();
 bool player_isAlive();
+int player_getEncumbrance();
 
 #endif

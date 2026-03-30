@@ -32,3 +32,22 @@ void player_waitPenalty() {
 bool player_isAlive() {
   return player.health > 0 && player.food > 0;
 }
+
+int player_getEncumbrance() {
+  int encumbrance = 0;
+  
+  for (int i=0;i<OS_WEAPONS_COUNT;i++) {
+    encumbrance += player.weapons[i];
+  }
+
+  for (int i=0;i<OS_ARMORS_COUNT;i++) {
+    encumbrance += i * player.armors[i];
+  }
+
+  encumbrance += player.gold / 100;
+  
+  encumbrance -= player.vehicles[2] * 20;
+  encumbrance -= player.strength * 4;
+
+  return encumbrance;
+}
