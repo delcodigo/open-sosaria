@@ -17,7 +17,7 @@ static ConsoleLine consoleLines[4];
 static const unsigned char textureData[] = {0,0,0,255};
 static GLuint blackPanelTextureId;
 static float transformMatrix[16];
-static char queuedMessages[10][30] = { 0 };
+static char queuedMessages[20][35] = { 0 };
 int queuedMessagesCount = 0;
 static float timeToNextMessage = 0.0f;
 static bool dequeuing = false;
@@ -59,15 +59,15 @@ void uiConsole_init() {
 }
 
 void uiConsole_queueMessage(const char *message) {
-  if (queuedMessagesCount < 10) {
+  if (queuedMessagesCount < 20) {
     strncpy(queuedMessages[queuedMessagesCount], message, sizeof(queuedMessages[queuedMessagesCount]));
-    queuedMessages[queuedMessagesCount][29] = '\0';
+    queuedMessages[queuedMessagesCount][strlen(message)] = '\0';
     queuedMessagesCount++;
   }
 }
 
 void uiConsole_queueMessageFormat(const char *format, ...) {
-  char message[30] = {0};
+  char message[35] = {0};
   va_list args;
   va_start(args, format);
   vsnprintf(message, sizeof(message), format, args);
@@ -127,7 +127,7 @@ void uiConsole_addMessage(const char *message) {
 }
 
 void uiConsole_addMessageFormat(const char *format, ...) {
-  char message[30] = {0};
+  char message[35] = {0};
   va_list args;
   va_start(args, format);
   vsnprintf(message, sizeof(message), format, args);
@@ -143,7 +143,7 @@ void uiConsole_replaceLastMessage(const char *message) {
 }
 
 void uiConsole_replaceLastMessageFormat(const char *format, ...) {
-  char message[30] = {0};
+  char message[35] = {0};
   va_list args;
   va_start(args, format);
   vsnprintf(message, sizeof(message), format, args);

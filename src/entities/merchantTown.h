@@ -3,6 +3,8 @@
 
 #include <stdbool.h>
 
+extern int drunkLevel;
+
 bool merchantTown_updateTransact();
 
 #endif

@@ -9,13 +9,14 @@
 #include "entities/playerTown.h"
 #include "entities/vmExecuter.h"
 #include "entities/guardTown.h"
+#include "entities/merchantTown.h"
 #include "utils.h"
 #include "config.h"
 
 #define OS_TOWN_MERCHANTS_COUNT 6
 
 static Vector2 merchantsPositions[OS_TOWN_MERCHANTS_COUNT] = { 0 };
-static Vector2 wenchPosition = { 0 };
+Vector2 wenchPosition = { 0 };
 static Vector2 bardPosition = { 0 };
 static Geometry merchantGeometry;
 static Geometry wenchGeometry;
@@ -53,6 +54,8 @@ static void sceneTown_init() {
   matrix4_setIdentity(personTransform);
 
   camera_setPosition3f(&camera, 0.0f, 0.0f, 10.0f);
+
+  drunkLevel = 0;
 
   player.px = 20;
   player.py = 20;

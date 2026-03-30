@@ -7,11 +7,13 @@
 #include "engine/input.h"
 #include "scenes/sceneDiskLoader.h"
 #include "scenes/sceneOverworld.h"
+#include "scenes/sceneTown.h"
 #include "entities/ui/uiConsole.h"
 #include "playerCommons.h"
 #include "vehicleOverworld.h"
 #include "vmExecuter.h"
 #include "worldMap.h"
+#include "utils.h"
 
 static TRANSACT_STEP transactStep = TRANSACT_STEP_START;
 static MERCHANT_TYPE merchantType = MERCHANT_TYPE_TRANSPORT;
@@ -20,6 +22,7 @@ static int wy = 0;
 static int lx = 0;
 static int ly = 0;
 static bool buyingLadder = false;
+int drunkLevel = 0;
 
 static void merchantTown_endTransact() {
   transactStep = TRANSACT_STEP_START;
@@ -78,6 +81,9 @@ static bool merchantTown_updateTransactSelectTransaction() {
       uiConsole_queueMessage(ultimaStrings[427]);
       uiConsole_queueMessage(ultimaStrings[428]);
       merchantType = MERCHANT_TYPE_MAGIC;
+    } else if (player.px > 29 && player.px < 36 && player.py > 3 && player.py < 8) {
+      uiConsole_queueMessage(ultimaStrings[429]);
+      merchantType = MERCHANT_TYPE_PUB;
     }
 
     uiConsole_queueMessage("");
@@ -147,6 +153,21 @@ static bool merchantTown_updateTransactBuyItem() {
     vmExecuter_queueAndReplaceConsoleMessage(consoleMessage1, consoleMessage2, 1.0f);
 
     transactStep = TRANSACT_STEP_SELECT_ITEM;
+  } else if (merchantType == MERCHANT_TYPE_PUB) {
+    if (player.gold < 1) {
+      uiConsole_queueMessage(ultimaStrings[503]);
+      merchantTown_endTransact();
+      return true;
+    }
+
+    player.gold -= 1;
+    uiConsole_updateStats();
+
+    uiConsole_queueMessage(ultimaStrings[504]);
+    uiConsole_queueMessage(ultimaStrings[505]);
+    vmExecuter_createWait(1.0f);
+
+    transactStep = TRANSACT_STEP_DRINK_AT_PUB;
   }
 
   return false;
@@ -162,6 +183,12 @@ static bool merchantTown_updateTransactSellItem() {
     return true;
   } else if (merchantType == MERCHANT_TYPE_MAGIC) {
     uiConsole_queueMessage(ultimaStrings[480]);
+
+    merchantTown_endTransact();
+
+    return true;
+  } else if (merchantType == MERCHANT_TYPE_PUB) {
+    uiConsole_queueMessage(ultimaStrings[502]);
 
     merchantTown_endTransact();
 
@@ -247,7 +274,7 @@ static bool merchantTown_updateTransactSelectItem() {
         if (lastKey == GLFW_KEY_M) {
           lastKey = GLFW_KEY_P;
         }
-        
+
         for (int i=1;i<=10;i++) {
           if (spellNames[i][0] == (char) lastKey) {
             selectedSpellId = i;
@@ -288,6 +315,80 @@ static bool merchantTown_updateTransactSelectItem() {
   return false;
 }
 
+static bool merchantTown_updateDrinkAtPub() {
+  drunkLevel += 1;
+
+  if (drunkLevel > player.stamina / 5 || drunkLevel > player.wisdom / 5) {
+    float wenchRadius = sqrt(pow(player.px - wenchPosition.x, 2) + pow(player.py - wenchPosition.y, 2));
+    if (wenchRadius <= 1.5f) {
+      uiConsole_queueMessageFormat("^T1%s", player.name);
+      uiConsole_queueMessageFormat("^T1%s", ultimaStrings[543]);
+      
+      player.gold = 0;
+      player.wisdom -= 1;
+      if (player.wisdom < 5) { player.wisdom = 5; }
+      uiConsole_updateStats();
+
+      uiConsole_queueMessageFormat("^T1%s", ultimaStrings[544]);
+      uiConsole_queueMessageFormat("^T1%s", ultimaStrings[545]);
+
+      merchantTown_endTransact();
+      return true;
+    }
+  }
+
+  if (rand01() > 0.7f) {
+    merchantTown_endTransact();
+    return true;
+  }
+
+  uiConsole_queueMessage(ultimaStrings[506]);
+
+  int gossip = (int)(rand01() * 10 + 1);
+
+  switch (gossip) {
+    case 1:
+      for (int i=0;i<5;i++) {
+        uiConsole_queueMessageFormat("^T1%s", ultimaStrings[507 + i]);
+      }
+      break;
+    case 2:
+      uiConsole_queueMessageFormat("^T1%s", ultimaStrings[512]);
+      break;
+    case 3:
+      for (int i=0;i<5;i++) {
+        uiConsole_queueMessageFormat("^T1%s", ultimaStrings[513 + i]);
+      }
+      break;
+    case 4:
+    case 5:
+      uiConsole_queueMessageFormat("^T1%s", ultimaStrings[518]);
+      break;
+    case 6:
+      uiConsole_queueMessageFormat("^T1%s", ultimaStrings[519]);
+      uiConsole_queueMessageFormat("^T1%s", ultimaStrings[520]);
+      break;
+    case 7:
+      for (int i=0;i<3;i++) {
+        uiConsole_queueMessageFormat("^T1%s", ultimaStrings[521 + i]);
+      }
+      break;
+    case 8:
+    case 9:
+      uiConsole_queueMessageFormat("^T1%s", ultimaStrings[524]);
+      break;
+    case 10:
+      for (int i=0;i<17;i++) {
+        uiConsole_queueMessageFormat("^T1%s", ultimaStrings[525 + i]);
+      }
+      break;
+  }
+
+  vmExecuter_createWait(1.0f);
+  merchantTown_endTransact();
+  return true;
+}
+
 bool merchantTown_updateTransact() {
   if (transactStep == TRANSACT_STEP_START) {
     return merchantTown_updateTransactStart();
@@ -299,6 +400,8 @@ bool merchantTown_updateTransact() {
     return merchantTown_updateTransactSellItem();
   } else if (transactStep == TRANSACT_STEP_SELECT_ITEM) {
     return merchantTown_updateTransactSelectItem();
+  } else if (transactStep == TRANSACT_STEP_DRINK_AT_PUB) {
+    return merchantTown_updateDrinkAtPub();
   }
 
   return false;
