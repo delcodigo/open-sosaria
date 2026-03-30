@@ -2,10 +2,11 @@
 #include <stdlib.h>
 #include <string.h>
 #include "saveAndLoad.h"
+#include "entities/vehicleOverworld.h"
 
 static char saveHeader[] = "--OPEN SOSARIA--";
 static char saveVersion[] = "v0.1.0";
-SaveData savedGame;
+SaveData savedGame = { 0 };
 
 bool loadGame() {
   FILE* file = fopen("PLAYER.BIN", "rb");
@@ -24,6 +25,8 @@ bool loadGame() {
 
   memcpy(&player, &savedGame.player, sizeof(Player));
 
+  memcpy(vehiclesMap, savedGame.vehiclesMap, sizeof(vehiclesMap));
+
   return true;
 }
 
@@ -39,6 +42,8 @@ void saveGame() {
   strncpy(savedGame.version, saveVersion, sizeof(savedGame.version) - 1);
 
   memcpy(&savedGame.player, &player, sizeof(Player));
+
+  memcpy(savedGame.vehiclesMap, vehiclesMap, sizeof(vehiclesMap));
 
   fwrite(&savedGame, sizeof(SaveData), 1, file);
   fclose(file);
