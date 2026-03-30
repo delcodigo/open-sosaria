@@ -228,9 +228,9 @@ static bool merchantTown_updateTransactSelectItem() {
     if (buyingLadder) {
       buyingLadder = false;
       if (lastKey == GLFW_KEY_U) {
-        selectedSpellId = 5;
-      } else if (lastKey == GLFW_KEY_D) {
         selectedSpellId = 6;
+      } else if (lastKey == GLFW_KEY_D) {
+        selectedSpellId = 5;
       } else {
         uiConsole_queueMessageFormat("%s%c", ultimaStrings[500], (char) lastKey);
         merchantTown_endTransact();
@@ -244,6 +244,10 @@ static bool merchantTown_updateTransactSelectItem() {
         lastKey = 0;
         return false;
       } else {
+        if (lastKey == GLFW_KEY_M) {
+          lastKey = GLFW_KEY_P;
+        }
+        
         for (int i=1;i<=10;i++) {
           if (spellNames[i][0] == (char) lastKey) {
             selectedSpellId = i;

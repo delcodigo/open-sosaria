@@ -48,7 +48,7 @@ static void playerCommons_tryAndEquipSpell(int spellIndex, const char *charUsed)
     return;
   }
 
-  if (spellIndex > 0 && player.spells[spellIndex - 1] < 1) {
+  if (spellIndex > 0 && player.spells[spellIndex] < 1) {
     uiConsole_addMessageFormat("%.15s%s", ultimaStrings[225], spellNames[spellIndex]);
     return;
   }
@@ -143,7 +143,7 @@ static bool playerCommons_readyWeaponEquip() {
       memset(selectedWeapon, 0, sizeof(selectedWeapon));
 
       if (i > 0 && player.weapons[i - 1] < 1) {
-        snprintf(weaponCommand, sizeof(weaponCommand), "%.15s%.15s", ultimaStrings[207], weaponNames[i]);
+        snprintf(weaponCommand, sizeof(weaponCommand), "%.16s%.14s", ultimaStrings[207], weaponNames[i]);
         uiConsole_addMessage(weaponCommand);
         return true;
       }

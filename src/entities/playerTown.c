@@ -163,6 +163,9 @@ bool playerTown_update(float deltaTime) {
         if (merchantTown_updateTransact()) { acted = true; } else
         if (playerTown_updateMovement(deltaTime)) { acted = true; }
         break;
+      case PLAYER_STATE_READY_TYPE:
+        if (playerCommons_updateReady()) { acted = true; }
+        break;
       case PLAYER_STATE_TRANSACT:
         if (merchantTown_updateTransact()) { acted = true; }
         break;
