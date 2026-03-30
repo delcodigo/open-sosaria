@@ -33,6 +33,7 @@ typedef struct {
   int quests[OS_QUESTS_COUNT];
   int px;
   int py;
+  int eptns;
 } Player;
 
 extern Player player;

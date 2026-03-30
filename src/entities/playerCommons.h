@@ -31,7 +31,8 @@ typedef enum {
 } TRANSACT_STEP;
 
 typedef enum {
-  MERCHANT_TYPE_TRANSPORT = 0
+  MERCHANT_TYPE_TRANSPORT = 0,
+  MERCHANT_TYPE_MAGIC = 1
 } MERCHANT_TYPE;
 
 extern PLAYER_STATE playerState;

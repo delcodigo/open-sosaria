@@ -1,4 +1,5 @@
 #include <math.h>
+#include <stdio.h>
 #include "engine/engine.h"
 #include "merchantTown.h"
 #include "data/player.h"
@@ -18,6 +19,7 @@ static int wx = 0;
 static int wy = 0;
 static int lx = 0;
 static int ly = 0;
+static bool buyingLadder = false;
 
 static void merchantTown_endTransact() {
   transactStep = TRANSACT_STEP_START;
@@ -71,10 +73,15 @@ static bool merchantTown_updateTransactSelectTransaction() {
     if (player.px > 3 && player.px < 10 && player.py > 3 && player.py < 8) {
       uiConsole_queueMessage(ultimaStrings[425]);
       uiConsole_queueMessage(ultimaStrings[426]);
-      uiConsole_queueMessage("");
-      vmExecuter_createWait(1.0f);
       merchantType = MERCHANT_TYPE_TRANSPORT;
+    } else if (player.px > 21 && player.px < 26 && player.py > 0 && player.py < 7) {
+      uiConsole_queueMessage(ultimaStrings[427]);
+      uiConsole_queueMessage(ultimaStrings[428]);
+      merchantType = MERCHANT_TYPE_MAGIC;
     }
+
+    uiConsole_queueMessage("");
+    vmExecuter_createWait(1.0f);
 
     return false;
   } else if (lastKey != 0 && lastKey != GLFW_KEY_T) {
@@ -88,6 +95,10 @@ static bool merchantTown_updateTransactSelectTransaction() {
 
 static int merchantTown_getTransportCost(int vehicleId) {
   return (int)((200 - player.intelligence) / 80.0f * pow(vehicleId * 4, 2));
+}
+
+static int merchantTown_getSpellCost(int spellId) {
+  return (int)((200 - player.wisdom) / 200.0f * spellId * 5);
 }
 
 static bool merchantTown_updateTransactBuyItem() {
@@ -123,6 +134,19 @@ static bool merchantTown_updateTransactBuyItem() {
     uiConsole_queueMessage(ultimaStrings[576]);
 
     transactStep = TRANSACT_STEP_SELECT_ITEM;
+  } else if (merchantType == MERCHANT_TYPE_MAGIC) {
+    uiConsole_queueMessageFormat("%.8s%d%.8s%d%.8s%d", ultimaStrings[481], merchantTown_getSpellCost(1), ultimaStrings[482], merchantTown_getSpellCost(2), ultimaStrings[483], merchantTown_getSpellCost(3));
+    uiConsole_queueMessageFormat("%.8s%d%.8s%d%.8s%d", ultimaStrings[484], merchantTown_getSpellCost(4), ultimaStrings[485], merchantTown_getSpellCost(5), ultimaStrings[486], merchantTown_getSpellCost(6));
+    uiConsole_queueMessageFormat("%.8s%d%.8s%d%.8s%d", ultimaStrings[487], merchantTown_getSpellCost(7), ultimaStrings[488], merchantTown_getSpellCost(8), ultimaStrings[489], merchantTown_getSpellCost(9));
+
+    char consoleMessage1[31] = {0};
+    char consoleMessage2[31] = {0};
+    snprintf(consoleMessage1, 30, "%.8s%d", ultimaStrings[490], merchantTown_getSpellCost(10));
+    snprintf(consoleMessage2, 30, "%.8s%d%.12s", ultimaStrings[490], merchantTown_getSpellCost(10), ultimaStrings[491]);
+    
+    vmExecuter_queueAndReplaceConsoleMessage(consoleMessage1, consoleMessage2, 1.0f);
+
+    transactStep = TRANSACT_STEP_SELECT_ITEM;
   }
 
   return false;
@@ -132,6 +156,12 @@ static bool merchantTown_updateTransactSellItem() {
   if (merchantType == MERCHANT_TYPE_TRANSPORT) {
     uiConsole_queueMessage(ultimaStrings[568]);
     uiConsole_queueMessage(ultimaStrings[569]);
+
+    merchantTown_endTransact();
+
+    return true;
+  } else if (merchantType == MERCHANT_TYPE_MAGIC) {
+    uiConsole_queueMessage(ultimaStrings[480]);
 
     merchantTown_endTransact();
 
@@ -186,6 +216,67 @@ static bool merchantTown_updateTransactSelectItem() {
     vehiclesMap[dy][dx] = (unsigned char) keyNumber;
 
     uiConsole_queueMessageFormat("%s%s", vehicleNames[keyNumber], ultimaStrings[581]);
+    merchantTown_endTransact();
+    return true;
+  } else if (merchantType == MERCHANT_TYPE_MAGIC) {
+    if (lastKey == 0 || lastKey < GLFW_KEY_A || lastKey > GLFW_KEY_Z) {
+      return false;
+    }
+
+    int selectedSpellId = -1;
+
+    if (buyingLadder) {
+      buyingLadder = false;
+      if (lastKey == GLFW_KEY_U) {
+        selectedSpellId = 5;
+      } else if (lastKey == GLFW_KEY_D) {
+        selectedSpellId = 6;
+      } else {
+        uiConsole_queueMessageFormat("%s%c", ultimaStrings[500], (char) lastKey);
+        merchantTown_endTransact();
+        return true;
+      }
+    } else {
+      uiConsole_replaceLastMessageFormat("%.8s%d%.12s%c", ultimaStrings[490], merchantTown_getSpellCost(10), ultimaStrings[491], (char) lastKey);
+      if (lastKey == GLFW_KEY_L) {
+        uiConsole_queueMessage(ultimaStrings[493]);
+        buyingLadder = true;
+        lastKey = 0;
+        return false;
+      } else {
+        for (int i=1;i<=10;i++) {
+          if (spellNames[i][0] == (char) lastKey) {
+            selectedSpellId = i;
+            break;
+          }
+        }
+      }
+    }
+
+    if (selectedSpellId == -1) {
+      uiConsole_queueMessageFormat("%s%c", ultimaStrings[500], (char) lastKey);
+      merchantTown_endTransact();
+      return true;
+    }
+
+    int spellCost = merchantTown_getSpellCost(selectedSpellId);
+    if (player.gold < spellCost || player.eptns - spellCost < 0) {
+      uiConsole_queueMessage(ultimaStrings[495]);
+      merchantTown_endTransact();
+      return true;
+    }
+
+    if (player.type != 3 && selectedSpellId > 6) {
+      uiConsole_queueMessage(ultimaStrings[496]);
+      merchantTown_endTransact();
+      return true;
+    }
+
+    player.gold -= spellCost;
+    player.eptns -= spellCost;
+    player.spells[selectedSpellId] += 1;
+
+    uiConsole_queueMessageFormat("%s%s", spellNames[selectedSpellId], ultimaStrings[497]);
     merchantTown_endTransact();
     return true;
   }
