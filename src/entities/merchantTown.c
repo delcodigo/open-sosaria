@@ -1,5 +1,6 @@
 #include <math.h>
 #include <stdio.h>
+#include <string.h>
 #include "engine/engine.h"
 #include "merchantTown.h"
 #include "data/player.h"
@@ -23,6 +24,7 @@ static int lx = 0;
 static int ly = 0;
 static bool buyingLadder = false;
 static int selectedItemId = -1;
+static char selectedWeaponName[3] = { 0 };
 int drunkLevel = 0;
 
 static void merchantTown_endTransact() {
@@ -89,8 +91,14 @@ static bool merchantTown_updateTransactSelectTransaction() {
       uiConsole_queueMessage(ultimaStrings[430]);
       uiConsole_queueMessage(ultimaStrings[431]);
       merchantType = MERCHANT_TYPE_ARMORY;
+    } else if (player.px > 10 && player.px < 17 && player.py > 13 && player.py < 18) {
+      uiConsole_queueMessage(ultimaStrings[432]);
+      uiConsole_queueMessage(ultimaStrings[433]);
+      merchantType = MERCHANT_TYPE_WEAPONS;
     }
 
+    memset(selectedWeaponName, 0, sizeof(selectedWeaponName));
+    lastKey = 0;
     uiConsole_queueMessage("");
     vmExecuter_createWait(1.0f);
 
@@ -114,6 +122,23 @@ static int merchantTown_getSpellCost(int spellId) {
 
 static int merchantTown_getArmorCost(int armorId) {
   return (int)((200 - player.intelligence) / 200.0f * 50 * armorId);
+}
+
+static int merchantTown_getWeaponCost(int weaponId) {
+  return (int)((200 - player.intelligence) / 200.0f * pow(weaponId, 2) + 5);
+}
+
+static int merchantTown_getWeaponTime() {
+  int tx = (int)(player.tx % OS_BTERRA_MAP_WIDTH);
+  int ty = (int)(player.ty % OS_BTERRA_MAP_HEIGHT);
+  int world = ((int)player.ty / OS_BTERRA_MAP_HEIGHT) * 2 + ((int)player.tx / OS_BTERRA_MAP_WIDTH);
+  int tileType = ultimaAssets.bterraMaps[world][ty][tx] & 0x0F;
+
+  int time = (int)((player.time / 3000.0f) * 2 + 1);
+  if (time > 5) { time = 5; }
+  if (tileType % 2 == 0) { time += 1; }
+
+  return time;
 }
 
 static bool merchantTown_updateTransactBuyItem() {
@@ -188,6 +213,33 @@ static bool merchantTown_updateTransactBuyItem() {
     uiConsole_queueMessage(ultimaStrings[552]);
 
     transactStep = TRANSACT_STEP_SELECT_ITEM;
+  } else if (merchantType == MERCHANT_TYPE_WEAPONS) {
+    int time = merchantTown_getWeaponTime();
+
+    if (time == 1 || time == 3 || time == 5) {
+      uiConsole_queueMessageFormat("%s%d%s%d%s%d", ultimaStrings[447], merchantTown_getWeaponCost(1), ultimaStrings[448], merchantTown_getWeaponCost(2), ultimaStrings[449], merchantTown_getWeaponCost(3));
+    }
+    if (time == 2 || time == 4 || time == 6) {
+      uiConsole_queueMessageFormat("%s%d%s%d", ultimaStrings[450], merchantTown_getWeaponCost(4), ultimaStrings[451], merchantTown_getWeaponCost(5));
+    }
+    if (time == 3 || time == 5) {
+      uiConsole_queueMessageFormat("%s%d%s%d", ultimaStrings[452], merchantTown_getWeaponCost(6), ultimaStrings[453], merchantTown_getWeaponCost(7));
+    }
+    if (time == 4 || time == 6) {
+      uiConsole_queueMessageFormat("%s%d%s%d%s%d", ultimaStrings[454], merchantTown_getWeaponCost(8), ultimaStrings[455], merchantTown_getWeaponCost(9), ultimaStrings[456], merchantTown_getWeaponCost(10));
+    }
+    if (time == 5) {
+      uiConsole_queueMessageFormat("%s%d%s%d%s%d", ultimaStrings[457], merchantTown_getWeaponCost(11), ultimaStrings[458], merchantTown_getWeaponCost(12), ultimaStrings[459], merchantTown_getWeaponCost(13));
+    }
+    if (time == 6) {
+      uiConsole_queueMessageFormat("%s%d%s%d", ultimaStrings[460], merchantTown_getWeaponCost(14), ultimaStrings[461], merchantTown_getWeaponCost(15));
+    }
+
+    uiConsole_queueMessage(ultimaStrings[462]);
+
+    memset(selectedWeaponName, 0, sizeof(selectedWeaponName));
+    lastKey = 0;
+    transactStep = TRANSACT_STEP_SELECT_ITEM;
   }
 
   return false;
@@ -215,6 +267,11 @@ static bool merchantTown_updateTransactSellItem() {
     return true;
   } else if (merchantType == MERCHANT_TYPE_ARMORY) {
     uiConsole_queueMessage(ultimaStrings[558]);
+
+    lastKey = 0;
+    transactStep = TRANSACT_STEP_SELECT_SELL_ITEM;
+  } else if (merchantType == MERCHANT_TYPE_WEAPONS) {
+    uiConsole_queueMessage(ultimaStrings[470]);
 
     lastKey = 0;
     transactStep = TRANSACT_STEP_SELECT_SELL_ITEM;
@@ -373,6 +430,76 @@ static bool merchantTown_updateTransactSelectItem() {
       player.armors[selectedArmorId - 1] += 1;
 
       uiConsole_queueMessageFormat("%s%s", armorNames[selectedArmorId], ultimaStrings[557]);
+      uiConsole_updateStats();
+      merchantTown_endTransact();
+
+      return true;
+    }
+  } else if (merchantType == MERCHANT_TYPE_WEAPONS) {
+    if (lastKey != 0 && lastKey >= GLFW_KEY_A && lastKey <= GLFW_KEY_Z) {
+      if (selectedWeaponName[0] == 0) {
+        selectedWeaponName[0] = (char) lastKey;
+        lastKey = 0;
+        uiConsole_replaceLastMessageFormat("%s%c", ultimaStrings[462], selectedWeaponName[0]);
+        return false;
+      } else if (selectedWeaponName[1] == 0) {
+        selectedWeaponName[1] = (char) lastKey;
+        lastKey = 0;
+        uiConsole_replaceLastMessageFormat("%s%s", ultimaStrings[462], selectedWeaponName);
+
+        return false;
+      }
+    }
+
+    if (selectedWeaponName[0] != 0 && selectedWeaponName[1] != 0) {
+      int selectedWeaponId = -1;
+      for (int i=1;i<=OS_WEAPONS_COUNT;i++) {
+        if (weaponNames[i][0] == selectedWeaponName[0] && weaponNames[i][1] == selectedWeaponName[1]) {
+          selectedWeaponId = i;
+          break;
+        }
+      }
+
+      if (selectedWeaponId == -1) {
+        uiConsole_queueMessageFormat("%s%s", selectedWeaponName, ultimaStrings[463]);
+        merchantTown_endTransact();
+        return true;
+      }
+
+      int time = merchantTown_getWeaponTime();
+      if ((int)((time + 1) / 2.0f) * 5 < selectedWeaponId) {
+        uiConsole_queueMessageFormat("%s%s", weaponNames[selectedWeaponId], ultimaStrings[464]);
+        merchantTown_endTransact();
+        return true;
+      } 
+      if (time % 2 != 0 && selectedWeaponId % 2 == 0) {
+        uiConsole_queueMessageFormat("%s%s", ultimaStrings[465], weaponNames[selectedWeaponId]);
+        merchantTown_endTransact();
+        return true;
+      } 
+      if (time % 2 == 0 && selectedWeaponId % 2 != 0) {
+        uiConsole_queueMessageFormat("%s%s", ultimaStrings[466], weaponNames[selectedWeaponId]);
+        merchantTown_endTransact();
+        return true;
+      }
+
+      if (player.gold < merchantTown_getWeaponCost(selectedWeaponId)) {
+        uiConsole_queueMessage(ultimaStrings[467]);
+        merchantTown_endTransact();
+        return true;
+      }
+
+      if (player_getEncumbrance() > 0) {
+        uiConsole_queueMessage(ultimaStrings[468]);
+        merchantTown_endTransact();
+        return true;
+      }
+
+      player.gold -= merchantTown_getWeaponCost(selectedWeaponId);
+      player.weapons[selectedWeaponId - 1] += 1;
+
+      uiConsole_queueMessageFormat("%s%s", weaponNames[selectedWeaponId], ultimaStrings[469]);
+      uiConsole_updateStats();
       merchantTown_endTransact();
 
       return true;
@@ -482,6 +609,47 @@ bool merchantTown_updateSelectSellItem() {
       lastKey = 0;
       transactStep = TRANSACT_STEP_CONFIRM_SELL_ITEM;
     }
+  } else if (merchantType == MERCHANT_TYPE_WEAPONS) {
+    if (lastKey != 0 && lastKey >= GLFW_KEY_A && lastKey <= GLFW_KEY_Z) {
+      if (selectedWeaponName[0] == 0) {
+        selectedWeaponName[0] = (char) lastKey;
+        lastKey = 0;
+        uiConsole_replaceLastMessageFormat("%s%c", ultimaStrings[470], selectedWeaponName[0]);
+        return false;
+      } else if (selectedWeaponName[1] == 0) {
+        selectedWeaponName[1] = (char) lastKey;
+        lastKey = 0;
+        uiConsole_replaceLastMessageFormat("%s%s", ultimaStrings[470], selectedWeaponName);
+        return false;
+      }
+
+      return false;
+    }
+
+    if (selectedWeaponName[0] != 0 && selectedWeaponName[1] != 0) {
+      int selectedWeaponId = -1;
+      for (int i=1;i<=OS_WEAPONS_COUNT;i++) {
+        if (weaponNames[i][0] == selectedWeaponName[0] && weaponNames[i][1] == selectedWeaponName[1]) {
+          selectedWeaponId = i;
+          break;
+        }
+      }
+
+      if (selectedWeaponId == -1) {
+        uiConsole_queueMessageFormat("%s%s", selectedWeaponName, ultimaStrings[471]);
+        merchantTown_endTransact();
+        return true;
+      }
+
+      int price = (int)((float) player.charisma / 50.0f * merchantTown_getWeaponCost(selectedWeaponId));
+
+      uiConsole_queueMessageFormat("%s%s", ultimaStrings[472], weaponNames[selectedWeaponId]);
+      uiConsole_queueMessageFormat("%s%d%s", ultimaStrings[473], price, ultimaStrings[562]);
+
+      lastKey = 0;
+      selectedItemId = selectedWeaponId;
+      transactStep = TRANSACT_STEP_CONFIRM_SELL_ITEM;
+    }
   }
 
   return false;
@@ -509,6 +677,35 @@ bool merchantTown_updateConfirmSellItem() {
       }
     } else {
       uiConsole_queueMessage(ultimaStrings[564]);
+    }
+
+    uiConsole_updateStats();
+
+    merchantTown_endTransact();
+    return true;
+  } else if (merchantType == MERCHANT_TYPE_WEAPONS && lastKey != 0) {
+    if (lastKey == GLFW_KEY_Y) {
+      if (player.weapons[selectedItemId - 1] <= 0) {
+        uiConsole_queueMessage(ultimaStrings[477]);
+        uiConsole_queueMessageFormat("%s%s", weaponNames[selectedItemId], ultimaStrings[478]);
+        merchantTown_endTransact();
+        return true;
+      }
+
+      int price = (int)((float) player.charisma / 50.0f * merchantTown_getWeaponCost(selectedItemId));
+
+      player.gold += price;
+      player.weapons[selectedItemId - 1] -= 1;
+
+      uiConsole_replaceLastMessageFormat("%s%d%s Y", ultimaStrings[473], price, ultimaStrings[562]);
+
+      if (player.weapon == selectedItemId - 1 && player.weapons[selectedItemId - 1] < 1) {
+        player.weapon = 0;
+      }
+
+      uiConsole_updateStats();
+    } else {
+      uiConsole_queueMessage(ultimaStrings[476]);
     }
 
     merchantTown_endTransact();
