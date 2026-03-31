@@ -148,7 +148,7 @@ static bool playerCommons_readyWeaponEquip() {
         return true;
       }
 
-      player.weapon = i - 1;
+      player.weapon = i;
       snprintf(weaponCommand, sizeof(weaponCommand), "%.15s%.15s", ultimaStrings[208], weaponNames[i]);
       uiConsole_addMessage(weaponCommand);
       return true;
