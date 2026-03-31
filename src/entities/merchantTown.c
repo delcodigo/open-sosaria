@@ -95,6 +95,10 @@ static bool merchantTown_updateTransactSelectTransaction() {
       uiConsole_queueMessage(ultimaStrings[432]);
       uiConsole_queueMessage(ultimaStrings[433]);
       merchantType = MERCHANT_TYPE_WEAPONS;
+    } else if (player.px > 21 && player.px < 27 && player.py > 11 && player.py < 18) {
+      uiConsole_queueMessage(ultimaStrings[434]);
+      uiConsole_queueMessage(ultimaStrings[435]);
+      merchantType = MERCHANT_TYPE_FOOD;
     }
 
     memset(selectedWeaponName, 0, sizeof(selectedWeaponName));
@@ -139,6 +143,10 @@ static int merchantTown_getWeaponTime() {
   if (tileType % 2 == 0) { time += 1; }
 
   return time;
+}
+
+static int merchantTown_getFoodCost() {
+  return (int)(5 - player.intelligence / 20.0f);
 }
 
 static bool merchantTown_updateTransactBuyItem() {
@@ -240,6 +248,13 @@ static bool merchantTown_updateTransactBuyItem() {
     memset(selectedWeaponName, 0, sizeof(selectedWeaponName));
     lastKey = 0;
     transactStep = TRANSACT_STEP_SELECT_ITEM;
+  } else if (merchantType == MERCHANT_TYPE_FOOD) {
+    uiConsole_queueMessage(ultimaStrings[584]);
+    uiConsole_queueMessageFormat("%s%d", ultimaStrings[585], merchantTown_getFoodCost());
+    uiConsole_queueMessage(ultimaStrings[586]);
+
+    lastKey = 0;
+    transactStep = TRANSACT_STEP_SELECT_ITEM;
   }
 
   return false;
@@ -275,6 +290,12 @@ static bool merchantTown_updateTransactSellItem() {
 
     lastKey = 0;
     transactStep = TRANSACT_STEP_SELECT_SELL_ITEM;
+  } else if (merchantType == MERCHANT_TYPE_FOOD) {
+    uiConsole_queueMessage(ultimaStrings[583]);
+
+    merchantTown_endTransact();
+
+    return true;
   }
 
   return false;
@@ -504,6 +525,31 @@ static bool merchantTown_updateTransactSelectItem() {
 
       return true;
     }
+  } else if (merchantType == MERCHANT_TYPE_FOOD && lastKey != 0) {
+    if (lastKey < GLFW_KEY_0 || lastKey > GLFW_KEY_9) {
+      return false;
+    }
+
+    uiConsole_replaceLastMessageFormat("%s%c", ultimaStrings[586], (char) lastKey);
+
+    if (lastKey == GLFW_KEY_0) {
+      uiConsole_queueMessage(ultimaStrings[587]);
+      merchantTown_endTransact();
+      return true;
+    }
+
+    if (player.gold < merchantTown_getFoodCost()) {
+      uiConsole_queueMessage(ultimaStrings[588]);
+      uiConsole_queueMessage(ultimaStrings[589]);
+      merchantTown_endTransact();
+      return true;
+    }
+
+    player.food += (int)(lastKey - GLFW_KEY_0) * 10;
+    player.gold -= merchantTown_getFoodCost();
+    uiConsole_updateStats();
+    merchantTown_endTransact();
+    return true;
   }
 
   return false;
