@@ -74,7 +74,13 @@ static bool merchantTown_updateTransactStart() {
 
 static bool merchantTown_updateTransactSelectTransaction() {
   if (input.b == 1 || input.s == 1) {
-    transactStep = input.b == 1 ? TRANSACT_STEP_BUY_ITEM : TRANSACT_STEP_SELL_ITEM;
+    if (input.b == 1) {
+      uiConsole_replaceLastMessageFormat("%s BUY", ultimaStrings[421]);
+      transactStep = TRANSACT_STEP_BUY_ITEM;
+    } else {
+      uiConsole_replaceLastMessageFormat("%s SELL", ultimaStrings[421]);
+      transactStep = TRANSACT_STEP_SELL_ITEM;
+    }
 
     if (player.px > 3 && player.px < 10 && player.py > 3 && player.py < 8) {
       uiConsole_queueMessage(ultimaStrings[425]);
@@ -494,12 +500,14 @@ static bool merchantTown_updateTransactSelectItem() {
         return true;
       } 
       if (time % 2 != 0 && selectedWeaponId % 2 == 0) {
-        uiConsole_queueMessageFormat("%s%s", ultimaStrings[465], weaponNames[selectedWeaponId]);
+        uiConsole_queueMessage(ultimaStrings[465]);
+        uiConsole_queueMessage(weaponNames[selectedWeaponId]);
         merchantTown_endTransact();
         return true;
       } 
       if (time % 2 == 0 && selectedWeaponId % 2 != 0) {
-        uiConsole_queueMessageFormat("%s%s", ultimaStrings[466], weaponNames[selectedWeaponId]);
+        uiConsole_queueMessage(ultimaStrings[466]);
+        uiConsole_queueMessage(weaponNames[selectedWeaponId]);
         merchantTown_endTransact();
         return true;
       }
@@ -703,7 +711,10 @@ bool merchantTown_updateSelectSellItem() {
 
 bool merchantTown_updateConfirmSellItem() {
   if (merchantType == MERCHANT_TYPE_ARMORY && lastKey != 0) {
+    int price = (int)((float) player.charisma / 50.0f * merchantTown_getArmorCost(selectedItemId));
     if (lastKey == GLFW_KEY_Y) {
+      uiConsole_replaceLastMessageFormat("%s%d%s Y", ultimaStrings[561], price, ultimaStrings[562]);
+
       if (player.armors[selectedItemId - 1] <= 0) {
         uiConsole_queueMessage(ultimaStrings[565]);
         uiConsole_queueMessageFormat("%s%s", armorNames[selectedItemId], ultimaStrings[566]);
@@ -711,17 +722,16 @@ bool merchantTown_updateConfirmSellItem() {
         return true;
       }
 
-      int price = (int)((float) player.charisma / 50.0f * merchantTown_getArmorCost(selectedItemId));
 
       player.gold += price;
       player.armors[selectedItemId - 1] -= 1;
 
-      uiConsole_replaceLastMessageFormat("%s%d%s Y", ultimaStrings[561], price, ultimaStrings[562]);
 
       if (player.armor == selectedItemId - 1 && player.armors[selectedItemId - 1] < 1) {
         player.armor = 0;
       }
     } else {
+      uiConsole_replaceLastMessageFormat("%s%d%s N", ultimaStrings[561], price, ultimaStrings[562]);
       uiConsole_queueMessage(ultimaStrings[564]);
     }
 
@@ -730,7 +740,10 @@ bool merchantTown_updateConfirmSellItem() {
     merchantTown_endTransact();
     return true;
   } else if (merchantType == MERCHANT_TYPE_WEAPONS && lastKey != 0) {
+    int price = (int)((float) player.charisma / 50.0f * merchantTown_getWeaponCost(selectedItemId));
     if (lastKey == GLFW_KEY_Y) {
+      uiConsole_replaceLastMessageFormat("%s%d%s Y", ultimaStrings[473], price, ultimaStrings[562]);
+
       if (player.weapons[selectedItemId - 1] <= 0) {
         uiConsole_queueMessage(ultimaStrings[477]);
         uiConsole_queueMessageFormat("%s%s", weaponNames[selectedItemId], ultimaStrings[478]);
@@ -738,12 +751,10 @@ bool merchantTown_updateConfirmSellItem() {
         return true;
       }
 
-      int price = (int)((float) player.charisma / 50.0f * merchantTown_getWeaponCost(selectedItemId));
 
       player.gold += price;
       player.weapons[selectedItemId - 1] -= 1;
 
-      uiConsole_replaceLastMessageFormat("%s%d%s Y", ultimaStrings[473], price, ultimaStrings[562]);
 
       if (player.weapon == selectedItemId - 1 && player.weapons[selectedItemId - 1] < 1) {
         player.weapon = 0;
@@ -751,6 +762,7 @@ bool merchantTown_updateConfirmSellItem() {
 
       uiConsole_updateStats();
     } else {
+      uiConsole_replaceLastMessageFormat("%s%d%s N", ultimaStrings[473], price, ultimaStrings[562]);
       uiConsole_queueMessage(ultimaStrings[476]);
     }
 
