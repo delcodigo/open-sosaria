@@ -308,6 +308,59 @@ static bool playerTown_updateDrop() {
   return false;
 }
 
+static bool playerTown_updateAttack() {
+  if (playerState == PLAYER_STATE_TOWN_ATTACK) {
+    if (lastKey == 0) { return false; }
+
+    int dx = 0;
+    int dy = 0;
+
+    if (input.up) {
+      dy = -1;
+    } else if (input.down) {
+      dy = 1;
+    } else if (input.left) {
+      dx = -1;
+    } else if (input.right) {
+      dx = 1;
+    } else {
+      uiConsole_queueMessage(ultimaStrings[343]);
+      return false;
+    }
+
+    int range = 1;
+    if (player.weapon >= 6 && player.weapon != 12) {
+      range = 5;
+    }
+
+    for (int i=1;i<=range;i++) {
+      if (player.py + dy * i >= 22) {
+        break;
+      }
+
+      if (sceneTown_isSolid(player.px + dx * i, player.py + dy * i)) {
+        dx *= i;
+        dy *= i;
+        break;
+      }
+    }
+
+    sceneTown_attackAt(player.px + dx, player.py + dy);
+    playerState = PLAYER_STATE_IDLE;
+
+    return true;
+  } else if (input.a == 1) {
+    input.a = 2;
+    waitingTime = 0.0f;
+
+    uiConsole_replaceLastMessageFormat("%s%s", ultimaStrings[98], ultimaStrings[342]);
+    lastKey = 0;
+    playerState = PLAYER_STATE_TOWN_ATTACK;
+  }
+
+  return false;
+}
+
 bool playerTown_update(float deltaTime) {
   bool acted = false;
   
@@ -323,6 +376,7 @@ bool playerTown_update(float deltaTime) {
         if (playerTown_updateSave()) { acted = true; } else
         if (merchantTown_updateTransact()) { acted = true; } else
         if (playerTown_updateDrop()) { acted = true; } else
+        if (playerTown_updateAttack()) { acted = true; } else
         if (playerTown_updateMovement(deltaTime)) { acted = true; }
         break;
       case PLAYER_STATE_READY_TYPE:
@@ -333,6 +387,9 @@ bool playerTown_update(float deltaTime) {
         break;
       case PLAYER_STATE_DROP:
         if (playerTown_updateDrop()) { acted = true; }
+        break;
+      case PLAYER_STATE_TOWN_ATTACK:
+        if (playerTown_updateAttack()) { acted = true; }
         break;
       default:
         break;

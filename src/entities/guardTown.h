@@ -6,6 +6,7 @@
 typedef struct {
   int x;
   int y;
+  int hp;
 } GuardTown;
 
 extern GuardTown guardTowns[OS_GUARD_TOWN_COUNT];

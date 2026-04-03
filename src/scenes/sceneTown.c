@@ -1,5 +1,6 @@
 #include "sceneTown.h"
 #include "sceneDiskLoader.h"
+#include "sceneOverworld.h"
 #include "data/player.h"
 #include "engine/geometry.h"
 #include "maths/matrix4.h"
@@ -90,6 +91,88 @@ bool sceneTown_isSolid(int x, int y) {
   }
 
   return false;
+}
+
+void sceneTown_attackAt(int x, int y) {
+  char *target = NULL;
+  TOWN_ENTITY_TYPE targetType = TOWN_ENTITY_TYPE_NONE;
+  int targetIndex = -1;
+  int T = -1;
+
+  for (int i=0; i<OS_GUARD_TOWN_COUNT; i++) {
+    if (guardTowns[i].x == x && guardTowns[i].y == y) {
+      target = ultimaStrings[347];
+      targetType = TOWN_ENTITY_TYPE_GUARD;
+      targetIndex = i;
+      T = 32 + i;
+      break;
+    }
+  }
+
+  for (int i=0; i<OS_TOWN_MERCHANTS_COUNT; i++) {
+    if (merchantsPositions[i].x == x && merchantsPositions[i].y == y) {
+      target = ultimaStrings[350];
+      targetType = TOWN_ENTITY_TYPE_MERCHANT;
+      targetIndex = i;
+      T = 40;
+      break;
+    }
+  }
+
+  if (wenchPosition.x == x && wenchPosition.y == y) {
+    target = ultimaStrings[351];
+    T = 41;
+    targetType = TOWN_ENTITY_TYPE_WENCH;
+  }
+
+  if (bardPosition.x == x && bardPosition.y == y) {
+    target = ultimaStrings[348];
+    T = 38;
+    targetType = TOWN_ENTITY_TYPE_BARD;
+  }
+
+  if (T == -1) {
+    uiConsole_queueMessage(ultimaStrings[344]);
+    return;
+  }
+
+  uiConsole_replaceLastMessageFormat("%s%s", ultimaStrings[98], ultimaStrings[342]);
+  uiConsole_queueMessage(target);
+
+  if (rand01() * ((player.strength + (T - 40) * 3 + player.weapon) + 75) < 50) {
+    uiConsole_queueMessage(ultimaStrings[352]);
+    return;
+  }
+  
+  enemyEncounter.monsterId = 1;
+
+  int damage = (int)(((player.strength + player.weapon) / 2.0f) * rand01() + 1);
+  uiConsole_queueMessageFormat("%s%d", ultimaStrings[353], damage);
+
+  if (targetType == TOWN_ENTITY_TYPE_BARD) {
+    bardPosition.x = -1;
+    bardPosition.y = -1;
+    player.eptns += 20;
+  } else if (targetType == TOWN_ENTITY_TYPE_WENCH) {
+    wenchPosition.x = -1;
+    wenchPosition.y = -1;
+    player.eptns += 10;
+  } else if (targetType == TOWN_ENTITY_TYPE_MERCHANT) {
+    merchantsPositions[targetIndex].x = -1;
+    merchantsPositions[targetIndex].y = -1;
+    player.eptns += 25;
+  } else if (targetType == TOWN_ENTITY_TYPE_GUARD) {
+    guardTowns[targetIndex].hp -= damage;
+    if (guardTowns[targetIndex].hp <= 0) {
+      guardTowns[targetIndex].x = -1;
+      guardTowns[targetIndex].y = -1;
+      player.eptns += 40;
+    } else {
+      return;
+    }
+  }
+
+  uiConsole_queueMessage(ultimaStrings[354]);
 }
 
 static void sceneTown_renderPerson(Geometry *geometry, Vector2 *position, float *transform, float *viewMatrix) {
