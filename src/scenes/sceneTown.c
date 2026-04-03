@@ -237,6 +237,11 @@ static void sceneTown_update(float deltaTime) {
   }
   
   if (!queuedMessagesCount && lagTime <= 0 && !vmExecuter_update(deltaTime)) {
+    if (respawnPlayer) {
+      scene_load(&sceneOverworld);
+      return;
+    }
+
     if (ztatsActive){
       uiZtats_update(deltaTime);
       return;
@@ -248,8 +253,14 @@ static void sceneTown_update(float deltaTime) {
       sceneTown_updateBard();
       sceneTown_updateWench();
       
+      for (int i=0; i<OS_GUARD_TOWN_COUNT; i++) {
+        guardTown_update(&guardTowns[i]);
+      }
+      
       if (player_isAlive()) {
         uiConsole_addMessage(ultimaStrings[98]);
+      } else {
+        sceneOverworld_attemptResurrection();
       }
     }
 

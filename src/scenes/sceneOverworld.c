@@ -86,7 +86,7 @@ static void sceneOverworld_resolveEncounter() {
   }
 }
 
-static bool sceneOverworld_attemptResurrection() {
+bool sceneOverworld_attemptResurrection() {
   if (!player_isAlive()) {
     uiConsole_addMessageFormat("%.15s%.14s", player.name, ultimaStrings[259]);
     uiConsole_addMessage(ultimaStrings[260]);

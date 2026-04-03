@@ -27,7 +27,7 @@ void playerTown_init() {
 
   geometry_setSprite(&playerTownGeometry, OS_TOWN_CASTLE_SPRITE_WIDTH, OS_TOWN_CASTLE_SPRITE_HEIGHT, tx1, 0, tx2, 1);
   
-  enemyEncounter.monsterId = -1;
+  enemyEncounter.monsterId = 0;
   droppedGold = false;
 }
 

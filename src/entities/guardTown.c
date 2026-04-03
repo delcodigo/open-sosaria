@@ -1,8 +1,15 @@
+#include <math.h>
+#include <stdlib.h>
 #include "guardTown.h"
+#include "entities/ui/uiConsole.h"
+#include "data/player.h"
 #include "engine/geometry.h"
 #include "scenes/sceneDiskLoader.h"
+#include "scenes/sceneOverworld.h"
+#include "scenes/sceneTown.h"
 #include "maths/matrix4.h"
 #include "config.h"
+#include "utils.h"
 
 GuardTown guardTowns[OS_GUARD_TOWN_COUNT] = { 0 };
 static Geometry guardTownGeometry;
@@ -21,6 +28,42 @@ void guardTown_init() {
   geometry_setSprite(&guardTownGeometry, OS_TOWN_CASTLE_SPRITE_WIDTH, OS_TOWN_CASTLE_SPRITE_HEIGHT, tx1, 0.0f, tx2, 1.0f);
 
   matrix4_setIdentity(transformMatrix);
+}
+
+void guardTown_update(GuardTown *guard) {
+  if (enemyEncounter.monsterId == 0) { return;}
+  if (guard->hp <= 0) { return; }
+
+  int dx = player.px - guard->x;
+  int dy = player.py - guard->y;
+  float distance = sqrtf(dx * dx + dy * dy);
+
+  if (distance > 9.0f) { return; }
+
+  if (distance < 2) {
+    uiConsole_queueMessage(ultimaStrings[593]);
+    if (rand01() * player.strength + player.armor * 4 > 30 || rand01() > 0.75f) {
+      uiConsole_queueMessage(ultimaStrings[594]);
+      lagTime += 0.1f;
+      return;
+    }
+
+    int damage = (int) (rand01() * 10 + player.health / 100);
+    player.health -= damage;
+    if (player.health < 0) { player.health = 0; }
+    uiConsole_updateStats();
+    uiConsole_queueMessageFormat("%s%d", ultimaStrings[595], damage);
+    return;
+  }
+
+  if (dy != 0) { dy = dy / abs(dy); }
+  if (dx != 0) { dx = dx / abs(dx); }
+
+  if (!sceneTown_isSolid(guard->x, guard->y + dy)) {
+    guard->y += dy;
+  } else if (!sceneTown_isSolid(guard->x + dx, guard->y)) {
+    guard->x += dx;
+  }
 }
 
 void guardTown_render(float *viewMatrix) {

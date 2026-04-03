@@ -12,4 +12,6 @@ typedef struct {
 extern Scene sceneOverworld;
 extern EnemyEncounter enemyEncounter;
 
+bool sceneOverworld_attemptResurrection();
+
 #endif
