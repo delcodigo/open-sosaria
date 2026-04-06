@@ -4,7 +4,10 @@ bin/open-sosaria
 bin/open-sosaria.exe
 bin/disk1.dsk
 bin/disk2.dsk
+bin/program.dsk
+bin/player.dsk
 bin/PLAYER.BIN
+releases/
 *.o
 *.a
 *.so

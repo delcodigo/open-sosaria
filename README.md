@@ -82,7 +82,7 @@ On some MSYS2 setups, use `mingw32-make` if `make` is not available in PATH.
 
 The engine currently includes:
 
-- **Disk Verification:** Validates that `disk1.dsk` and `disk2.dsk` exist and contain the required Apple II Ultima files with correct sizes
+- **Disk Verification:** Validates that `program.dsk` and `player.dsk` exist and contain the required Apple II Ultima files with correct sizes
 - **Disk Loader Scene (Partial):** Core disk loading flow is working and displays status messages during boot (file verification and error messages)
 - **Asset Extraction:** Reads and parses DOS 3.3 disk catalogs and file structures from the Apple II disks
 - **Title Splash Screen:** Extracts and renders the title screen picture (`PIC.ULTIMATUM`) from the disk images

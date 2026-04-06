@@ -452,7 +452,7 @@ static void sceneDiskLoader_emitQuotedStringsFromAppleBasicLine(const unsigned c
           if (existingLength + length < 41) {
             strncat(ultimaStrings[ultimaStringCount], (const char *)(lineData + start), length);
             ultimaStrings[ultimaStringCount][existingLength + length] = '\0';
-            printf("Appended to string: [%d] '%s'\n", ultimaStringCount, ultimaStrings[ultimaStringCount]);
+            // printf("Appended to string: [%d] '%s'\n", ultimaStringCount, ultimaStrings[ultimaStringCount]);
             shouldAppend = false;
             ultimaStringCount++;
             i = end + 1;
@@ -469,7 +469,7 @@ static void sceneDiskLoader_emitQuotedStringsFromAppleBasicLine(const unsigned c
         } else {
           ultimaStringCount++;
           shouldAppend = false;
-          printf("Extracted string: [%d] '%s'\n", ultimaStringCount - 1, ultimaStrings[ultimaStringCount - 1]);
+          // printf("Extracted string: [%d] '%s'\n", ultimaStringCount - 1, ultimaStrings[ultimaStringCount - 1]);
         }
       } else if (!isEmpty) {
         ultimaStrings[ultimaStringCount++][0] = '\0';
@@ -1028,14 +1028,14 @@ static void sceneDiskLoader_loadTownCollisionsMap(uint8_t *disk) {
 }
 
 static int sceneDiskLoader_verifyUltimaDisks() {
-  if (!file_exists("disk1.dsk")) {
-    strcpy(diskMsgText, "'disk1.dsk' not found!");
+  if (!file_exists("program.dsk")) {
+    strcpy(diskMsgText, "'program.dsk' not found!");
     text_create(&diskMsg, diskMsgText);
     return 0;
   }
 
-  if (!file_exists("disk2.dsk")) {
-    strcpy(diskMsgText, "'disk2.dsk' not found!");
+  if (!file_exists("player.dsk")) {
+    strcpy(diskMsgText, "'player.dsk' not found!");
     text_create(&diskMsg, diskMsgText);
     return 0;
   }
@@ -1051,8 +1051,8 @@ static int sceneDiskLoader_verifyUltimaDisks() {
     return 0;
   }
 
-  FILE *file1 = fopen("disk1.dsk", "rb");
-  FILE *file2 = fopen("disk2.dsk", "rb");
+  FILE *file1 = fopen("program.dsk", "rb");
+  FILE *file2 = fopen("player.dsk", "rb");
 
   fread(disk1, 1, DISK_SIZE, file1);
   fread(disk2, 1, DISK_SIZE, file2);
@@ -1174,8 +1174,8 @@ void sceneDiskLoader_extractUltimaAssets() {
     return;
   }
 
-  FILE *file1 = fopen("disk1.dsk", "rb");
-  FILE *file2 = fopen("disk2.dsk", "rb");
+  FILE *file1 = fopen("program.dsk", "rb");
+  FILE *file2 = fopen("player.dsk", "rb");
 
   fread(disk1, 1, DISK_SIZE, file1);
   fread(disk2, 1, DISK_SIZE, file2);
