@@ -67,6 +67,10 @@ static void sceneTown_init() {
 }
 
 bool sceneTown_isSolid(int x, int y) {
+  if (x < 0 || x >= OS_TOWN_CASTLE_SIZE_WIDTH || y < 0 || y >= OS_TOWN_CASTLE_SIZE_HEIGHT) {
+    return false;
+  }
+  
   if (ultimaAssets.townCollisionMap[y][x]) {
     return true;
   }

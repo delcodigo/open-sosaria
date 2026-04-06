@@ -7,6 +7,7 @@
 #include "scenes/sceneDiskLoader.h"
 #include "scenes/sceneOverworld.h"
 #include "scenes/sceneTown.h"
+#include "scenes/sceneCastle.h"
 #include "merchantTown.h"
 #include "data/player.h"
 #include "data/bevery.h"
@@ -31,8 +32,8 @@ void playerTown_init() {
   droppedGold = false;
 }
 
-static bool playerTown_checkExit(int moveY) {
-  if (player.py + moveY > 21) {
+static bool playerTown_checkExit(int moveX, int moveY) {
+  if ((isPlayerInCastle && player.px + moveX < 0) || (!isPlayerInCastle && player.py + moveY > 21)) {
     vmExecuter_createSceneTransition(0.5f, &sceneOverworld);
     return true;
   }
@@ -42,7 +43,7 @@ static bool playerTown_checkExit(int moveY) {
 
 static bool playerTown_isSolid(int x, int y) {
   if (isPlayerInCastle) {
-    return false;
+    return sceneCastle_isSolid(x, y);
   } else {
     return sceneTown_isSolid(x, y);
   }
@@ -77,7 +78,7 @@ bool playerTown_updateMovement(float deltaTime) {
       return true;
     }
     
-    if (playerTown_checkExit(moveY)) {
+    if (playerTown_checkExit(moveX, moveY)) {
       return true;
     }
 

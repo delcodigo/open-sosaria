@@ -1003,22 +1003,22 @@ static void sceneDiskLoader_freeShapeTable(ShapeTable *table) {
   }
 }
 
-static void sceneDiskLoader_loadTownCollisionsMap(uint8_t *disk) {
-  Buffer *fileBuffer = sceneDiskLoader_readDos33FileByName(disk, "BTWN");
+static void sceneDiskLoader_loadCollisionsMap(uint8_t *disk, char* fileName, uint8_t map[OS_TOWN_CASTLE_SIZE_HEIGHT][OS_TOWN_CASTLE_SIZE_WIDTH]) {
+  Buffer *fileBuffer = sceneDiskLoader_readDos33FileByName(disk, fileName);
   if (fileBuffer && fileBuffer->data) {
     uint32_t size = 0;
     const uint8_t *data = sceneDiskLoader_maybeStripBloadHeader(fileBuffer->data, fileBuffer->size, &size);
 
-    if (!data || size < OS_TOWN_SIZE_WIDTH * OS_TOWN_SIZE_HEIGHT) {
+    if (!data || size < OS_TOWN_CASTLE_SIZE_WIDTH * OS_TOWN_CASTLE_SIZE_HEIGHT) {
       free(fileBuffer->data);
       free(fileBuffer);
       return;
     }
 
     uint8_t *ptr = (uint8_t *)data;
-    for (int x=0;x<OS_TOWN_SIZE_WIDTH;x++) {
-      for (int y=0;y<OS_TOWN_SIZE_HEIGHT;y++) {
-        ultimaAssets.townCollisionMap[y][x] = *ptr++;
+    for (int x=0;x<OS_TOWN_CASTLE_SIZE_WIDTH;x++) {
+      for (int y=0;y<OS_TOWN_CASTLE_SIZE_HEIGHT;y++) {
+        map[y][x] = *ptr++;
       }
     }
     
@@ -1243,7 +1243,10 @@ void sceneDiskLoader_extractUltimaAssets() {
   sceneDiskLoader_extractBasicStrings(disk1, "CAS MOVE");
 
   // Load town collisions map
-  sceneDiskLoader_loadTownCollisionsMap(disk2);
+  sceneDiskLoader_loadCollisionsMap(disk2, "BTWN", ultimaAssets.townCollisionMap);
+
+  // Load castle collisions map
+  sceneDiskLoader_loadCollisionsMap(disk2, "BCAS", ultimaAssets.castleCollisionMap);
 
   // BEVERY
   Buffer *beveryBuffer = sceneDiskLoader_readDos33FileByName(disk2, "BEVERY");

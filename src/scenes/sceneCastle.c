@@ -25,6 +25,14 @@ static void sceneCastle_init() {
   playerCastle_init();
 }
 
+bool sceneCastle_isSolid(int x, int y) {
+  if (x < 0 || x >= OS_TOWN_CASTLE_SIZE_WIDTH || y < 0 || y >= OS_TOWN_CASTLE_SIZE_HEIGHT) {
+    return false;
+  }
+
+  return ultimaAssets.castleCollisionMap[y][x] != 0;
+}
+
 static void sceneCastle_update(float deltaTime) {
   if (lagTime > 0) {
     lagTime -= deltaTime;

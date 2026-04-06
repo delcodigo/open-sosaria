@@ -25,7 +25,8 @@ typedef struct {
   UltimaImage townCastleSprites;
   uint8_t bterraMaps[OS_BTERRA_COUNT][OS_BTERRA_MAP_WIDTH][OS_BTERRA_MAP_HEIGHT];
 
-  uint8_t townCollisionMap[OS_TOWN_SIZE_HEIGHT][OS_TOWN_SIZE_WIDTH];
+  uint8_t townCollisionMap[OS_TOWN_CASTLE_SIZE_HEIGHT][OS_TOWN_CASTLE_SIZE_WIDTH];
+  uint8_t castleCollisionMap[OS_TOWN_CASTLE_SIZE_HEIGHT][OS_TOWN_CASTLE_SIZE_WIDTH];
 
   bool loaded;
 } UltimaAssets;

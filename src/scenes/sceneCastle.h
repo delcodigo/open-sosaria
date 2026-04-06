@@ -6,4 +6,6 @@
 
 extern Scene sceneCastle;
 
+bool sceneCastle_isSolid(int x, int y);
+
 #endif
