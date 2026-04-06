@@ -16,6 +16,7 @@
 #include "scenes/sceneDiskLoader.h"
 #include "scenes/sceneOverworld.h"
 #include "scenes/sceneTown.h"
+#include "scenes/sceneCastle.h"
 #include "maths/matrix4.h"
 #include "vehicleOverworld.h"
 #include "config.h"
@@ -645,7 +646,11 @@ static bool playerOverworld_updateEnter() {
 
     uiConsole_replaceLastMessageFormat("%.15s%.15s", ultimaStrings[98], ultimaStrings[163]);
 
-    if (tile == 5) {
+    if (tile == 4) {
+      uiConsole_queueMessageFormat(placesNames[world * 20 + tileType + 1]);
+      uiConsole_queueMessageFormat(" ");
+      vmExecuter_createSceneTransition(1.5f, &sceneCastle);
+    }else if (tile == 5) {
       playerOverworld_enterSignpost();
 
       return true;

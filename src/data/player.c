@@ -5,6 +5,7 @@ Player player = {0};
 
 bool playerActed = false;
 bool respawnPlayer = false;
+bool isPlayerInCastle = false;
 int respawnX = 0;
 int respawnY = 0;
 float keyRepeatDelay = 0;

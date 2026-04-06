@@ -40,7 +40,15 @@ static bool playerTown_checkExit(int moveY) {
   return false;
 }
 
-static bool playerTown_updateMovement(float deltaTime) {
+static bool playerTown_isSolid(int x, int y) {
+  if (isPlayerInCastle) {
+    return false;
+  } else {
+    return sceneTown_isSolid(x, y);
+  }
+}
+
+bool playerTown_updateMovement(float deltaTime) {
   int moveX = 0;
   int moveY = 0;
   int movementStringIndex = -1;
@@ -63,7 +71,7 @@ static bool playerTown_updateMovement(float deltaTime) {
     waitingTime = 0.0f;
     uiConsole_replaceLastMessageFormat("%.14s%.15s", ultimaStrings[98], ultimaStrings[movementStringIndex]);
 
-    if (sceneTown_isSolid(player.px + moveX, player.py + moveY)) {
+    if (playerTown_isSolid(player.px + moveX, player.py + moveY)) {
       uiConsole_addMessage(ultimaStrings[341]);
       keyRepeatDelay = 0.3f;
       return true;

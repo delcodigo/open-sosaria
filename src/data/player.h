@@ -44,6 +44,7 @@ extern int respawnY;
 extern float keyRepeatDelay;
 extern float waitingTime;
 extern float lagTime;
+extern bool isPlayerInCastle;
 
 void player_consumeFood();
 void player_consumeTownFood();

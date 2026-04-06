@@ -57,6 +57,7 @@ static void sceneTown_init() {
   camera_setPosition3f(&camera, 0.0f, 0.0f, 10.0f);
 
   drunkLevel = 0;
+  isPlayerInCastle = false;
 
   player.px = 20;
   player.py = 20;

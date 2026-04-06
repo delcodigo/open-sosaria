@@ -452,7 +452,7 @@ static void sceneDiskLoader_emitQuotedStringsFromAppleBasicLine(const unsigned c
           if (existingLength + length < 41) {
             strncat(ultimaStrings[ultimaStringCount], (const char *)(lineData + start), length);
             ultimaStrings[ultimaStringCount][existingLength + length] = '\0';
-            // printf("Appended to string: [%d] '%s'\n", ultimaStringCount, ultimaStrings[ultimaStringCount]);
+            printf("Appended to string: [%d] '%s'\n", ultimaStringCount, ultimaStrings[ultimaStringCount]);
             shouldAppend = false;
             ultimaStringCount++;
             i = end + 1;
@@ -469,7 +469,7 @@ static void sceneDiskLoader_emitQuotedStringsFromAppleBasicLine(const unsigned c
         } else {
           ultimaStringCount++;
           shouldAppend = false;
-          // printf("Extracted string: [%d] '%s'\n", ultimaStringCount - 1, ultimaStrings[ultimaStringCount - 1]);
+          printf("Extracted string: [%d] '%s'\n", ultimaStringCount - 1, ultimaStrings[ultimaStringCount - 1]);
         }
       } else if (!isEmpty) {
         ultimaStrings[ultimaStringCount++][0] = '\0';
@@ -1240,6 +1240,7 @@ void sceneDiskLoader_extractUltimaAssets() {
   sceneDiskLoader_extractBasicStrings(disk1, "INIT DISPLAY");
   sceneDiskLoader_extractBasicStrings(disk1, "OUT MOVE");
   sceneDiskLoader_extractBasicStrings(disk1, "TWN MOVE");
+  sceneDiskLoader_extractBasicStrings(disk1, "CAS MOVE");
 
   // Load town collisions map
   sceneDiskLoader_loadTownCollisionsMap(disk2);
