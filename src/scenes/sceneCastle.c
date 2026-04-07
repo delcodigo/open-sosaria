@@ -8,6 +8,7 @@
 #include "entities/ui/uiConsole.h"
 #include "entities/vmExecuter.h"
 #include "entities/playerCastle.h"
+#include "entities/ui/uiztats.h"
 #include "maths/matrix4.h"
 #include "maths/vector2.h"
 #include "config.h"
@@ -48,6 +49,8 @@ static void sceneCastle_init() {
   playerCastle_init();
   guardCastle_init();
   sceneCastle_initialiseEntities();
+
+  uiConsole_addMessage(ultimaStrings[98]);
 }
 
 bool sceneCastle_isSolid(int x, int y) {
@@ -115,6 +118,11 @@ static void sceneCastle_update(float deltaTime) {
   if (lagTime > 0) {
     lagTime -= deltaTime;
     if (lagTime < 0) { lagTime = 0; }
+  }
+
+  if (ztatsActive){
+    uiZtats_update(deltaTime);
+    return;
   }
 
   if (!queuedMessagesCount && lagTime <= 0 && !vmExecuter_update(deltaTime)) {

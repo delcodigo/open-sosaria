@@ -2,6 +2,7 @@
 #include "engine/geometry.h"
 #include "engine/input.h"
 #include "playerTown.h"
+#include "playerCommons.h"
 #include "data/player.h"
 #include "scenes/sceneDiskLoader.h"
 #include "maths/matrix4.h"
@@ -22,7 +23,21 @@ bool playerCastle_update(float deltaTime) {
   bool acted = false;
   
   if (keyRepeatDelay <= 0) {
-    if (playerTown_updateMovement(deltaTime)) { acted = true; }
+    switch (playerState) {
+      case PLAYER_STATE_IDLE:
+        if (playerCommons_updateZtats()) { acted = true; } else
+        if (playerCommons_updateReady()) { acted = true; } else
+        if (playerCommons_updateWait()) { acted = true; } else
+        if (playerTown_updateMovement(deltaTime)) { acted = true; }
+        break;
+
+      case PLAYER_STATE_READY_TYPE:
+        if (playerCommons_updateReady()) { acted = true; }
+        break;
+
+      default:
+        break;
+    }
   } else {
     keyRepeatDelay -= deltaTime;
     if (keyRepeatDelay < 0) {
