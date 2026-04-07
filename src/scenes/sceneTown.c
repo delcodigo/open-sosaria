@@ -27,13 +27,13 @@ static float personTransform[16];
 static Geometry townGeometry;
 static float townTransform[16];
 
-static void sceneTown_initializeGeometry(int spriteIndex, Geometry *geometry) {
+void sceneTown_initializeGeometry(int spriteIndex, Geometry *geometry) {
   float tx1 = (spriteIndex * OS_TOWN_CASTLE_SPRITE_WIDTH) / (float)ultimaAssets.townCastleSprites.width;
   float tx2 = ((spriteIndex + 1) * OS_TOWN_CASTLE_SPRITE_WIDTH) / (float)ultimaAssets.townCastleSprites.width;
   geometry_setSprite(geometry, OS_TOWN_CASTLE_SPRITE_WIDTH, OS_TOWN_CASTLE_SPRITE_HEIGHT, tx1, 0.0f, tx2, 1.0f);
 }
 
-static void sceneTown_initializePositions() {
+static void sceneTown_initialisePositions() {
   wenchPosition.x = 35; wenchPosition.y = 7;
   bardPosition.x = 15; bardPosition.y = 6;
 
@@ -63,7 +63,7 @@ static void sceneTown_init() {
   player.py = 20;
   playerTown_init();
   guardTown_init();
-  sceneTown_initializePositions();
+  sceneTown_initialisePositions();
 }
 
 bool sceneTown_isSolid(int x, int y) {
@@ -180,7 +180,7 @@ void sceneTown_attackAt(int x, int y) {
   uiConsole_queueMessage(ultimaStrings[354]);
 }
 
-static void sceneTown_renderPerson(Geometry *geometry, Vector2 *position, float *transform, float *viewMatrix) {
+void sceneTown_renderPerson(Geometry *geometry, Vector2 *position, float *transform, float *viewMatrix) {
   matrix4_setPosition(transform, position->x * OS_TOWN_CASTLE_SPRITE_WIDTH, position->y * OS_TOWN_CASTLE_SPRITE_HEIGHT, 1);
   geometry_render(geometry, ultimaAssets.townCastleSprites.textureId, transform, viewMatrix);
 }

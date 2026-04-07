@@ -12,6 +12,7 @@ typedef struct {
 extern GuardTown guardTowns[OS_GUARD_TOWN_COUNT];
 
 void guardTown_init();
+void guardCastle_init();
 void guardTown_update(GuardTown *guard);
 void guardTown_render(float *viewMatrix);
 void guardTown_free();

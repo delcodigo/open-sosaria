@@ -4,6 +4,7 @@
 #include "maths/vector2.h"
 #include "engine/engine.h"
 #include "engine/scene.h"
+#include "engine/geometry.h"
 
 typedef enum {
   TOWN_ENTITY_TYPE_NONE = 0,
@@ -16,6 +17,8 @@ typedef enum {
 extern Scene sceneTown;
 extern Vector2 wenchPosition;
 
+void sceneTown_initializeGeometry(int spriteIndex, Geometry *geometry);
+void sceneTown_renderPerson(Geometry *geometry, Vector2 *position, float *transform, float *viewMatrix);
 bool sceneTown_isSolid(int x, int y);
 void sceneTown_attackAt(int x, int y);
 
