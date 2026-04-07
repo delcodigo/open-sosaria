@@ -210,7 +210,7 @@ static void sceneTown_updateBard() {
   }
 
   for (int i=0;i<OS_WEAPONS_COUNT;i++) {
-    if (player.weapons[i] > 0 && player.weapon != i) {
+    if (player.weapons[i] > 0 && player.weapon-1 != i) {
       player.weapons[i] -= 1;
     }
   }

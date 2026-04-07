@@ -11,6 +11,7 @@
 #include "maths/matrix4.h"
 #include "maths/vector2.h"
 #include "config.h"
+#include "utils.h"
 
 static Geometry backgroundGeometry;
 static Geometry jesterGeometry;
@@ -54,7 +55,60 @@ bool sceneCastle_isSolid(int x, int y) {
     return false;
   }
 
+  for (int i=0; i<OS_GUARD_TOWN_COUNT; i++) {
+    if (guardTowns[i].x == x && guardTowns[i].y == y) {
+      return true;
+    }
+  }
+
+  if (jesterPosition.x == x && jesterPosition.y == y) {
+    return true;
+  }
+
+  if (princessPosition.x == x && princessPosition.y == y) {
+    return true;
+  }
+
+  if (kingPosition.x == x && kingPosition.y == y) {
+    return true;
+  }
+
   return ultimaAssets.castleCollisionMap[y][x] != 0;
+}
+
+static void sceneCastle_updateJester() {
+  if (jesterPosition.x < 0) { return; }
+
+  int dx = (int)(rand01() * 3) - 1;
+  int dy = (int)(rand01() * 3) - 1;
+
+  if (dx == 0 && dy == 0) { return; }
+  if (jesterPosition.x + dx < 0) { return; }
+
+  if (sceneCastle_isSolid(jesterPosition.x + dx, jesterPosition.y + dy)) { 
+    if (rand01() > 0.8f){
+      uiConsole_addMessage(ultimaStrings[821]);
+      uiConsole_addMessage(ultimaStrings[822]);
+    }
+
+    return;
+  }
+
+  if (jesterPosition.x + dx != player.px || jesterPosition.y + dy != player.py) {
+    jesterPosition.x += dx;
+    jesterPosition.y += dy;
+    return;
+  }
+
+  for (int i=0;i<OS_WEAPONS_COUNT;i++) {
+    if (player.weapons[i] > 0 && player.weapon-1 != i) {
+      player.weapons[i] -= 1;
+    }
+  }
+
+  if (rand01() * 50 < player.wisdom) {
+    uiConsole_addMessage(ultimaStrings[823]);
+  }
 }
 
 static void sceneCastle_update(float deltaTime) {
@@ -66,6 +120,8 @@ static void sceneCastle_update(float deltaTime) {
   if (!queuedMessagesCount && lagTime <= 0 && !vmExecuter_update(deltaTime)) {
     if (playerActed) {
       playerActed = false;
+
+      sceneCastle_updateJester();
 
       for (int i=0; i<OS_GUARD_TOWN_COUNT; i++) {
         guardTown_update(&guardTowns[i]);
