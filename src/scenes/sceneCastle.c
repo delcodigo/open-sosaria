@@ -1,6 +1,7 @@
 #include "sceneCastle.h"
 #include "sceneDiskLoader.h"
 #include "sceneTown.h"
+#include "sceneOverworld.h"
 #include "data/player.h"
 #include "engine/geometry.h"
 #include "engine/camera.h"
@@ -43,6 +44,7 @@ static void sceneCastle_init() {
   matrix4_setIdentity(personTransform);
 
   isPlayerInCastle = true;
+  enemyEncounter.monsterId = 0;
 
   player.px = 1;
   player.py = 11;
@@ -114,6 +116,20 @@ static void sceneCastle_updateJester() {
   }
 }
 
+static void sceneCastle_updatePrincess() {
+  if (princessPosition.x < 0) { return; }
+
+  int dx = (int)(rand01() * 3) - 1;
+  int dy = (int)(rand01() * 3) - 1;
+
+  if (dx == 0 && dy == 0) { return; }
+  if (sceneCastle_isSolid(princessPosition.x + dx, princessPosition.y + dy)) { return; }
+  if (princessPosition.x + dx != player.px || princessPosition.y + dy != player.py) {
+    princessPosition.x += dx;
+    princessPosition.y += dy;
+  }
+}
+
 static void sceneCastle_update(float deltaTime) {
   if (lagTime > 0) {
     lagTime -= deltaTime;
@@ -130,6 +146,7 @@ static void sceneCastle_update(float deltaTime) {
       playerActed = false;
 
       sceneCastle_updateJester();
+      sceneCastle_updatePrincess();
 
       for (int i=0; i<OS_GUARD_TOWN_COUNT; i++) {
         guardTown_update(&guardTowns[i]);
