@@ -7,6 +7,7 @@
 #include "scenes/sceneDiskLoader.h"
 #include "scenes/sceneOverworld.h"
 #include "scenes/sceneTown.h"
+#include "scenes/sceneCastle.h"
 #include "maths/matrix4.h"
 #include "config.h"
 #include "utils.h"
@@ -45,6 +46,14 @@ void guardCastle_init() {
   matrix4_setIdentity(transformMatrix);
 }
 
+static bool guardTown_isSolid(int x, int y) {
+  if (isPlayerInCastle) {
+    return sceneCastle_isSolid(x, y);
+  } else {
+    return sceneTown_isSolid(x, y);
+  }
+}
+
 void guardTown_update(GuardTown *guard) {
   if (enemyEncounter.monsterId == 0) { return;}
   if (guard->hp <= 0) { return; }
@@ -63,7 +72,11 @@ void guardTown_update(GuardTown *guard) {
       return;
     }
 
-    int damage = (int) (rand01() * 10 + player.health / 100);
+    int damage = (int) (rand01() * 10 + player.health / 100.0f);
+    if (isPlayerInCastle) {
+      damage = (int)(rand01() * 20 + player.health / 75.0f);
+    }
+
     player.health -= damage;
     if (player.health < 0) { player.health = 0; }
     uiConsole_updateStats();
@@ -74,9 +87,9 @@ void guardTown_update(GuardTown *guard) {
   if (dy != 0) { dy = dy / abs(dy); }
   if (dx != 0) { dx = dx / abs(dx); }
 
-  if (!sceneTown_isSolid(guard->x, guard->y + dy)) {
+  if (!guardTown_isSolid(guard->x, guard->y + dy)) {
     guard->y += dy;
-  } else if (!sceneTown_isSolid(guard->x + dx, guard->y)) {
+  } else if (!guardTown_isSolid(guard->x + dx, guard->y)) {
     guard->x += dx;
   }
 }

@@ -10,6 +10,7 @@
 #include "data/bevery.h"
 #include "scenes/sceneDiskLoader.h"
 #include "scenes/sceneCastle.h"
+#include "scenes/sceneOverworld.h"
 #include "maths/matrix4.h"
 #include "entities/ui/uiConsole.h"
 #include "config.h"
@@ -330,6 +331,43 @@ static bool playerCastle_updateSave() {
   return false;
 }
 
+static bool playerCastle_updateSteal() {
+  if (input.s == 1) {
+    input.s = 2;
+
+    uiConsole_replaceLastMessageFormat("%s%s", ultimaStrings[98], ultimaStrings[736]);
+
+    if (rand01() > 0.8f || enemyEncounter.monsterId > 0 || (rand01() > 0.8f && player.type != 4)) {
+      uiConsole_queueMessage(ultimaStrings[738]);
+      enemyEncounter.monsterId = 1;
+      return true;
+    }
+
+    if (player.px > 15 && player.px < 26 && player.py < 5) {
+      int armorIndex = (int)(rand01() * OS_ARMORS_COUNT);
+      player.armors[armorIndex]++;
+      uiConsole_queueMessage(ultimaStrings[739]);
+      uiConsole_queueMessage(armorNames[armorIndex + 1]);
+    } else if (player.px > 15 && player.px < 26 && player.py > 16) {
+      int weaponIndex = (int)(rand01() * OS_WEAPONS_COUNT);
+      player.weapons[weaponIndex]++;
+      uiConsole_queueMessage(ultimaStrings[740]);
+      uiConsole_queueMessage(weaponNames[weaponIndex + 1]);
+    } else if (player.px > 26 && player.px < 31 && player.py < 5) {
+      int foodObtained = (int)(rand01() * 30) + 1;
+      player.food += foodObtained;
+      uiConsole_queueMessage(ultimaStrings[741]);
+      uiConsole_queueMessageFormat("%d%s", foodObtained, ultimaStrings[742]);
+    } else {
+      uiConsole_queueMessage(ultimaStrings[737]);
+    }
+
+    return true;
+  }
+
+  return false;
+}
+
 bool playerCastle_update(float deltaTime) {
   bool acted = false;
   
@@ -348,6 +386,7 @@ bool playerCastle_update(float deltaTime) {
         if (playerCastle_updateInfo()) { acted = true; } else
         if (playerCastle_updateOpen()) { acted = true; } else
         if (playerCastle_updateSave()) { acted = true; } else
+        if (playerCastle_updateSteal()) { acted = true; } else
         if (playerTown_updateMovement(deltaTime)) { acted = true; }
         break;
 
