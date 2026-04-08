@@ -138,12 +138,17 @@ static void sceneCastle_update(float deltaTime) {
     if (lagTime < 0) { lagTime = 0; }
   }
 
-  if (ztatsActive){
+  if (!queuedMessagesCount && lagTime <= 0 && !vmExecuter_update(deltaTime)) {
+    if (respawnPlayer) {
+      scene_load(&sceneOverworld);
+      return;
+    }
+
+    if (ztatsActive){
     uiZtats_update(deltaTime);
     return;
   }
 
-  if (!queuedMessagesCount && lagTime <= 0 && !vmExecuter_update(deltaTime)) {
     if (playerActed) {
       playerActed = false;
 
@@ -156,6 +161,8 @@ static void sceneCastle_update(float deltaTime) {
 
       if (player_isAlive()) {
         uiConsole_addMessage(ultimaStrings[98]);
+      } else {
+        sceneOverworld_attemptResurrection();
       }
     }
 
