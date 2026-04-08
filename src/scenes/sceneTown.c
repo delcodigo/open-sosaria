@@ -144,7 +144,7 @@ void sceneTown_attackAt(int x, int y) {
   uiConsole_replaceLastMessageFormat("%s%s", ultimaStrings[98], ultimaStrings[342]);
   uiConsole_queueMessage(target);
 
-  if (rand01() * ((player.strength + (T - 40) * 3 + player.weapon) + 75) < 50) {
+  if (rand01() * ((player.agility + (T - 40) * 3 + player.weapon) + 75) < 50) {
     uiConsole_queueMessage(ultimaStrings[352]);
     return;
   }

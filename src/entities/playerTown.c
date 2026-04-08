@@ -317,7 +317,15 @@ static bool playerTown_updateDrop() {
   return false;
 }
 
-static bool playerTown_updateAttack() {
+static void playerTown_attackAt(int x, int y) {
+  if (isPlayerInCastle) {
+    sceneCastle_attackAt(x, y);
+  } else {
+    sceneTown_attackAt(x, y);
+  }
+}
+
+bool playerTown_updateAttack() {
   if (playerState == PLAYER_STATE_TOWN_ATTACK) {
     if (lastKey == 0) { return false; }
 
@@ -347,14 +355,14 @@ static bool playerTown_updateAttack() {
         break;
       }
 
-      if (sceneTown_isSolid(player.px + dx * i, player.py + dy * i)) {
+      if (playerTown_isSolid(player.px + dx * i, player.py + dy * i)) {
         dx *= i;
         dy *= i;
         break;
       }
     }
 
-    sceneTown_attackAt(player.px + dx, player.py + dy);
+    playerTown_attackAt(player.px + dx, player.py + dy);
     playerState = PLAYER_STATE_IDLE;
 
     return true;

@@ -8,5 +8,6 @@ extern Scene sceneCastle;
 extern int allowToTakeItemsFromCastle;
 
 bool sceneCastle_isSolid(int x, int y);
+void sceneCastle_attackAt(int x, int y);
 
 #endif

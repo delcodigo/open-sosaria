@@ -1,3 +1,4 @@
+#include <math.h>
 #include "sceneCastle.h"
 #include "sceneDiskLoader.h"
 #include "sceneTown.h"
@@ -24,6 +25,7 @@ static Vector2 princessPosition = { 0 };
 static Vector2 kingPosition = { 0 };
 static float backgroundTransformationMatrix[16];
 static float personTransform[16];
+static int castleKey = 0;
 
 int allowToTakeItemsFromCastle = 0;
 
@@ -129,6 +131,86 @@ static void sceneCastle_updatePrincess() {
   if (princessPosition.x + dx != player.px || princessPosition.y + dy != player.py) {
     princessPosition.x += dx;
     princessPosition.y += dy;
+  }
+}
+
+void sceneCastle_attackAt(int x, int y) {
+  char *target = NULL;
+  TOWN_ENTITY_TYPE targetType = TOWN_ENTITY_TYPE_NONE;
+  int targetIndex = -1;
+  int T = -1;
+
+  for (int i=0; i<OS_GUARD_TOWN_COUNT; i++) {
+    if (guardTowns[i].x == x && guardTowns[i].y == y) {
+      target = ultimaStrings[347];
+      targetType = TOWN_ENTITY_TYPE_GUARD;
+      targetIndex = i;
+      T = 32 + i;
+      break;
+    }
+  }
+
+  if (princessPosition.x == x && princessPosition.y == y) {
+    target = ultimaStrings[656];
+    T = 41;
+    targetType = TOWN_ENTITY_TYPE_PRINCESS;
+  }
+
+  if (jesterPosition.x == x && jesterPosition.y == y) {
+    target = ultimaStrings[653];
+    T = 38;
+    targetType = TOWN_ENTITY_TYPE_JESTER;
+  }
+
+  if (kingPosition.x == x && kingPosition.y == y) {
+    target = ultimaStrings[651];
+    T = 31;
+    targetType = TOWN_ENTITY_TYPE_KING;
+    enemyEncounter.monsterId = 1;
+  }
+
+  if (T == -1) {
+    uiConsole_queueMessage(ultimaStrings[657]);
+    return;
+  }
+
+  uiConsole_replaceLastMessageFormat("%s%s", ultimaStrings[98], ultimaStrings[342]);
+  uiConsole_queueMessage(target);
+
+  if (rand01() * ((player.agility + (T - 40) * 3 + player.weapon) + 50) < 50) {
+    uiConsole_queueMessage(ultimaStrings[657]);
+    return;
+  }
+  
+  enemyEncounter.monsterId = 1;
+
+  int damage = (int)(((player.strength + player.weapon) / 2.0f) * rand01() + 1);
+  uiConsole_queueMessageFormat("%s%d", ultimaStrings[658], damage);
+
+  if (targetType == TOWN_ENTITY_TYPE_JESTER) {
+    jesterPosition.x = -1;
+    jesterPosition.y = -1;
+    player.eptns += 30;
+    castleKey = (int)(rand01() * 2 + 1);
+    uiConsole_queueMessage(ultimaStrings[659]);
+    uiConsole_queueMessage(ultimaStrings[660]);
+  } else if (targetType == TOWN_ENTITY_TYPE_PRINCESS) {
+    princessPosition.x = -1;
+    princessPosition.y = -1;
+    player.eptns += 10;
+    uiConsole_queueMessage(ultimaStrings[659]);
+  } else if (targetType == TOWN_ENTITY_TYPE_KING && player.agility * pow(rand01(), 3) > 50) {
+    kingPosition.x = -1;
+    kingPosition.y = -1;
+    player.eptns += 10000;
+    uiConsole_queueMessage(ultimaStrings[659]);
+  } else if (targetType == TOWN_ENTITY_TYPE_GUARD) {
+    guardTowns[targetIndex].hp -= damage;
+    if (guardTowns[targetIndex].hp <= 0) {
+      guardTowns[targetIndex].x = -1;
+      guardTowns[targetIndex].y = -1;
+      player.eptns += 50;
+    }
   }
 }
 

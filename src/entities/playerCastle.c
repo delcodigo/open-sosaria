@@ -368,6 +368,19 @@ static bool playerCastle_updateSteal() {
   return false;
 }
 
+bool playerCastle_updateExit() {
+  if (input.x == 1) {
+    input.x = 2;
+
+    uiConsole_replaceLastMessageFormat("%s%s", ultimaStrings[98], ultimaStrings[801]);
+    uiConsole_queueMessage(ultimaStrings[802]);
+
+    return true;
+  }
+
+  return false;
+}
+
 bool playerCastle_update(float deltaTime) {
   bool acted = false;
   
@@ -387,6 +400,8 @@ bool playerCastle_update(float deltaTime) {
         if (playerCastle_updateOpen()) { acted = true; } else
         if (playerCastle_updateSave()) { acted = true; } else
         if (playerCastle_updateSteal()) { acted = true; } else
+        if (playerCastle_updateExit()) { acted = true; } else
+        if (playerTown_updateAttack()) { acted = true; } else
         if (playerTown_updateMovement(deltaTime)) { acted = true; }
         break;
 
@@ -396,6 +411,10 @@ bool playerCastle_update(float deltaTime) {
       
       case PLAYER_STATE_DROP:
         if (playerCastle_updateDrop()) { acted = true; }
+        break;
+
+      case PLAYER_STATE_TOWN_ATTACK:
+        if (playerTown_updateAttack()) { acted = true; }
         break;
 
       default:
