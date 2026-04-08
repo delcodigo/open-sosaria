@@ -285,6 +285,51 @@ static bool playerCastle_updateGet() {
   return false;
 }
 
+static bool playerCastle_updateInfo() {
+  if (input.i == 1) {
+    input.i = 2;
+    waitingTime = 0.0f;
+
+    int tx = (int)(player.tx % OS_BTERRA_MAP_WIDTH);
+    int ty = (int)(player.ty % OS_BTERRA_MAP_HEIGHT);
+    int world = ((int)player.ty / OS_BTERRA_MAP_HEIGHT) * 2 + ((int)player.tx / OS_BTERRA_MAP_WIDTH);
+    int tileType = ultimaAssets.bterraMaps[world][ty][tx] & 0x0F;
+
+    uiConsole_replaceLastMessageFormat("%.14s%.15s", ultimaStrings[98], ultimaStrings[707]);
+    uiConsole_queueMessage(ultimaStrings[708]);
+    uiConsole_queueMessage(placesNames[world * 20 + tileType + 1]);
+    uiConsole_queueMessage(ultimaStrings[709]);
+
+    return true;
+  }
+
+  return false;
+}
+
+static bool playerCastle_updateOpen() {
+  if (input.o == 1) {
+    input.o = 2;
+    waitingTime = 0.0f;
+
+    uiConsole_replaceLastMessageFormat("%s%s", ultimaStrings[98], ultimaStrings[715]);
+
+    return true;
+  }
+
+  return false;
+}
+
+static bool playerCastle_updateSave() {
+  if (input.q == 1) {
+    input.q = 2;
+    uiConsole_replaceLastMessageFormat("%.14s%.15s", ultimaStrings[98], ultimaStrings[717]);
+    uiConsole_queueMessage(ultimaStrings[718]);
+    return true;
+  }
+
+  return false;
+}
+
 bool playerCastle_update(float deltaTime) {
   bool acted = false;
   
@@ -300,6 +345,9 @@ bool playerCastle_update(float deltaTime) {
         if (playerCastle_updateEnter()) { acted = true; } else
         if (playerCastle_updateFiring()) { acted = true; } else
         if (playerCastle_updateGet()) { acted = true; } else
+        if (playerCastle_updateInfo()) { acted = true; } else
+        if (playerCastle_updateOpen()) { acted = true; } else
+        if (playerCastle_updateSave()) { acted = true; } else
         if (playerTown_updateMovement(deltaTime)) { acted = true; }
         break;
 
