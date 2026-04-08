@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 #include "playerCastle.h"
 #include "engine/geometry.h"
 #include "engine/input.h"
@@ -8,6 +9,7 @@
 #include "data/player.h"
 #include "data/bevery.h"
 #include "scenes/sceneDiskLoader.h"
+#include "scenes/sceneCastle.h"
 #include "maths/matrix4.h"
 #include "entities/ui/uiConsole.h"
 #include "config.h"
@@ -217,6 +219,72 @@ static bool playerCastle_updateDrop() {
   return false;
 }
 
+static bool playerCastle_updateEnter() {
+  if (input.e == 1) {
+    input.e = 2;
+
+    uiConsole_replaceLastMessageFormat("%s%s", ultimaStrings[98], ultimaStrings[693]);
+    uiConsole_queueMessage(ultimaStrings[694]);
+
+    return true;
+  }
+
+  return false;
+}
+
+static bool playerCastle_updateFiring() {
+  if (input.f == 1) {
+    input.f = 2;
+
+    uiConsole_replaceLastMessageFormat("%s%s", ultimaStrings[98], ultimaStrings[695]);
+    uiConsole_queueMessage(ultimaStrings[696]);
+
+    return true;
+  }
+
+  return false;
+}
+
+static bool playerCastle_updateGet() {
+  if (input.g == 1) {
+    input.g = 2;
+
+    uiConsole_replaceLastMessageFormat("%s%s", ultimaStrings[98], ultimaStrings[697]);
+
+    if (allowToTakeItemsFromCastle < 1) {
+      uiConsole_queueMessage(ultimaStrings[699]);
+      uiConsole_queueMessage(ultimaStrings[700]);
+      return true;
+    }
+
+    if (player.px > 15 && player.px < 26 && player.py < 5) {
+      int armorIndex = (int)(rand01() * OS_ARMORS_COUNT);
+      player.armors[armorIndex]++;
+      uiConsole_queueMessage(ultimaStrings[701]);
+      uiConsole_queueMessage(armorNames[armorIndex + 1]);
+      allowToTakeItemsFromCastle--;
+    } else if (player.px > 15 && player.px < 26 && player.py > 16) {
+      int weaponIndex = (int)(rand01() * OS_WEAPONS_COUNT);
+      player.weapons[weaponIndex]++;
+      uiConsole_queueMessage(ultimaStrings[702]);
+      uiConsole_queueMessage(weaponNames[weaponIndex + 1]);
+      allowToTakeItemsFromCastle--;
+    } else if (player.px > 26 && player.px < 31 && player.py < 5) {
+      int foodObtained = (int)(pow(rand01(), 2) * 15) + 1;
+      player.food += foodObtained;
+      uiConsole_queueMessage(ultimaStrings[703]);
+      uiConsole_queueMessageFormat("%d%s", foodObtained, ultimaStrings[704]);
+      allowToTakeItemsFromCastle--;
+    } else {
+      uiConsole_queueMessage(ultimaStrings[698]);
+    }
+
+    return true;
+  }
+
+  return false;
+}
+
 bool playerCastle_update(float deltaTime) {
   bool acted = false;
   
@@ -229,6 +297,9 @@ bool playerCastle_update(float deltaTime) {
         if (playerCastle_updateBoard()) { acted = true; } else
         if (playerCastle_updateCast()) { acted = true; } else
         if (playerCastle_updateDrop()) { acted = true; } else
+        if (playerCastle_updateEnter()) { acted = true; } else
+        if (playerCastle_updateFiring()) { acted = true; } else
+        if (playerCastle_updateGet()) { acted = true; } else
         if (playerTown_updateMovement(deltaTime)) { acted = true; }
         break;
 

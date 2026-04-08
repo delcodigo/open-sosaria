@@ -25,6 +25,8 @@ static Vector2 kingPosition = { 0 };
 static float backgroundTransformationMatrix[16];
 static float personTransform[16];
 
+int allowToTakeItemsFromCastle = 0;
+
 static void sceneCastle_initialiseEntities() {
   jesterPosition.x = 37; jesterPosition.y = 6;
   princessPosition.x = 37; princessPosition.y = 14;

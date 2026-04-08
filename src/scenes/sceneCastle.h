@@ -5,6 +5,7 @@
 #include "engine/scene.h"
 
 extern Scene sceneCastle;
+extern int allowToTakeItemsFromCastle;
 
 bool sceneCastle_isSolid(int x, int y);
 
