@@ -190,28 +190,30 @@ void sceneCastle_attackAt(int x, int y) {
   if (targetType == TOWN_ENTITY_TYPE_JESTER) {
     jesterPosition.x = -1;
     jesterPosition.y = -1;
-    player.eptns += 30;
+    player.experience += 30;
     castleKey = (int)(rand01() * 2 + 1);
     uiConsole_queueMessage(ultimaStrings[659]);
     uiConsole_queueMessage(ultimaStrings[660]);
   } else if (targetType == TOWN_ENTITY_TYPE_PRINCESS) {
     princessPosition.x = -1;
     princessPosition.y = -1;
-    player.eptns += 10;
+    player.experience += 10;
     uiConsole_queueMessage(ultimaStrings[659]);
   } else if (targetType == TOWN_ENTITY_TYPE_KING && player.agility * pow(rand01(), 3) > 50) {
     kingPosition.x = -1;
     kingPosition.y = -1;
-    player.eptns += 10000;
+    player.experience += 10000;
     uiConsole_queueMessage(ultimaStrings[659]);
   } else if (targetType == TOWN_ENTITY_TYPE_GUARD) {
     guardTowns[targetIndex].hp -= damage;
     if (guardTowns[targetIndex].hp <= 0) {
       guardTowns[targetIndex].x = -1;
       guardTowns[targetIndex].y = -1;
-      player.eptns += 50;
+      player.experience += 50;
     }
   }
+
+  uiConsole_updateStats();
 }
 
 static void sceneCastle_update(float deltaTime) {

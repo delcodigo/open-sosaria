@@ -400,7 +400,7 @@ static bool merchantTown_updateTransactSelectItem() {
     }
 
     int spellCost = merchantTown_getSpellCost(selectedSpellId);
-    if (player.gold < spellCost || player.eptns - spellCost < 0) {
+    if (player.gold < spellCost || player.experience - spellCost < 0) {
       uiConsole_queueMessage(ultimaStrings[495]);
       merchantTown_endTransact();
       return true;
@@ -413,7 +413,7 @@ static bool merchantTown_updateTransactSelectItem() {
     }
 
     player.gold -= spellCost;
-    player.eptns -= spellCost;
+    player.experience -= spellCost;
     player.spells[selectedSpellId] += 1;
 
     uiConsole_queueMessageFormat("%s%s", spellNames[selectedSpellId], ultimaStrings[497]);

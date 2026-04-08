@@ -22,6 +22,7 @@ static void sceneOverworld_init() {
   worldMap_init();
   playerOverworld_init();
   uiConsole_addMessage(ultimaStrings[98]);
+  uiConsole_updateStats();
   vehicleOverworld_init();
   playerActed = false;
 }

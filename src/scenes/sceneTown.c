@@ -157,26 +157,27 @@ void sceneTown_attackAt(int x, int y) {
   if (targetType == TOWN_ENTITY_TYPE_BARD) {
     bardPosition.x = -1;
     bardPosition.y = -1;
-    player.eptns += 20;
+    player.experience += 20;
   } else if (targetType == TOWN_ENTITY_TYPE_WENCH) {
     wenchPosition.x = -1;
     wenchPosition.y = -1;
-    player.eptns += 10;
+    player.experience += 10;
   } else if (targetType == TOWN_ENTITY_TYPE_MERCHANT) {
     merchantsPositions[targetIndex].x = -1;
     merchantsPositions[targetIndex].y = -1;
-    player.eptns += 25;
+    player.experience += 25;
   } else if (targetType == TOWN_ENTITY_TYPE_GUARD) {
     guardTowns[targetIndex].hp -= damage;
     if (guardTowns[targetIndex].hp <= 0) {
       guardTowns[targetIndex].x = -1;
       guardTowns[targetIndex].y = -1;
-      player.eptns += 40;
+      player.experience += 40;
     } else {
       return;
     }
   }
 
+  uiConsole_updateStats();
   uiConsole_queueMessage(ultimaStrings[354]);
 }
 
