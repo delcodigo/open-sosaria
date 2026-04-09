@@ -382,6 +382,61 @@ static bool playerCastle_updateExit() {
   return false;
 }
 
+static bool playerCastle_checkForQuestCompletion() {
+  int tx = (int)(player.tx % OS_BTERRA_MAP_WIDTH);
+  int ty = (int)(player.ty % OS_BTERRA_MAP_HEIGHT);
+  int world = ((int)player.ty / OS_BTERRA_MAP_HEIGHT) * 2 + ((int)player.tx / OS_BTERRA_MAP_WIDTH);
+  int tileType = ultimaAssets.bterraMaps[world][ty][tx] & 0x0F;
+  int questId = world * 2 + tileType;
+
+  if (tileType == 1 && player.quests[questId] < 0) {
+    player.quests[questId] = 0;
+    uiConsole_queueMessageFormat("^T1%s%s%s", ultimaStrings[777], player.name, ultimaStrings[778]);
+    uiConsole_queueMessageFormat("^T1%s", ultimaStrings[779]);
+
+    switch (world) {
+      case 0:
+        for (int i=0;i<5;i++) {
+          uiConsole_queueMessageFormat("^T1%s", ultimaStrings[761 + i]);
+        }
+        player.gems[0]++;
+        break;
+      case 1:
+        for (int i=0;i<4;i++) {
+          uiConsole_queueMessageFormat("^T1%s", ultimaStrings[766 + i]);
+        }
+        player.gems[1]++;
+        break;
+      case 2:
+        for (int i=0;i<3;i++) {
+          uiConsole_queueMessageFormat("^T1%s", ultimaStrings[770 + i]);
+        }
+        player.gems[2]++;
+        allowToTakeItemsFromCastle = 9;
+        break;
+      case 3:
+        for (int i=0;i<4;i++) {
+          uiConsole_queueMessageFormat("^T1%s", ultimaStrings[773 + i]);
+        }
+        player.gems[3]++;
+        break;
+    }
+
+    return true;
+  } else if (tileType == 0 && player.quests[questId] < 0) {
+    int strengthReward = (int)((99 - player.strength) / 10.0f);
+    player.strength += strengthReward;
+    player.quests[questId] = 0;
+    uiConsole_queueMessageFormat("^T1%s%s%s", ultimaStrings[780], player.name, ultimaStrings[781]);
+    uiConsole_queueMessageFormat("^T1%s", ultimaStrings[782]);
+    uiConsole_queueMessageFormat("^T1%s%d", ultimaStrings[783], strengthReward);
+
+    return true;
+  }
+
+  return false;
+}
+
 static bool playerCastle_updateTransact() {
   if (playerState == PLAYER_STATE_TRANSACT) {
     if (lastKey == 0) {
@@ -442,7 +497,9 @@ static bool playerCastle_updateTransact() {
       return true;
     }
 
-    // TODO: Quest completion logic
+    if (playerCastle_checkForQuestCompletion()) {
+      return true;
+    }
 
     uiConsole_queueMessage(ultimaStrings[747]);
     uiConsole_queueMessage(ultimaStrings[748]);
