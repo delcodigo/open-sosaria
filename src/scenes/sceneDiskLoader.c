@@ -1310,6 +1310,10 @@ void sceneDiskLoader_extractUltimaAssets() {
   free(disk1);
   free(disk2);
 
+  ultimaAssets.blackSprite = sceneDiskLoader_createImage(1, 1, 0, 0, 0);
+  ultimaAssets.blackSprite.textureId = texture_load(ultimaAssets.blackSprite.width, ultimaAssets.blackSprite.height, ultimaAssets.blackSprite.data);
+  free(ultimaAssets.blackSprite.data);
+
   ultimaAssets.loaded = true;
 }
 
@@ -1349,6 +1353,10 @@ void sceneDiskLoader_freeTextures() {
     ultimaAssets.overworldTiles.textureId = 0;
     texture_free(ultimaAssets.enemySprites.textureId);
     ultimaAssets.enemySprites.textureId = 0;
+    texture_free(ultimaAssets.townCastleSprites.textureId);
+    ultimaAssets.townCastleSprites.textureId = 0;
+    texture_free(ultimaAssets.blackSprite.textureId);
+    ultimaAssets.blackSprite.textureId = 0;
   }
 }
 

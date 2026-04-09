@@ -556,6 +556,43 @@ static bool playerCastle_updateTransact() {
   return false;
 }
 
+static bool playerCastle_updateUnlock() {
+  if (input.u == 1) {
+    input.u = 2;
+
+    uiConsole_replaceLastMessageFormat("%s%s", ultimaStrings[98], ultimaStrings[791]);
+    
+    if (player.px == 33 && player.py == 17) {
+      if (castleKey != 1) {
+        uiConsole_queueMessage(ultimaStrings[793]);
+        uiConsole_queueMessage(ultimaStrings[794]);
+        return true;
+      }
+
+      openedCellDoorIndex = 0;
+      uiConsole_queueMessage(ultimaStrings[795]);
+      return true;
+    } else if (player.px == 37 && player.py == 17) {
+      if (castleKey != 2) {
+        uiConsole_queueMessage(ultimaStrings[796]);
+        uiConsole_queueMessage(ultimaStrings[797]);
+        return true;
+      }
+
+      openedCellDoorIndex = 1;
+      uiConsole_queueMessage(ultimaStrings[798]);
+      return true;
+    } else {
+      uiConsole_queueMessage(ultimaStrings[792]);
+      return true;
+    }
+
+    return true;
+  }
+
+  return false;
+}
+
 bool playerCastle_update(float deltaTime) {
   bool acted = false;
   
@@ -577,6 +614,7 @@ bool playerCastle_update(float deltaTime) {
         if (playerCastle_updateSteal()) { acted = true; } else
         if (playerCastle_updateExit()) { acted = true; } else
         if (playerCastle_updateTransact()) { acted = true; } else
+        if (playerCastle_updateUnlock()) { acted = true; } else
         if (playerTown_updateAttack()) { acted = true; } else
         if (playerTown_updateMovement(deltaTime)) { acted = true; }
         break;

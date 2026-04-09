@@ -20,14 +20,16 @@ static Geometry backgroundGeometry;
 static Geometry jesterGeometry;
 static Geometry princessGeometry;
 static Geometry kingGeometry;
+static Geometry openedCellDoorGeometry;
 static Vector2 jesterPosition = { 0 };
 static Vector2 princessPosition = { 0 };
 static Vector2 kingPosition = { 0 };
 static float backgroundTransformationMatrix[16];
 static float personTransform[16];
-static int castleKey = 0;
 
+int castleKey = 0;
 int allowToTakeItemsFromCastle = 0;
+int openedCellDoorIndex = -1;
 
 static void sceneCastle_initialiseEntities() {
   jesterPosition.x = 37; jesterPosition.y = 6;
@@ -39,6 +41,8 @@ static void sceneCastle_init() {
   geometry_setSprite(&backgroundGeometry, OS_SCREEN_WIDTH, OS_SCREEN_HEIGHT, 0, 0, 1, 1);
   matrix4_setIdentity(backgroundTransformationMatrix);
 
+  geometry_setSprite(&openedCellDoorGeometry, OS_TOWN_CASTLE_SPRITE_WIDTH, OS_TOWN_CASTLE_SPRITE_HEIGHT, 0, 0, 1, 1);
+
   camera_setPosition3f(&camera, 0.0f, 0.0f, 10.0f);
 
   sceneTown_initializeGeometry(2, &jesterGeometry);
@@ -48,6 +52,8 @@ static void sceneCastle_init() {
   matrix4_setIdentity(personTransform);
 
   isPlayerInCastle = true;
+  castleKey = 0;
+  openedCellDoorIndex = -1;
   enemyEncounter.monsterId = 0;
 
   player.px = 1;
@@ -80,6 +86,14 @@ bool sceneCastle_isSolid(int x, int y) {
 
   if (kingPosition.x == x && kingPosition.y == y) {
     return true;
+  }
+  
+  if (x == 33 && y == 16 && openedCellDoorIndex == 0) {
+    return false;
+  }
+
+  if (x == 37 && y == 16 && openedCellDoorIndex == 1) {
+    return false;
   }
 
   return ultimaAssets.castleCollisionMap[y][x] != 0;
@@ -257,6 +271,15 @@ static void sceneCastle_update(float deltaTime) {
   
   float *viewMatrix = camera_getViewProjectionMatrix(&camera);
   geometry_render(&backgroundGeometry, ultimaAssets.castleScreen.textureId, backgroundTransformationMatrix, viewMatrix);
+  
+  if (openedCellDoorIndex == 0) {
+    matrix4_setPosition(personTransform, 33 * OS_TOWN_CASTLE_SPRITE_WIDTH, 16 * OS_TOWN_CASTLE_SPRITE_HEIGHT, 0.1f);
+    geometry_render(&openedCellDoorGeometry, ultimaAssets.blackSprite.textureId, personTransform, viewMatrix);
+  } else if (openedCellDoorIndex == 1) {
+    matrix4_setPosition(personTransform, 37 * OS_TOWN_CASTLE_SPRITE_WIDTH, 16 * OS_TOWN_CASTLE_SPRITE_HEIGHT, 0.1f);
+    geometry_render(&openedCellDoorGeometry, ultimaAssets.blackSprite.textureId, personTransform, viewMatrix);
+  }
+
   playerCastle_render(viewMatrix);
   sceneTown_renderPerson(&jesterGeometry, &jesterPosition, personTransform, viewMatrix);
   sceneTown_renderPerson(&princessGeometry, &princessPosition, personTransform, viewMatrix);
@@ -267,6 +290,10 @@ static void sceneCastle_update(float deltaTime) {
 
 static void sceneCastle_free() {
   geometry_free(&backgroundGeometry);
+  geometry_free(&jesterGeometry);
+  geometry_free(&princessGeometry);
+  geometry_free(&kingGeometry);
+  geometry_free(&openedCellDoorGeometry);
   playerCastle_free();
   guardTown_free();
 }
