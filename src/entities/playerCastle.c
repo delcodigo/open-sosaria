@@ -8,6 +8,7 @@
 #include "playerCommons.h"
 #include "data/player.h"
 #include "data/bevery.h"
+#include "data/enemy.h"
 #include "scenes/sceneDiskLoader.h"
 #include "scenes/sceneCastle.h"
 #include "scenes/sceneOverworld.h"
@@ -368,7 +369,7 @@ static bool playerCastle_updateSteal() {
   return false;
 }
 
-bool playerCastle_updateExit() {
+static bool playerCastle_updateExit() {
   if (input.x == 1) {
     input.x = 2;
 
@@ -376,6 +377,80 @@ bool playerCastle_updateExit() {
     uiConsole_queueMessage(ultimaStrings[802]);
 
     return true;
+  }
+
+  return false;
+}
+
+static bool playerCastle_updateTransact() {
+  if (playerState == PLAYER_STATE_TRANSACT) {
+    if (lastKey == 0) {
+      return false;
+    }
+
+    uiConsole_replaceLastMessageFormat("%s%c", ultimaStrings[748], (char) lastKey);
+
+    if (lastKey != 0 && lastKey != GLFW_KEY_S && lastKey != GLFW_KEY_G) {
+      uiConsole_queueMessage(ultimaStrings[749]);
+      playerState = PLAYER_STATE_IDLE;
+      return true;
+    }
+
+    if (lastKey == GLFW_KEY_S) {
+      int tx = (int)(player.tx % OS_BTERRA_MAP_WIDTH);
+      int ty = (int)(player.ty % OS_BTERRA_MAP_HEIGHT);
+      int world = ((int)player.ty / OS_BTERRA_MAP_HEIGHT) * 2 + ((int)player.tx / OS_BTERRA_MAP_WIDTH);
+      int tileType = ultimaAssets.bterraMaps[world][ty][tx] & 0x0F;
+      int questId = world * 2 + tileType;
+
+      if (player.quests[questId] > 0) {
+        uiConsole_queueMessage(ultimaStrings[753]);
+        uiConsole_queueMessage(ultimaStrings[754]);
+        playerState = PLAYER_STATE_IDLE;
+        return true;
+      }
+
+      player.quests[questId] = 1;
+
+      if (tileType == 1) {
+        uiConsole_queueMessageFormat("^T1%s", ultimaStrings[758]);
+        uiConsole_queueMessageFormat("^T1%s", enemyDefinitions[world * 5 + 30].name);
+        uiConsole_queueMessageFormat("^T1%s", ultimaStrings[759]);
+        uiConsole_queueMessageFormat("^T1%s", ultimaStrings[760]);
+      } else {
+        uiConsole_queueMessageFormat("^T1%s", ultimaStrings[755]);
+        uiConsole_queueMessageFormat("^T1%s", placesNames[world * 20 + 3]);
+        uiConsole_queueMessageFormat("^T1%s", ultimaStrings[756]);
+        uiConsole_queueMessageFormat("^T1%s", ultimaStrings[757]);
+      }
+
+      playerState = PLAYER_STATE_IDLE;
+      return true;
+    }
+  } else if (input.t == 1) {
+    input.t = 2;
+
+    uiConsole_queueMessage(ultimaStrings[744]);
+
+    if (enemyEncounter.monsterId > 0) {
+      uiConsole_queueMessage(ultimaStrings[745]);
+      return true;
+    }
+
+    if (player.px < 32 || player.py > 7) {
+      uiConsole_queueMessage(ultimaStrings[746]);
+      return true;
+    }
+
+    // TODO: Quest completion logic
+
+    uiConsole_queueMessage(ultimaStrings[747]);
+    uiConsole_queueMessage(ultimaStrings[748]);
+
+    playerState = PLAYER_STATE_TRANSACT;
+    lastKey = 0;
+
+    return false;
   }
 
   return false;
@@ -401,6 +476,7 @@ bool playerCastle_update(float deltaTime) {
         if (playerCastle_updateSave()) { acted = true; } else
         if (playerCastle_updateSteal()) { acted = true; } else
         if (playerCastle_updateExit()) { acted = true; } else
+        if (playerCastle_updateTransact()) { acted = true; } else
         if (playerTown_updateAttack()) { acted = true; } else
         if (playerTown_updateMovement(deltaTime)) { acted = true; }
         break;
@@ -415,6 +491,10 @@ bool playerCastle_update(float deltaTime) {
 
       case PLAYER_STATE_TOWN_ATTACK:
         if (playerTown_updateAttack()) { acted = true; }
+        break;
+
+      case PLAYER_STATE_TRANSACT:
+        if (playerCastle_updateTransact()) { acted = true; }
         break;
 
       default:

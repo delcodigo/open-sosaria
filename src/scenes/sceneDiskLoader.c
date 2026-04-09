@@ -620,6 +620,18 @@ static void sceneDiskLoader_decodeEnemiesTable(const uint8_t *data) {
 
     enemy_define(i, name, group, rank, hp);
   }
+
+  memcpy(enemyDefinitions[12].name, ultimaStrings[14], strlen(ultimaStrings[14]) + 1);
+  memcpy(enemyDefinitions[6].name, ultimaStrings[15], strlen(ultimaStrings[15]) + 1);
+  memcpy(enemyDefinitions[7].name, ultimaStrings[16], strlen(ultimaStrings[16]) + 1);
+  memcpy(enemyDefinitions[10].name, ultimaStrings[17], strlen(ultimaStrings[17]) + 1);
+  memcpy(enemyDefinitions[19].name, ultimaStrings[18], strlen(ultimaStrings[18]) + 1);
+  memcpy(enemyDefinitions[20].name, ultimaStrings[19], strlen(ultimaStrings[19]) + 1);
+  memcpy(enemyDefinitions[30].name, ultimaStrings[21], strlen(ultimaStrings[21]) + 1);
+  memcpy(enemyDefinitions[33].name, ultimaStrings[22], strlen(ultimaStrings[22]) + 1);
+  memcpy(enemyDefinitions[39].name, ultimaStrings[23], strlen(ultimaStrings[23]) + 1);
+  memcpy(enemyDefinitions[41].name, ultimaStrings[24], strlen(ultimaStrings[24]) + 1);
+  memcpy(enemyDefinitions[32].name, ultimaStrings[25], strlen(ultimaStrings[25]) + 1);
 }
 
 static void sceneDiskLoader_decodeUltimaStrings(const uint8_t *data, size_t index, char ***variable, int *variableSize) {
@@ -1282,10 +1294,12 @@ void sceneDiskLoader_extractUltimaAssets() {
     // Spells
     address = sceneDiskLoader_findVariableOffset(data, size, "SP$");
     sceneDiskLoader_decodeUltimaStrings(data, address + variableHeaderCount, &spellNames, &spellNamesSize);
+    memcpy(spellNames[3], ultimaStrings[20], strlen(ultimaStrings[20]) + 1);
 
     // Places
     address = sceneDiskLoader_findVariableOffset(data, size, "TD$");
     sceneDiskLoader_decodeUltimaStrings(data, address + variableHeaderCount, &placesNames, &placesNamesSize);
+    memcpy(placesNames[44], ultimaStrings[26], strlen(ultimaStrings[26]) + 1);
 
     sceneDiskLoader_decodeEnemiesTable(data);
 
