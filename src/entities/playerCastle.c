@@ -438,7 +438,44 @@ static bool playerCastle_checkForQuestCompletion() {
 }
 
 static bool playerCastle_updateTransact() {
-  if (playerState == PLAYER_STATE_TRANSACT) {
+  if (playerState == PLAYER_STATE_CASTLE_OFFER_GOLD) {
+    if (lastKey == 0 || lastKey < GLFW_KEY_0 || lastKey > GLFW_KEY_9) {
+      return false;
+    }
+
+    uiConsole_replaceLastMessageFormat("%s%c", ultimaStrings[785], (char) lastKey);
+
+    int value = lastKey - GLFW_KEY_0;
+    if (value == 0) {
+      uiConsole_queueMessage(ultimaStrings[786]);
+      playerState = PLAYER_STATE_IDLE;
+      return true;
+    }
+
+    if (value * 10 > player.gold) {
+      uiConsole_queueMessage(ultimaStrings[787]);
+      playerState = PLAYER_STATE_IDLE;
+      return true;
+    }
+
+    float healingFact = (value * 10 / (float)player.gold);
+    if (value == 9 && healingFact < 0.5f) {
+      healingFact = 0.5f;
+    }
+
+    int healingReward = (int)(healingFact * value * 30);
+
+    uiConsole_queueMessage(ultimaStrings[788]);
+    uiConsole_queueMessageFormat("%s%d%s", ultimaStrings[789], healingReward, ultimaStrings[790]);
+
+    player.gold -= value * 10;
+    player.health += healingReward;
+
+    uiConsole_updateStats();
+
+    playerState = PLAYER_STATE_IDLE;
+    return true;
+  } else if (playerState == PLAYER_STATE_TRANSACT) {
     if (lastKey == 0) {
       return false;
     }
@@ -481,6 +518,12 @@ static bool playerCastle_updateTransact() {
 
       playerState = PLAYER_STATE_IDLE;
       return true;
+    } else if (lastKey == GLFW_KEY_G) {
+      uiConsole_queueMessage(ultimaStrings[784]);
+      uiConsole_queueMessage(ultimaStrings[785]);
+      lastKey = 0;
+      playerState = PLAYER_STATE_CASTLE_OFFER_GOLD;
+      return false;
     }
   } else if (input.t == 1) {
     input.t = 2;
@@ -551,6 +594,10 @@ bool playerCastle_update(float deltaTime) {
         break;
 
       case PLAYER_STATE_TRANSACT:
+        if (playerCastle_updateTransact()) { acted = true; }
+        break;
+
+      case PLAYER_STATE_CASTLE_OFFER_GOLD:
         if (playerCastle_updateTransact()) { acted = true; }
         break;
 
