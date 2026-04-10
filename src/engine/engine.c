@@ -41,7 +41,7 @@ int engine_init() {
   glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
   glfwWindowHint(GLFW_MAXIMIZED, GLFW_TRUE);
 
-  window = glfwCreateWindow(OS_SCREEN_WIDTH, OS_SCREEN_HEIGHT, "Open Sosaria", NULL, NULL);
+  window = glfwCreateWindow(OS_SCREEN_WIDTH, OS_SCREEN_HEIGHT, "Open Sosaria 0.2.0", NULL, NULL);
   if (!window) {
     fprintf(stderr, "Failed to create window\n");
     glfwTerminate();

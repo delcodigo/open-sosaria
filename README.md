@@ -78,22 +78,27 @@ On some MSYS2 setups, use `mingw32-make` if `make` is not available in PATH.
 ./bin/open-sosaria
 ```
 
-## Current Implementation
 
-The engine currently includes:
+## Current Implementation (v0.2.0)
 
-- **Disk Verification:** Validates that `program.dsk` and `player.dsk` exist and contain the required Apple II Ultima files with correct sizes
-- **Disk Loader Scene (Partial):** Core disk loading flow is working and displays status messages during boot (file verification and error messages)
-- **Asset Extraction:** Reads and parses DOS 3.3 disk catalogs and file structures from the Apple II disks
-- **Title Splash Screen:** Extracts and renders the title screen picture (`PIC.ULTIMATUM`) from the disk images
-- **Character Generator:** Character creation and saving is working
-- **Overworld Rendering:** Overworld map rendering is working with a temporary flying camera
-- **Overworld Player Controller:** Player movement and collision in the overworld are working
-- **Rendering Pipeline:** OpenGL-based 2D graphics rendering via GLFW
+The engine now includes:
+
+- **Full Towns and Castles:** All towns and castles are fully implemented with feature parity to the original Apple II release.
+- **Overworld (Nearly Complete):** Overworld map, player movement, and collision are implemented. The only major features missing are the **Time Machine** and **Space Shuttle**.
+- **Disk Verification:** Validates that `program.dsk` and `player.dsk` exist and contain the required Apple II Ultima files with correct sizes.
+- **Disk Loader Scene:** Core disk loading flow is working and displays status messages during boot (file verification and error messages).
+- **Asset Extraction:** Reads and parses DOS 3.3 disk catalogs and file structures from the Apple II disks.
+- **Title Splash Screen:** Extracts and renders the title screen picture (`PIC.ULTIMATUM`) from the disk images.
+- **Character Generator:** Character creation and saving is working.
+- **Rendering Pipeline:** OpenGL-based 2D graphics rendering via GLFW.
 
 ## Next Steps
 
-Game logic, additional sprite rendering work, and Apple II game mechanics are planned for future development.
+- Complete the overworld by implementing the **Time Machine** and **Space Shuttle** mechanics.
+- Implement the **Dungeons**.
+- Develop the **Space Minigame**.
+- Create the **Mondain Encounter** (final boss battle).
+- Continue refining game logic, sprite rendering, and Apple II game mechanics.
 
 ## Research Notes
 
