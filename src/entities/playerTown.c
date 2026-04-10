@@ -13,6 +13,7 @@
 #include "data/bevery.h"
 #include "maths/matrix4.h"
 #include "playerCommons.h"
+#include "vehicleOverworld.h"
 #include "vmExecuter.h"
 #include "config.h"
 
@@ -33,7 +34,36 @@ void playerTown_init() {
 }
 
 static bool playerTown_checkExit(int moveX, int moveY) {
-  if ((isPlayerInCastle && player.px + moveX < 0) || (!isPlayerInCastle && player.py + moveY > 21)) {
+  if (isPlayerInCastle && player.px + moveX < 0) {
+    if (princessPosition.x < 5 && princessPosition.y > 0) {
+      uiConsole_queueMessageFormat("^T1%s", ultimaStrings[636]);
+      uiConsole_queueMessageFormat("^T1%s", ultimaStrings[637]);
+      uiConsole_queueMessageFormat("^T1%s", ultimaStrings[638]);
+
+      player.health += 3000;
+      player.gold += 3000;
+      player.experience += 3000;
+
+      uiConsole_updateStats();
+    }
+
+    if (princessPosition.x < 5 && princessPosition.y > 0 && player.time > 7000 && player.spaceLevel > 20) {
+      uiConsole_queueMessageFormat("^T1%s", ultimaStrings[639]);
+      uiConsole_queueMessageFormat("^T1%s", ultimaStrings[640]);
+      uiConsole_queueMessageFormat("^T1%s", ultimaStrings[641]);
+      uiConsole_queueMessageFormat("^T1%s", ultimaStrings[642]);
+      uiConsole_queueMessageFormat("^T1%s", ultimaStrings[643]);
+      uiConsole_queueMessageFormat("^T1%s", ultimaStrings[644]);
+
+      vehiclesMap[3][3] = 7;
+    }
+
+    enemyEncounter.monsterId = -1;
+    vmExecuter_createSceneTransition(0.5f, &sceneOverworld);
+    return true;
+  }
+
+  if (!isPlayerInCastle && player.py + moveY > 21) {
     vmExecuter_createSceneTransition(0.5f, &sceneOverworld);
     return true;
   }

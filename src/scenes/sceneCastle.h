@@ -3,8 +3,10 @@
 
 #include "engine/engine.h"
 #include "engine/scene.h"
+#include "maths/vector2.h"
 
 extern Scene sceneCastle;
+extern Vector2 princessPosition;
 extern int castleKey;
 extern int allowToTakeItemsFromCastle;
 extern int openedCellDoorIndex;

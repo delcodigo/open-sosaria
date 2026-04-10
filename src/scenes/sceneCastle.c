@@ -1,4 +1,5 @@
 #include <math.h>
+#include <stdlib.h>
 #include "sceneCastle.h"
 #include "sceneDiskLoader.h"
 #include "sceneTown.h"
@@ -22,11 +23,11 @@ static Geometry princessGeometry;
 static Geometry kingGeometry;
 static Geometry openedCellDoorGeometry;
 static Vector2 jesterPosition = { 0 };
-static Vector2 princessPosition = { 0 };
 static Vector2 kingPosition = { 0 };
 static float backgroundTransformationMatrix[16];
 static float personTransform[16];
 
+Vector2 princessPosition = { 0 };
 int castleKey = 0;
 int allowToTakeItemsFromCastle = 0;
 int openedCellDoorIndex = -1;
@@ -137,14 +138,32 @@ static void sceneCastle_updateJester() {
 static void sceneCastle_updatePrincess() {
   if (princessPosition.x < 0) { return; }
 
-  int dx = (int)(rand01() * 3) - 1;
-  int dy = (int)(rand01() * 3) - 1;
+  if (enemyEncounter.monsterId > 0) {
+    int dx = player.px - princessPosition.x;
+    int dy = player.py - princessPosition.y;
+    float distance = sqrtf(dx * dx + dy * dy);
+    if (distance < 2.0f) {
+      return;
+    }
 
-  if (dx == 0 && dy == 0) { return; }
-  if (sceneCastle_isSolid(princessPosition.x + dx, princessPosition.y + dy)) { return; }
-  if (princessPosition.x + dx != player.px || princessPosition.y + dy != player.py) {
-    princessPosition.x += dx;
-    princessPosition.y += dy;
+    if (dx != 0) { dx = dx / abs(dx); }
+    if (dy != 0) { dy = dy / abs(dy); }
+
+    if (!sceneCastle_isSolid(princessPosition.x + dx, princessPosition.y + dy) &&
+        (princessPosition.x + dx != player.px || princessPosition.y + dy != player.py)) {
+      princessPosition.x += dx;
+      princessPosition.y += dy;
+    }
+  } else {
+    int dx = (int)(rand01() * 3) - 1;
+    int dy = (int)(rand01() * 3) - 1;
+
+    if (dx == 0 && dy == 0) { return; }
+    if (sceneCastle_isSolid(princessPosition.x + dx, princessPosition.y + dy)) { return; }
+    if (princessPosition.x + dx != player.px || princessPosition.y + dy != player.py) {
+      princessPosition.x += dx;
+      princessPosition.y += dy;
+    }
   }
 }
 
@@ -243,9 +262,9 @@ static void sceneCastle_update(float deltaTime) {
     }
 
     if (ztatsActive){
-    uiZtats_update(deltaTime);
-    return;
-  }
+      uiZtats_update(deltaTime);
+      return;
+    }
 
     if (playerActed) {
       playerActed = false;

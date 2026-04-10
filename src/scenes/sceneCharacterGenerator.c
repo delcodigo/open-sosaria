@@ -201,6 +201,7 @@ static void sceneCharacterGenerator_finishPlayerCreation() {
   player.armor = 1;
   player.weapon = 1;
   player.spell = 0;
+  player.spaceLevel = 0;
   for (int i=1;i<OS_ARMORS_COUNT;i++) { player.armors[i] = 0; }
   for (int i=0;i<OS_VEHICLES_COUNT;i++) { player.vehicles[i] = 0; }
   for (int i=0;i<OS_WEAPONS_COUNT;i++) { player.weapons[i] = 0; }
