@@ -17,6 +17,7 @@
 #include "scenes/sceneOverworld.h"
 #include "scenes/sceneTown.h"
 #include "scenes/sceneCastle.h"
+#include "scenes/sceneDungeon.h"
 #include "maths/matrix4.h"
 #include "vehicleOverworld.h"
 #include "config.h"
@@ -658,6 +659,13 @@ static bool playerOverworld_updateEnter() {
       uiConsole_queueMessageFormat("%s%s", ultimaStrings[180], placesNames[world * 20 + tileType + 13]);
       uiConsole_queueMessageFormat(" ");
       vmExecuter_createSceneTransition(1.5f, &sceneTown);
+      
+      return true;
+    } else if (tile == 7) {
+      player.dungeonDepth = 1;
+      uiConsole_queueMessageFormat(placesNames[world * 20 + tileType + 5]);
+      uiConsole_queueMessageFormat(" ");
+      vmExecuter_createSceneTransition(1.5f, &sceneDungeon);
       
       return true;
     }
