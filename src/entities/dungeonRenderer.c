@@ -1,14 +1,16 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
+#include "engine/geometry.h"
 #include "dungeonRenderer.h"
 #include "scenes/sceneDungeon.h"
+#include "scenes/sceneDiskLoader.h"
 #include "config.h"
-#include "engine/geometry.h"
 #include "engine/texture.h"
 #include "maths/matrix4.h"
 #include "data/bevery.h"
 #include "data/player.h"
+#include "entities/ui/uiConsole.h"
 
 static uint8_t dungeonScreen[OS_SCREEN_WIDTH * OS_SCREEN_HEIGHT * 4] = {0};
 static GLuint dungeonTextureID;
@@ -163,15 +165,46 @@ void dungeonRenderer_update() {
       if (centerTile == 4) {
         shouldBreak = true;
 
+        dungeonRenderer_drawLine(dungeonDoorsFrontTable[distance][0], dungeonDoorsFrontTable[distance][3], dungeonDoorsFrontTable[distance][0], dungeonDoorsFrontTable[distance][2]);
+        dungeonRenderer_drawLine(dungeonDoorsFrontTable[distance][0], dungeonDoorsFrontTable[distance][2], dungeonDoorsFrontTable[distance][1], dungeonDoorsFrontTable[distance][2]);
+        dungeonRenderer_drawLine(dungeonDoorsFrontTable[distance][1], dungeonDoorsFrontTable[distance][2], dungeonDoorsFrontTable[distance][1], dungeonDoorsFrontTable[distance][3]);
       }
     }
 
     if (!shouldBreak) {
       if (centerTile == 6) {
+        int t3 = (b2 * 3 + b1) / 4;
+        int t4 = (b2 + b1) / 2;
+        int t5 = (l2 * 7 + r2 * 3) / 10;
+        int t6 = (l2 * 1.5f + r2 * 8.5f) / 10;
+        int l3 = (l2 * 8 + r2 * 2) / 10;
+        int r3 = (l2 + r2 * 9) / 10;
+        int t7 = (b2 + b1 * 3) / 4;
 
+        dungeonRenderer_drawLine(l3,t3,t5,b2);
+        dungeonRenderer_drawLine(t5,b2,r3,t3);
+        dungeonRenderer_drawLine(r3,t3,r3,t7);
+        dungeonRenderer_drawLine(r3,t7,t6,b1);
+        dungeonRenderer_drawLine(t6,b1,t5,b1);
+        dungeonRenderer_drawLine(t5,b1,l3,t7);
+        dungeonRenderer_drawLine(l3,t7,l3,t3);
+        dungeonRenderer_drawLine(l3,t3,t5,t4);
+        dungeonRenderer_drawLine(t5,t4,t6,t4);
+        dungeonRenderer_drawLine(t6,t4,t6,b1);
+        dungeonRenderer_drawLine(t5,b1,t5,t4);
+        dungeonRenderer_drawLine(t6,t4,r3,t3);
+
+        uiConsole_queueMessageFormat("^I%s", ultimaStrings[843]);
       }
       if (centerTile == 12) {
-
+        int l = (l1 + l2) / 2;
+        int r = (r1 + r2) / 2;
+        int t = (t1 + t2) / 2;
+        int b = (b1 + b2) / 2;
+        for (int x=1;x<=4;x++) {
+          int h = (t * x + (5 - x) * b) / 5;
+          dungeonRenderer_drawLine(l, h, r, h);
+        }
       }
       if (leftTile == 1 || leftTile == 3 || leftTile == 4) {
         dungeonRenderer_drawLine(l1, t1, l2, t2);
@@ -189,6 +222,16 @@ void dungeonRenderer_update() {
           dungeonRenderer_drawLine(l2, t2, l2, b2);
         }
       }
+      if (leftTile == 4) {
+        if (distance > 0) {
+          dungeonRenderer_drawLine(dungeonDoorsTable[distance][0], dungeonDoorsTable[distance][4], dungeonDoorsTable[distance][0], dungeonDoorsTable[distance][2]);
+          dungeonRenderer_drawLine(dungeonDoorsTable[distance][0], dungeonDoorsTable[distance][2], dungeonDoorsTable[distance][1], dungeonDoorsTable[distance][3]);
+          dungeonRenderer_drawLine(dungeonDoorsTable[distance][1], dungeonDoorsTable[distance][3], dungeonDoorsTable[distance][1], dungeonDoorsTable[distance][5]);
+        } else {
+          dungeonRenderer_drawLine(0, dungeonDoorsTable[distance][2] - 3, dungeonDoorsTable[distance][1], dungeonDoorsTable[distance][3]);
+          dungeonRenderer_drawLine(dungeonDoorsTable[distance][1], dungeonDoorsTable[distance][3], dungeonDoorsTable[distance][1], dungeonDoorsTable[distance][5]);
+        }
+      }
       if (rightTile == 1 || rightTile == 3 || rightTile == 4) {
         dungeonRenderer_drawLine(r1, t1, r2, t2);
         dungeonRenderer_drawLine(r1, b1, r2, b2);
@@ -203,6 +246,16 @@ void dungeonRenderer_update() {
         int frontTile = dungeonRenderer_getFrontTile(distance + 1);
         if (frontTile != 1 && frontTile != 3 && frontTile != 4) {
           dungeonRenderer_drawLine(r2, t2, r2, b2);
+        }
+      }
+      if (rightTile == 4) {
+        if (distance > 0) {
+          dungeonRenderer_drawLine(279 - dungeonDoorsTable[distance][0], dungeonDoorsTable[distance][4], 279 - dungeonDoorsTable[distance][0], dungeonDoorsTable[distance][2]);
+          dungeonRenderer_drawLine(279 - dungeonDoorsTable[distance][0], dungeonDoorsTable[distance][2], 279 - dungeonDoorsTable[distance][1], dungeonDoorsTable[distance][3]);
+          dungeonRenderer_drawLine(279 - dungeonDoorsTable[distance][1], dungeonDoorsTable[distance][3], 279 - dungeonDoorsTable[distance][1], dungeonDoorsTable[distance][5]);
+        } else {
+          dungeonRenderer_drawLine(279, dungeonDoorsTable[distance][2] - 3, 279 - dungeonDoorsTable[distance][1], dungeonDoorsTable[distance][3]);
+          dungeonRenderer_drawLine(279 - dungeonDoorsTable[distance][1], dungeonDoorsTable[distance][3], 279 - dungeonDoorsTable[distance][1], dungeonDoorsTable[distance][5]);
         }
       }
       if (centerTile == 7 || centerTile == 9) {

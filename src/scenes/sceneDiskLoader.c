@@ -666,6 +666,28 @@ static void sceneDiskLoader_decodeDungeonTable(const uint8_t *data, size_t index
   }
 }
 
+static void sceneDiskLoader_decodeDungeonDoorsTable(const uint8_t *data, size_t index) {
+  index += 4;
+  for (int x=0;x<OS_DUNGEON_DOORS_TABLE_WIDTH;x++) {
+    for (int y=0;y<OS_DUNGEON_TABLE_HEIGHT;y++) {
+      int value = data[index] << 8 | data[index + 1];
+      dungeonDoorsTable[y][x] = value;
+      index += 2;
+    }
+  }
+}
+
+static void sceneDiskLoader_decodeDungeonDoorsFrontTable(const uint8_t *data, size_t index) {
+  index += 4;
+  for (int x=0;x<OS_DUNGEON_DOORS_FRONT_TABLE_WIDTH;x++) {
+    for (int y=0;y<OS_DUNGEON_TABLE_HEIGHT;y++) {
+      int value = data[index] << 8 | data[index + 1];
+      dungeonDoorsFrontTable[y][x] = value;
+      index += 2;
+    }
+  }
+}
+
 static size_t sceneDiskLoader_findVariableOffset(const uint8_t *data, size_t dataSize, const char *varName) {
   if (!data || !varName || !varName[0]) { return 0; }
 
@@ -1264,6 +1286,7 @@ void sceneDiskLoader_extractUltimaAssets() {
   sceneDiskLoader_extractBasicStrings(disk1, "OUT MOVE");
   sceneDiskLoader_extractBasicStrings(disk1, "TWN MOVE");
   sceneDiskLoader_extractBasicStrings(disk1, "CAS MOVE");
+  sceneDiskLoader_extractBasicStrings(disk1, "DNG MOVE 1");
 
   // Load town collisions map
   sceneDiskLoader_loadCollisionsMap(disk2, "BTWN", ultimaAssets.townCollisionMap);
@@ -1314,6 +1337,12 @@ void sceneDiskLoader_extractUltimaAssets() {
 
     address = sceneDiskLoader_findVariableOffset(data, size, "PE%");
     sceneDiskLoader_decodeDungeonTable(data, address + variableHeaderCount);
+
+    address = sceneDiskLoader_findVariableOffset(data, size, "LD%");
+    sceneDiskLoader_decodeDungeonDoorsTable(data, address + variableHeaderCount);
+
+    address = sceneDiskLoader_findVariableOffset(data, size, "CD%");
+    sceneDiskLoader_decodeDungeonDoorsFrontTable(data, address + variableHeaderCount);
 
     sceneDiskLoader_decodeEnemiesTable(data);
 

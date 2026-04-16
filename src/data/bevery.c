@@ -27,6 +27,8 @@ char **placesNames = NULL;
 int placesNamesSize = 0;
 
 int dungeonTable[OS_DUNGEON_TABLE_HEIGHT][OS_DUNGEON_TABLE_WIDTH] = {0};
+int dungeonDoorsTable[OS_DUNGEON_TABLE_HEIGHT][OS_DUNGEON_DOORS_TABLE_WIDTH] = {0};
+int dungeonDoorsFrontTable[OS_DUNGEON_TABLE_HEIGHT][OS_DUNGEON_DOORS_FRONT_TABLE_WIDTH] = {0};
 
 void bevery_free() {
   for (int i=0;i<statsNamesSize;i++) {
