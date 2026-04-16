@@ -653,6 +653,17 @@ static void sceneDiskLoader_decodeUltimaStrings(const uint8_t *data, size_t inde
     (*variable)[i][strLen] = '\0';
     offset += 3;
   }
+}  
+
+static void sceneDiskLoader_decodeDungeonTable(const uint8_t *data, size_t index) {
+  index += 4;
+  for (int x=0;x<OS_DUNGEON_TABLE_WIDTH;x++) {
+    for (int y=0;y<OS_DUNGEON_TABLE_HEIGHT;y++) {
+      int value = data[index] << 8 | data[index + 1];
+      dungeonTable[y][x] = value;
+      index += 2;
+    }
+  }
 }
 
 static size_t sceneDiskLoader_findVariableOffset(const uint8_t *data, size_t dataSize, const char *varName) {
@@ -1300,6 +1311,9 @@ void sceneDiskLoader_extractUltimaAssets() {
     address = sceneDiskLoader_findVariableOffset(data, size, "TD$");
     sceneDiskLoader_decodeUltimaStrings(data, address + variableHeaderCount, &placesNames, &placesNamesSize);
     memcpy(placesNames[44], ultimaStrings[26], strlen(ultimaStrings[26]) + 1);
+
+    address = sceneDiskLoader_findVariableOffset(data, size, "PE%");
+    sceneDiskLoader_decodeDungeonTable(data, address + variableHeaderCount);
 
     sceneDiskLoader_decodeEnemiesTable(data);
 

@@ -35,6 +35,8 @@ typedef struct {
   int py;
   int spaceLevel;
   int dungeonDepth;
+  int dx;
+  int dy;
 } Player;
 
 extern Player player;

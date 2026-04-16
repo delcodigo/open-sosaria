@@ -1,6 +1,9 @@
 #ifndef OS_BEVERY_H
 #define OS_BEVERY_H
 
+#define OS_DUNGEON_TABLE_HEIGHT 11
+#define OS_DUNGEON_TABLE_WIDTH 4
+
 extern char **statsNames;
 extern int statsNamesSize;
 
@@ -24,6 +27,8 @@ extern int typesNamesSize;
 
 extern char **placesNames;
 extern int placesNamesSize;
+
+extern int dungeonTable[OS_DUNGEON_TABLE_HEIGHT][OS_DUNGEON_TABLE_WIDTH];
 
 void bevery_free();
 

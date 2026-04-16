@@ -4,12 +4,24 @@
 #include "sceneDungeon.h"
 #include "entities/ui/uiztats.h"
 #include "entities/ui/uiConsole.h"
+#include "entities/dungeonRenderer.h"
+#include "entities/playerDungeon.h"
 #include "data/player.h"
 #include "sceneDiskLoader.h"
 #include "config.h"
 #include "utils.h"
 
-static int dungeonMap[OS_DUNGEON_MAP_WIDTH][OS_DUNGEON_MAP_HEIGHT] = {0};
+int dungeonMap[OS_DUNGEON_MAP_WIDTH][OS_DUNGEON_MAP_HEIGHT] = {0};
+
+static void sceneDungeon_printDungeon() {
+  printf("\n");
+  for (int x=0;x<OS_DUNGEON_MAP_WIDTH;x++) {
+    for (int y=0;y<OS_DUNGEON_MAP_HEIGHT;y++) {
+      printf("%d ", dungeonMap[x][y]);
+    }
+    printf("\n");
+  }
+}
 
 static void sceneDungeon_generateFloor() {
   int tx = (int)(player.tx % OS_BTERRA_MAP_WIDTH);
@@ -101,10 +113,21 @@ static void sceneDungeon_generateFloor() {
     dungeonMap[1][1] = 8;
     dungeonMap[7][3] = 0;
   }
+
+  sceneDungeon_printDungeon();
 }
 
 static void sceneDungeon_init() {
+  camera_setPosition3f(&camera, 0.0f, 0.0f, 10.0f);
   sceneDungeon_generateFloor();  
+  dungeonRenderer_init();
+
+  player.px = 1;
+  player.py = 1;
+  player.dx = 0;
+  player.dy = 1;
+  playerDungeon_init();
+  dungeonRenderer_update();
 }
 
 static void sceneDungeon_update(float deltaTime) {
@@ -112,11 +135,19 @@ static void sceneDungeon_update(float deltaTime) {
     uiZtats_update(deltaTime);
   }
 
+  if (playerDungeon_update(deltaTime)) {
+    dungeonRenderer_update();
+  }
+
+  float *viewMatrix = camera_getViewProjectionMatrix(&camera);
+  dungeonRenderer_render(viewMatrix);
+
   uiConsole_update(deltaTime);
 }
 
 static void sceneDungeon_free() {
-    
+  dungeonRenderer_free();
+  playerDungeon_free();
 }
 
 Scene sceneDungeon = {
