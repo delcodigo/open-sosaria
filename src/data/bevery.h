@@ -33,6 +33,8 @@ extern int placesNamesSize;
 extern int dungeonTable[OS_DUNGEON_TABLE_HEIGHT][OS_DUNGEON_TABLE_WIDTH];
 extern int dungeonDoorsTable[OS_DUNGEON_TABLE_HEIGHT][OS_DUNGEON_DOORS_TABLE_WIDTH];
 extern int dungeonDoorsFrontTable[OS_DUNGEON_TABLE_HEIGHT][OS_DUNGEON_DOORS_FRONT_TABLE_WIDTH];
+extern int dungeonTrapsTable[OS_DUNGEON_TABLE_HEIGHT][6];
+extern int dungeonLaddersTable[OS_DUNGEON_TABLE_HEIGHT][4];
 
 void bevery_free();
 

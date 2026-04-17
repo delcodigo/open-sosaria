@@ -10,13 +10,13 @@ static bool playerDungeon_updateRotation() {
     int dx = player.dx;
     player.dx = player.dy;
     player.dy = -dx;
-    keyRepeatDelay = 0.1f;
+    keyRepeatDelay = 0.2f;
     return true;
   } else if (input.right) {
     int dx = player.dx;
     player.dx = -player.dy;
     player.dy = dx;
-    keyRepeatDelay = 0.1f;
+    keyRepeatDelay = 0.2f;
     return true;
   }
 
@@ -27,12 +27,12 @@ static bool playerDungeon_updateMovement() {
   if (input.up) {
     player.px += player.dx;
     player.py += player.dy;
-    keyRepeatDelay = 0.1f;
+    keyRepeatDelay = 0.2f;
     return true;
   } else if (input.down) {
     player.px -= player.dx;
     player.py -= player.dy;
-    keyRepeatDelay = 0.1f;
+    keyRepeatDelay = 0.2f;
     return true;
   }
 

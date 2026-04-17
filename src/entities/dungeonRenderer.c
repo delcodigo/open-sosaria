@@ -159,7 +159,6 @@ void dungeonRenderer_update() {
 
       if (centerTile == 1 || centerTile == 3) {
         shouldBreak = true;
-
       }
 
       if (centerTile == 4) {
@@ -194,7 +193,7 @@ void dungeonRenderer_update() {
         dungeonRenderer_drawLine(t5,b1,t5,t4);
         dungeonRenderer_drawLine(t6,t4,r3,t3);
 
-        uiConsole_queueMessageFormat("^I%s", ultimaStrings[843]);
+        uiConsole_queueMessageFormat("^1%s^0", ultimaStrings[843]);
       }
       if (centerTile == 12) {
         int l = (l1 + l2) / 2;
@@ -259,20 +258,52 @@ void dungeonRenderer_update() {
         }
       }
       if (centerTile == 7 || centerTile == 9) {
-
+        dungeonRenderer_drawLine(dungeonTrapsTable[distance][0], dungeonTrapsTable[distance][4], dungeonTrapsTable[distance][2], dungeonTrapsTable[distance][5]);
+        dungeonRenderer_drawLine(dungeonTrapsTable[distance][2], dungeonTrapsTable[distance][5], dungeonTrapsTable[distance][3], dungeonTrapsTable[distance][5]);
+        dungeonRenderer_drawLine(dungeonTrapsTable[distance][3], dungeonTrapsTable[distance][5], dungeonTrapsTable[distance][1], dungeonTrapsTable[distance][4]);
+        dungeonRenderer_drawLine(dungeonTrapsTable[distance][1], dungeonTrapsTable[distance][4], dungeonTrapsTable[distance][0], dungeonTrapsTable[distance][4]);
       }
       if (centerTile == 8) {
-
+        dungeonRenderer_drawLine(dungeonTrapsTable[distance][0], 158 - dungeonTrapsTable[distance][4], dungeonTrapsTable[distance][2], 158 - dungeonTrapsTable[distance][5]);
+        dungeonRenderer_drawLine(dungeonTrapsTable[distance][2], 158 - dungeonTrapsTable[distance][5], dungeonTrapsTable[distance][3], 158 - dungeonTrapsTable[distance][5]);
+        dungeonRenderer_drawLine(dungeonTrapsTable[distance][3], 158 - dungeonTrapsTable[distance][5], dungeonTrapsTable[distance][1], 158 - dungeonTrapsTable[distance][4]);
+        dungeonRenderer_drawLine(dungeonTrapsTable[distance][1], 158 - dungeonTrapsTable[distance][4], dungeonTrapsTable[distance][0], 158 - dungeonTrapsTable[distance][4]);
       }
       if (centerTile == 7 || centerTile == 8) {
+        int ba = dungeonLaddersTable[distance][3];
+        int tp = dungeonLaddersTable[distance][2];
         if (player.dy == 0) {
-
+          dungeonRenderer_drawLine(139,ba,139,tp);
+          dungeonRenderer_drawLine(140,tp,140,ba);
         } else {
+          int lx = dungeonLaddersTable[distance][0];
+          int rx = dungeonLaddersTable[distance][1];
+          dungeonRenderer_drawLine(lx,ba,lx,tp);
+          dungeonRenderer_drawLine(rx,tp,rx,ba);
 
+          int y1 = (ba * 4 + tp) / 5;
+          int y2 = (ba * 3 + tp * 2) / 5;
+          int y3 = (ba * 2 + tp * 3) / 5;
+          int y4 = (ba + tp * 4) / 5;
+
+          dungeonRenderer_drawLine(lx,y1,rx,y1);
+          dungeonRenderer_drawLine(lx,y2,rx,y2);
+          dungeonRenderer_drawLine(lx,y3,rx,y3);
+          dungeonRenderer_drawLine(lx,y4,rx,y4);
         }
       }
       if (centerTile == 5) {
-
+        int t2 = distance + 1;
+        dungeonRenderer_drawLine(139-20/t2,dungeonTable[distance][3],139-20/t2,dungeonTable[distance][3]-20/t2);
+        dungeonRenderer_drawLine(139-20/t2,dungeonTable[distance][3]-20/t2,139+20/t2,dungeonTable[distance][3]-20/t2);
+        dungeonRenderer_drawLine(139+20/t2,dungeonTable[distance][3]-20/t2,139+20/t2,dungeonTable[distance][3]);
+        dungeonRenderer_drawLine(139+20/t2,dungeonTable[distance][3],139-20/t2,dungeonTable[distance][3]);
+        dungeonRenderer_drawLine(139-20/t2,dungeonTable[distance][3]-20/t2,139-10/t2,dungeonTable[distance][3]-30/t2);
+        dungeonRenderer_drawLine(139-10/t2,dungeonTable[distance][3]-30/t2,139+30/t2,dungeonTable[distance][3]-30/t2);
+        dungeonRenderer_drawLine(139+30/t2,dungeonTable[distance][3]-30/t2,139+30/t2,dungeonTable[distance][3]-10/t2);
+        dungeonRenderer_drawLine(139+30/t2,dungeonTable[distance][3]-10/t2,139+20/t2,dungeonTable[distance][3]);
+        dungeonRenderer_drawLine(139+20/t2,dungeonTable[distance][3]-20/t2,139+30/t2,dungeonTable[distance][3]-30/t2);
+        uiConsole_queueMessageFormat("^1%s^0", ultimaStrings[844]);
       }
     }
     if ((int)(dungeonMap[player.px][player.py] / 100) < 1) {

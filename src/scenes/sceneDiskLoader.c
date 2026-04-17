@@ -653,36 +653,14 @@ static void sceneDiskLoader_decodeUltimaStrings(const uint8_t *data, size_t inde
     (*variable)[i][strLen] = '\0';
     offset += 3;
   }
-}  
-
-static void sceneDiskLoader_decodeDungeonTable(const uint8_t *data, size_t index) {
-  index += 4;
-  for (int x=0;x<OS_DUNGEON_TABLE_WIDTH;x++) {
-    for (int y=0;y<OS_DUNGEON_TABLE_HEIGHT;y++) {
-      int value = data[index] << 8 | data[index + 1];
-      dungeonTable[y][x] = value;
-      index += 2;
-    }
-  }
 }
 
-static void sceneDiskLoader_decodeDungeonDoorsTable(const uint8_t *data, size_t index) {
+static void sceneDiskLoader_decodeBidimentionalArray(const uint8_t *data, size_t index, int width, int height, int output[height][width]) {
   index += 4;
-  for (int x=0;x<OS_DUNGEON_DOORS_TABLE_WIDTH;x++) {
-    for (int y=0;y<OS_DUNGEON_TABLE_HEIGHT;y++) {
+  for (int x=0;x<width;x++) {
+    for (int y=0;y<height;y++) {
       int value = data[index] << 8 | data[index + 1];
-      dungeonDoorsTable[y][x] = value;
-      index += 2;
-    }
-  }
-}
-
-static void sceneDiskLoader_decodeDungeonDoorsFrontTable(const uint8_t *data, size_t index) {
-  index += 4;
-  for (int x=0;x<OS_DUNGEON_DOORS_FRONT_TABLE_WIDTH;x++) {
-    for (int y=0;y<OS_DUNGEON_TABLE_HEIGHT;y++) {
-      int value = data[index] << 8 | data[index + 1];
-      dungeonDoorsFrontTable[y][x] = value;
+      output[y][x] = value;
       index += 2;
     }
   }
@@ -1336,13 +1314,19 @@ void sceneDiskLoader_extractUltimaAssets() {
     memcpy(placesNames[44], ultimaStrings[26], strlen(ultimaStrings[26]) + 1);
 
     address = sceneDiskLoader_findVariableOffset(data, size, "PE%");
-    sceneDiskLoader_decodeDungeonTable(data, address + variableHeaderCount);
+    sceneDiskLoader_decodeBidimentionalArray(data, address + variableHeaderCount, OS_DUNGEON_TABLE_WIDTH, OS_DUNGEON_TABLE_HEIGHT, dungeonTable);
 
     address = sceneDiskLoader_findVariableOffset(data, size, "LD%");
-    sceneDiskLoader_decodeDungeonDoorsTable(data, address + variableHeaderCount);
+    sceneDiskLoader_decodeBidimentionalArray(data, address + variableHeaderCount, OS_DUNGEON_DOORS_TABLE_WIDTH, OS_DUNGEON_TABLE_HEIGHT, dungeonDoorsTable);
 
     address = sceneDiskLoader_findVariableOffset(data, size, "CD%");
-    sceneDiskLoader_decodeDungeonDoorsFrontTable(data, address + variableHeaderCount);
+    sceneDiskLoader_decodeBidimentionalArray(data, address + variableHeaderCount, OS_DUNGEON_DOORS_FRONT_TABLE_WIDTH, OS_DUNGEON_TABLE_HEIGHT, dungeonDoorsFrontTable);
+
+    address = sceneDiskLoader_findVariableOffset(data, size, "FT%");
+    sceneDiskLoader_decodeBidimentionalArray(data, address + variableHeaderCount, 6, OS_DUNGEON_TABLE_HEIGHT, dungeonTrapsTable);
+
+    address = sceneDiskLoader_findVariableOffset(data, size, "LA%");
+    sceneDiskLoader_decodeBidimentionalArray(data, address + variableHeaderCount, 4, OS_DUNGEON_TABLE_HEIGHT, dungeonLaddersTable);
 
     sceneDiskLoader_decodeEnemiesTable(data);
 
