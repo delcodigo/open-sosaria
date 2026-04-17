@@ -1314,13 +1314,13 @@ void sceneDiskLoader_extractUltimaAssets() {
     memcpy(placesNames[44], ultimaStrings[26], strlen(ultimaStrings[26]) + 1);
 
     address = sceneDiskLoader_findVariableOffset(data, size, "PE%");
-    sceneDiskLoader_decodeBidimentionalArray(data, address + variableHeaderCount, OS_DUNGEON_TABLE_WIDTH, OS_DUNGEON_TABLE_HEIGHT, dungeonTable);
+    sceneDiskLoader_decodeBidimentionalArray(data, address + variableHeaderCount, 4, OS_DUNGEON_TABLE_HEIGHT, dungeonTable);
 
     address = sceneDiskLoader_findVariableOffset(data, size, "LD%");
-    sceneDiskLoader_decodeBidimentionalArray(data, address + variableHeaderCount, OS_DUNGEON_DOORS_TABLE_WIDTH, OS_DUNGEON_TABLE_HEIGHT, dungeonDoorsTable);
+    sceneDiskLoader_decodeBidimentionalArray(data, address + variableHeaderCount, 6, OS_DUNGEON_TABLE_HEIGHT, dungeonDoorsTable);
 
     address = sceneDiskLoader_findVariableOffset(data, size, "CD%");
-    sceneDiskLoader_decodeBidimentionalArray(data, address + variableHeaderCount, OS_DUNGEON_DOORS_FRONT_TABLE_WIDTH, OS_DUNGEON_TABLE_HEIGHT, dungeonDoorsFrontTable);
+    sceneDiskLoader_decodeBidimentionalArray(data, address + variableHeaderCount, 4, OS_DUNGEON_TABLE_HEIGHT, dungeonDoorsFrontTable);
 
     address = sceneDiskLoader_findVariableOffset(data, size, "FT%");
     sceneDiskLoader_decodeBidimentionalArray(data, address + variableHeaderCount, 6, OS_DUNGEON_TABLE_HEIGHT, dungeonTrapsTable);

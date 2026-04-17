@@ -130,12 +130,28 @@ static void sceneDungeon_init() {
   dungeonRenderer_update();
 }
 
+bool sceneDungeon_isSolid(int x, int y) {
+  if (x < 0 || x >= OS_DUNGEON_MAP_WIDTH || y < 0 || y >= OS_DUNGEON_MAP_HEIGHT) {
+    return false;
+  }
+
+  int tile = dungeonMap[x][y];
+  return tile == 1 || tile > 9;
+}
+
 static void sceneDungeon_update(float deltaTime) {
   if (ztatsActive) {
     uiZtats_update(deltaTime);
   }
 
-  if (playerDungeon_update(deltaTime)) {
+  if (playerActed) {
+    playerActed = false;
+
+    uiConsole_addMessage(ultimaStrings[98]);
+  }
+
+  if (player_isAlive() && playerDungeon_update(deltaTime)) {
+    playerActed = true;
     dungeonRenderer_update();
   }
 

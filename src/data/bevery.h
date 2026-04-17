@@ -2,9 +2,6 @@
 #define OS_BEVERY_H
 
 #define OS_DUNGEON_TABLE_HEIGHT 11
-#define OS_DUNGEON_TABLE_WIDTH 4
-#define OS_DUNGEON_DOORS_TABLE_WIDTH 6
-#define OS_DUNGEON_DOORS_FRONT_TABLE_WIDTH 4
 
 extern char **statsNames;
 extern int statsNamesSize;
@@ -30,9 +27,9 @@ extern int typesNamesSize;
 extern char **placesNames;
 extern int placesNamesSize;
 
-extern int dungeonTable[OS_DUNGEON_TABLE_HEIGHT][OS_DUNGEON_TABLE_WIDTH];
-extern int dungeonDoorsTable[OS_DUNGEON_TABLE_HEIGHT][OS_DUNGEON_DOORS_TABLE_WIDTH];
-extern int dungeonDoorsFrontTable[OS_DUNGEON_TABLE_HEIGHT][OS_DUNGEON_DOORS_FRONT_TABLE_WIDTH];
+extern int dungeonTable[OS_DUNGEON_TABLE_HEIGHT][4];
+extern int dungeonDoorsTable[OS_DUNGEON_TABLE_HEIGHT][6];
+extern int dungeonDoorsFrontTable[OS_DUNGEON_TABLE_HEIGHT][4];
 extern int dungeonTrapsTable[OS_DUNGEON_TABLE_HEIGHT][6];
 extern int dungeonLaddersTable[OS_DUNGEON_TABLE_HEIGHT][4];
 
