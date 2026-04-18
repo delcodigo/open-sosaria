@@ -1,3 +1,4 @@
+#include <math.h>
 #include "entities/ui/uiConsole.h"
 #include "entities/vmExecuter.h"
 #include "playerDungeon.h"
@@ -6,6 +7,7 @@
 #include "scenes/sceneDiskLoader.h"
 #include "scenes/sceneDungeon.h"
 #include "scenes/sceneOverworld.h"
+#include "utils.h"
 
 static int hp = 0;
 
@@ -150,6 +152,7 @@ static bool playerDungeon_updateKlimb() {
         uiConsole_queueMessageFormat("%s%d%s", ultimaStrings[929], hp, ultimaStrings[930]);
         uiConsole_queueMessage("");
         player.health += hp;
+        uiConsole_updateStats();
         vmExecuter_createSceneTransition(1, &sceneOverworld);
         return true;
       }
@@ -169,6 +172,35 @@ static bool playerDungeon_updateKlimb() {
   return false;
 }
 
+static bool playerDungeon_updateOpen() {
+  if (input.o == 1) {
+    input.o = 2;
+    uiConsole_replaceLastMessageFormat("%s%s", ultimaStrings[98], ultimaStrings[940]);
+
+    int tile = dungeonMap[player.px][player.py];
+    if (tile != 6) {
+      uiConsole_queueMessage(ultimaStrings[941]);
+      return true;
+    }
+
+    int frontTile = dungeonMap[player.px + player.dx][player.py + player.dy];
+    if (rand01() < 0.4f || frontTile != 0 || rand01() > 0.8f) {
+      dungeonMap[player.px][player.py] = 0;
+      int gold = (int)(rand01() * pow(player.dungeonDepth, 2) * 9 + 9);
+      player.gold += gold;
+      uiConsole_queueMessageFormat("%s%d%s", ultimaStrings[916], gold, ultimaStrings[917]);
+      uiConsole_updateStats();
+      return true;
+    }
+
+    // TODO: Spawn a monster
+
+    return true;
+  }
+
+  return false;
+}
+
 bool playerDungeon_update(float deltaTime) {
   bool acted = false;
 
@@ -180,6 +212,7 @@ bool playerDungeon_update(float deltaTime) {
     if (playerDungeon_updateGet()) { acted = true; } else
     if (playerDungeon_updateInform()) { acted = true; } else
     if (playerDungeon_updateKlimb()) { acted = true; } else
+    if (playerDungeon_updateOpen()) { acted = true; } else
     if (playerDungeon_updateRotation()) { acted = true; } else
     if (playerDungeon_updateMovement()) { acted = true; }
   } else {
