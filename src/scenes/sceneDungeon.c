@@ -13,16 +13,6 @@
 
 int dungeonMap[OS_DUNGEON_MAP_WIDTH][OS_DUNGEON_MAP_HEIGHT] = {0};
 
-static void sceneDungeon_printDungeon() {
-  printf("\n");
-  for (int x=0;x<OS_DUNGEON_MAP_WIDTH;x++) {
-    for (int y=0;y<OS_DUNGEON_MAP_HEIGHT;y++) {
-      printf("%d ", dungeonMap[x][y]);
-    }
-    printf("\n");
-  }
-}
-
 static void sceneDungeon_generateFloor() {
   int tx = (int)(player.tx % OS_BTERRA_MAP_WIDTH);
   int ty = (int)(player.ty % OS_BTERRA_MAP_HEIGHT);
@@ -113,8 +103,6 @@ static void sceneDungeon_generateFloor() {
     dungeonMap[1][1] = 8;
     dungeonMap[7][3] = 0;
   }
-
-  sceneDungeon_printDungeon();
 }
 
 static void sceneDungeon_init() {
