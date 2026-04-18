@@ -6,6 +6,7 @@
 #include "entities/ui/uiConsole.h"
 #include "entities/dungeonRenderer.h"
 #include "entities/playerDungeon.h"
+#include "entities/vmExecuter.h"
 #include "data/player.h"
 #include "sceneDiskLoader.h"
 #include "config.h"
@@ -13,7 +14,7 @@
 
 int dungeonMap[OS_DUNGEON_MAP_WIDTH][OS_DUNGEON_MAP_HEIGHT] = {0};
 
-static void sceneDungeon_generateFloor() {
+void sceneDungeon_generateFloor() {
   int tx = (int)(player.tx % OS_BTERRA_MAP_WIDTH);
   int ty = (int)(player.ty % OS_BTERRA_MAP_HEIGHT);
   int world = ((int)player.ty / OS_BTERRA_MAP_HEIGHT) * 2 + ((int)player.tx / OS_BTERRA_MAP_WIDTH);
@@ -132,15 +133,17 @@ static void sceneDungeon_update(float deltaTime) {
     uiZtats_update(deltaTime);
   }
 
-  if (playerActed) {
-    playerActed = false;
+  if (!queuedMessagesCount && lagTime <= 0 && !vmExecuter_update(deltaTime)) {
+    if (playerActed) {
+      playerActed = false;
+      
+      dungeonRenderer_update();
+      uiConsole_addMessage(ultimaStrings[98]);
+    }
 
-    uiConsole_addMessage(ultimaStrings[98]);
-  }
-
-  if (player_isAlive() && playerDungeon_update(deltaTime)) {
-    playerActed = true;
-    dungeonRenderer_update();
+    if (player_isAlive() && playerDungeon_update(deltaTime)) {
+      playerActed = true;
+    }
   }
 
   float *viewMatrix = camera_getViewProjectionMatrix(&camera);

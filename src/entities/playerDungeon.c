@@ -1,11 +1,16 @@
 #include "entities/ui/uiConsole.h"
+#include "entities/vmExecuter.h"
 #include "playerDungeon.h"
 #include "data/player.h"
 #include "engine/input.h"
 #include "scenes/sceneDiskLoader.h"
 #include "scenes/sceneDungeon.h"
+#include "scenes/sceneOverworld.h"
+
+static int hp = 0;
 
 void playerDungeon_init() {
+  hp = 0;
 }
 
 static bool playerDungeon_updateRotation() {
@@ -120,6 +125,50 @@ static bool playerDungeon_updateInform() {
   return false;
 }
 
+static bool playerDungeon_updateKlimb() {
+  if (input.k == 1) {
+    input.k = 2;
+
+    uiConsole_replaceLastMessageFormat("%s%s", ultimaStrings[98], ultimaStrings[925]);
+
+    int tile = dungeonMap[player.px][player.py];
+    if (tile != 7 && tile != 8 && tile != 9) {
+      uiConsole_queueMessage(ultimaStrings[926]);
+      return true;
+    }
+
+    if (player.dy == 0 && tile != 9) {
+      uiConsole_queueMessage(ultimaStrings[927]);
+      return true;
+    }
+
+    if (tile == 8) {
+      uiConsole_queueMessageFormat("%s%d", ultimaStrings[928], player.dungeonDepth - 1);
+      player.dungeonDepth--;
+      if (player.dungeonDepth < 1) {
+        hp *= 2;
+        uiConsole_queueMessageFormat("%s%d%s", ultimaStrings[929], hp, ultimaStrings[930]);
+        uiConsole_queueMessage("");
+        player.health += hp;
+        vmExecuter_createSceneTransition(1, &sceneOverworld);
+        return true;
+      }
+
+      sceneDungeon_generateFloor();
+    } else {
+      uiConsole_queueMessageFormat("%s%d", ultimaStrings[934], player.dungeonDepth + 1);
+      player.dungeonDepth++;
+      sceneDungeon_generateFloor();
+    }
+
+
+    vmExecuter_createWait(1);
+    return true;
+  }
+
+  return false;
+}
+
 bool playerDungeon_update(float deltaTime) {
   bool acted = false;
 
@@ -130,6 +179,7 @@ bool playerDungeon_update(float deltaTime) {
     if (playerDungeon_updateFire()) { acted = true; } else
     if (playerDungeon_updateGet()) { acted = true; } else
     if (playerDungeon_updateInform()) { acted = true; } else
+    if (playerDungeon_updateKlimb()) { acted = true; } else
     if (playerDungeon_updateRotation()) { acted = true; } else
     if (playerDungeon_updateMovement()) { acted = true; }
   } else {
