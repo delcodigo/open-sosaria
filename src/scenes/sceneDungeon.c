@@ -129,11 +129,12 @@ bool sceneDungeon_isSolid(int x, int y) {
 }
 
 static void sceneDungeon_update(float deltaTime) {
-  if (ztatsActive) {
-    uiZtats_update(deltaTime);
-  }
-
   if (!queuedMessagesCount && lagTime <= 0 && !vmExecuter_update(deltaTime)) {
+    if (ztatsActive) {
+      uiZtats_update(deltaTime);
+      return;
+    }
+
     if (playerActed) {
       playerActed = false;
       

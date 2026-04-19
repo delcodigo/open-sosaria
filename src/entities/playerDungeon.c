@@ -2,6 +2,7 @@
 #include "entities/ui/uiConsole.h"
 #include "entities/vmExecuter.h"
 #include "playerDungeon.h"
+#include "playerCommons.h"
 #include "data/player.h"
 #include "engine/input.h"
 #include "scenes/sceneDiskLoader.h"
@@ -201,25 +202,69 @@ static bool playerDungeon_updateOpen() {
   return false;
 }
 
+static bool playerDungeon_updateSave() {
+  if (input.q == 1) {
+    input.q = 2;
+    uiConsole_replaceLastMessageFormat("%s%s", ultimaStrings[98], ultimaStrings[944]);
+    uiConsole_queueMessage(ultimaStrings[945]);
+    uiConsole_queueMessage(ultimaStrings[946]);
+    return true;
+  }
+
+  return false;
+}
+
+static bool playerDungeon_updateAutoPass(float deltaTime) {
+  waitingTime += deltaTime;
+  if (waitingTime >= 5.0f) {
+    waitingTime = 0.0f;
+    uiConsole_replaceLastMessageFormat("%s%s", ultimaStrings[98], ultimaStrings[99]);
+    player_waitPenalty();
+    return true;
+  }
+
+  return false;
+}
+
 bool playerDungeon_update(float deltaTime) {
   bool acted = false;
 
   if (keyRepeatDelay <= 0) {
-    if (playerDungeon_updateBoard()) { acted = true; } else
-    if (playerDungeon_updateDrop()) { acted = true; } else
-    if (playerDungeon_updateEnter()) { acted = true; } else
-    if (playerDungeon_updateFire()) { acted = true; } else
-    if (playerDungeon_updateGet()) { acted = true; } else
-    if (playerDungeon_updateInform()) { acted = true; } else
-    if (playerDungeon_updateKlimb()) { acted = true; } else
-    if (playerDungeon_updateOpen()) { acted = true; } else
-    if (playerDungeon_updateRotation()) { acted = true; } else
-    if (playerDungeon_updateMovement()) { acted = true; }
+    switch (playerState) {
+      case PLAYER_STATE_IDLE:
+        if (playerDungeon_updateBoard()) { acted = true; } else
+        if (playerDungeon_updateDrop()) { acted = true; } else
+        if (playerDungeon_updateEnter()) { acted = true; } else
+        if (playerDungeon_updateFire()) { acted = true; } else
+        if (playerDungeon_updateGet()) { acted = true; } else
+        if (playerDungeon_updateInform()) { acted = true; } else
+        if (playerDungeon_updateKlimb()) { acted = true; } else
+        if (playerDungeon_updateOpen()) { acted = true; } else
+        if (playerDungeon_updateSave()) { acted = true; } else
+        if (playerCommons_updateReady()) { acted = true; } else
+        if (playerCommons_updateWait()) { acted = true; } else
+        if (playerCommons_updateZtats()) { acted = true; } else
+        if (playerDungeon_updateRotation()) { acted = true; } else
+        if (playerDungeon_updateMovement()) { acted = true; } else 
+        if (playerDungeon_updateAutoPass(deltaTime)) { acted = true; }
+        break;
+      
+      case PLAYER_STATE_READY_TYPE:
+        if (playerCommons_updateReady()) { acted = true; } else
+        break;
+
+      default:
+        break;
+    }
   } else {
     keyRepeatDelay -= deltaTime;
     if (keyRepeatDelay < 0) {
       keyRepeatDelay = 0;
     }
+  }
+
+  if (acted) {
+    waitingTime = 0.0f;
   }
 
   return acted;
