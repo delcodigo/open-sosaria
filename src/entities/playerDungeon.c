@@ -226,6 +226,36 @@ static bool playerDungeon_updateAutoPass(float deltaTime) {
   return false;
 }
 
+static bool playerDungeon_updateUnlock() {
+  if (input.u == 1) {
+    input.u = 2;
+    uiConsole_replaceLastMessageFormat("%s%s", ultimaStrings[98], ultimaStrings[973]);
+
+    int tile = dungeonMap[player.px][player.py];
+    if (tile != 5) {
+      uiConsole_queueMessage(ultimaStrings[974]);
+      return true;
+    }
+
+    if (player.type != 4 && rand01() < 0.5f - (float) player.agility / 100.0f) {
+      uiConsole_queueMessage(ultimaStrings[975]);
+      player.health -= player.dungeonDepth;
+      uiConsole_updateStats();
+      return true;
+    }
+
+    dungeonMap[player.px][player.py] = 0;
+    int gold = (int)(rand01() * pow(player.dungeonDepth, 2) * 9 + 9);
+    player.gold += gold;
+    uiConsole_queueMessageFormat("%s%d%s", ultimaStrings[916], gold, ultimaStrings[917]);
+    uiConsole_updateStats();
+
+    return true;
+  }
+
+  return false;
+}
+
 bool playerDungeon_update(float deltaTime) {
   bool acted = false;
 
@@ -244,6 +274,7 @@ bool playerDungeon_update(float deltaTime) {
         if (playerCommons_updateReady()) { acted = true; } else
         if (playerCommons_updateWait()) { acted = true; } else
         if (playerCommons_updateZtats()) { acted = true; } else
+        if (playerDungeon_updateUnlock()) { acted = true; } else
         if (playerDungeon_updateRotation()) { acted = true; } else
         if (playerDungeon_updateMovement()) { acted = true; } else 
         if (playerDungeon_updateAutoPass(deltaTime)) { acted = true; }
