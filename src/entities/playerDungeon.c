@@ -17,24 +17,27 @@ void playerDungeon_init() {
 }
 
 static bool playerDungeon_updateRotation() {
-  if (input.left) {
+  if (input.left == 1) {
+    input.left = 2;
     int dx = player.dx;
     player.dx = player.dy;
     player.dy = -dx;
-    keyRepeatDelay = 0.2f;
+    keyRepeatDelay = 0.1f;
     uiConsole_replaceLastMessageFormat("%s%s", ultimaStrings[98], ultimaStrings[866]);
     return true;
-  } else if (input.right) {
+  } else if (input.right == 1) {
+    input.right = 2;
     int dx = player.dx;
     player.dx = -player.dy;
     player.dy = dx;
-    keyRepeatDelay = 0.2f;
+    keyRepeatDelay = 0.1f;
     uiConsole_replaceLastMessageFormat("%s%s", ultimaStrings[98], ultimaStrings[867]);
     return true;
-  } else if (input.down) {
+  } else if (input.down == 1) {
+    input.down = 2;
     player.dx = -player.dx;
     player.dy = -player.dy;
-    keyRepeatDelay = 0.2f;
+    keyRepeatDelay = 0.1f;
     uiConsole_replaceLastMessageFormat("%s%s", ultimaStrings[98], ultimaStrings[865]);
     return true;
   }
@@ -43,7 +46,8 @@ static bool playerDungeon_updateRotation() {
 }
 
 static bool playerDungeon_updateMovement() {
-  if (input.up) {
+  if (input.up == 1) {
+    input.up = 2;
     uiConsole_replaceLastMessageFormat("%s%s", ultimaStrings[98], ultimaStrings[859]);
 
     if (sceneDungeon_isSolid(player.px + player.dx, player.py + player.dy)) {
@@ -53,7 +57,25 @@ static bool playerDungeon_updateMovement() {
 
     player.px += player.dx;
     player.py += player.dy;
-    keyRepeatDelay = 0.2f;
+    keyRepeatDelay = 0.1f;
+
+    int tile = dungeonMap[player.px][player.py];
+    if (tile == 2) {
+      if (player.weapons[3] > 0) {
+        player.weapons[3]--;
+        uiConsole_queueMessage(ultimaStrings[862]);
+        uiConsole_queueMessage(ultimaStrings[863]);
+      } else {
+        uiConsole_queueMessage(ultimaStrings[864]);
+        player.health -= (int)(rand01() * player.dungeonDepth * 10 + player.dungeonDepth);
+        uiConsole_queueMessageFormat("%s%d", ultimaStrings[934], player.dungeonDepth + 1);
+        player.dungeonDepth++;
+        sceneDungeon_generateFloor();
+      }
+
+      vmExecuter_createWait(1);
+    }
+
     return true;
   }
 
