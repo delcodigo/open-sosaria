@@ -1069,7 +1069,7 @@ static float sceneDiskLoader_decodeDungeonCreaturePoint(uint8_t *instructions, u
   float point = 1;
   if (instructions[1] == 0xC9) {
     point = -1;
-  } else if (instructions[1] == 0XC1 || instructions[1] == 0x2C) {
+  } else if (instructions[1] == 0XC1 || instructions[1] == 0x2C || instructions[1] == 0x3A) {
     *offset += 1;
     return 0;
   }
@@ -1112,7 +1112,6 @@ static void sceneDiskLoader_decodeDungeonCreature(uint8_t *data, size_t dataSize
 
     float coordY = sceneDiskLoader_decodeDungeonCreaturePoint((uint8_t *)instructions, &instructions);
 
-    printf("%f,%f", coordX, coordY);
     dungeonEnemyHplotPoints[creatureIndex].hplotLists[hplotIndex].points[hplotCoordIndex++] = coordX;
     dungeonEnemyHplotPoints[creatureIndex].hplotLists[hplotIndex].points[hplotCoordIndex++] = coordY;
 
@@ -1122,7 +1121,6 @@ static void sceneDiskLoader_decodeDungeonCreature(uint8_t *data, size_t dataSize
       while (instructions[0] != 0x43) { instructions++; }
     } else if (instructions[0] == 0x00) { // EOL
       if (instructions[5] == 0x93) {
-        lineNumber += 10;
         dungeonEnemyHplotPoints[creatureIndex].hplotLists[hplotIndex].pointCount = hplotCoordIndex;
         hplotIndex++;
         hplotCoordIndex = 0;
@@ -1140,10 +1138,15 @@ static void sceneDiskLoader_decodeDungeonCreature(uint8_t *data, size_t dataSize
     } else if (instructions[0] == 0x3A) { // :
       dungeonEnemyHplotPoints[creatureIndex].hplotLists[hplotIndex].pointCount = hplotCoordIndex;
       if (instructions[1] == 0x93) {
-        lineNumber += 10;
         hplotIndex++;
         hplotCoordIndex = 0;
         instructions += 2;
+
+        if (instructions[0] == 0xC1) {
+          dungeonEnemyHplotPoints[creatureIndex].hplotLists[hplotIndex].points[hplotCoordIndex++] = coordX;
+          dungeonEnemyHplotPoints[creatureIndex].hplotLists[hplotIndex].points[hplotCoordIndex++] = coordY;
+          instructions++;
+        }
       } else if (instructions[1] == 0xB1) {
         parsing = false;
       }
@@ -1166,6 +1169,10 @@ static void sceneDiskLoader_loadDungeonCreatures(uint8_t *disk, char *fileName) 
     }
 
     sceneDiskLoader_decodeDungeonCreature((uint8_t *)data, size, 10000, 0);
+    sceneDiskLoader_decodeDungeonCreature((uint8_t *)data, size, 11000, 1);
+    sceneDiskLoader_decodeDungeonCreature((uint8_t *)data, size, 12000, 2);
+    sceneDiskLoader_decodeDungeonCreature((uint8_t *)data, size, 13000, 3);
+    sceneDiskLoader_decodeDungeonCreature((uint8_t *)data, size, 14000, 4);
     
     free(fileBuffer->data);
     free(fileBuffer);

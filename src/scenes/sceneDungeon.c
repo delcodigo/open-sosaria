@@ -107,6 +107,8 @@ void sceneDungeon_generateFloor() {
   }
 
   monstersIndex = 20 + ((int)(player.dungeonDepth / 2.0f + 0.5f) - 1) * 5;
+  dungeonMap[2][1] = 0;
+  dungeonMap[4][1] = 0;
   dungeonMap[3][1] = 100;
 }
 

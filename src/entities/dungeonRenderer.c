@@ -46,69 +46,18 @@ void dungeonRenderer_setPixel(int x, int y, uint8_t r, uint8_t g, uint8_t b) {
 }
 
 void dungeonRenderer_drawLine(int x0, int y0, int x1, int y1) {
-  int dx = x1 - x0;
-  int dy = y1 - y0;
-  int stepX = dx > 0 ? 1 : (dx < 0 ? -1 : 0);
-  int stepY = dy > 0 ? 1 : (dy < 0 ? -1 : 0);
-  int absDx = abs(dx);
-  int absDy = abs(dy);
+  int dx = abs(x1 - x0);
+  int dy = abs(y1 - y0);
+  int stepX = x0 < x1 ? 1 : -1;
+  int stepY = y0 < y1 ? 1 : -1;
+  int err = dx - dy;
 
-  dungeonRenderer_setPixel(x0, y0, 255, 255, 255);
-
-  if (absDx >= absDy) {
-    int error = absDx;
-    int previousError = error;
-    int doubledDx = absDx * 2;
-    int doubledDy = absDy * 2;
-
-    for (int i = 0; i < absDx; i++) {
-      x0 += stepX;
-      error += doubledDy;
-
-      if (error > doubledDx) {
-        y0 += stepY;
-        error -= doubledDx;
-
-        if (error + previousError < doubledDx) {
-          dungeonRenderer_setPixel(x0, y0 - stepY, 255, 255, 255);
-        } else if (error + previousError > doubledDx) {
-          dungeonRenderer_setPixel(x0 - stepX, y0, 255, 255, 255);
-        } else {
-          dungeonRenderer_setPixel(x0, y0 - stepY, 255, 255, 255);
-          dungeonRenderer_setPixel(x0 - stepX, y0, 255, 255, 255);
-        }
-      }
-
-      dungeonRenderer_setPixel(x0, y0, 255, 255, 255);
-      previousError = error;
-    }
-  } else {
-    int error = absDy;
-    int previousError = error;
-    int doubledDx = absDx * 2;
-    int doubledDy = absDy * 2;
-
-    for (int i = 0; i < absDy; i++) {
-      y0 += stepY;
-      error += doubledDx;
-
-      if (error > doubledDy) {
-        x0 += stepX;
-        error -= doubledDy;
-
-        if (error + previousError < doubledDy) {
-          dungeonRenderer_setPixel(x0 - stepX, y0, 255, 255, 255);
-        } else if (error + previousError > doubledDy) {
-          dungeonRenderer_setPixel(x0, y0 - stepY, 255, 255, 255);
-        } else {
-          dungeonRenderer_setPixel(x0 - stepX, y0, 255, 255, 255);
-          dungeonRenderer_setPixel(x0, y0 - stepY, 255, 255, 255);
-        }
-      }
-
-      dungeonRenderer_setPixel(x0, y0, 255, 255, 255);
-      previousError = error;
-    }
+  while (1) {
+    dungeonRenderer_setPixel(x0, y0, 255, 255, 255);
+    if (x0 == x1 && y0 == y1) break;
+    int e2 = 2 * err;
+    if (e2 > -dy) { err -= dy; x0 += stepX; }
+    if (e2 < dx)  { err += dx; y0 += stepY; }
   }
 }
 
@@ -327,15 +276,20 @@ void dungeonRenderer_update() {
       } else {
         uiConsole_queueMessageFormat("^1%s^0", enemyDefinitions[monsterInCell + monstersIndex].name);
 
-        int linesCount = dungeonEnemyHplotPoints[0].hplotListCount;
+        int linesCount = dungeonEnemyHplotPoints[4].hplotListCount;
         for (int i=0;i<linesCount;i++) {
-          int pointCount = dungeonEnemyHplotPoints[0].hplotLists[i].pointCount;
-          int x1 = C + dungeonEnemyHplotPoints[0].hplotLists[i].points[0] * (dungeonEnemyHplotPoints[0].hplotLists[i].points[0] < 0 ? L : R);
-          int y1 = B + dungeonEnemyHplotPoints[0].hplotLists[i].points[1] * H;
+          int pointCount = dungeonEnemyHplotPoints[4].hplotLists[i].pointCount;
+          int x1 = C + dungeonEnemyHplotPoints[4].hplotLists[i].points[0] * (dungeonEnemyHplotPoints[4].hplotLists[i].points[0] < 0 ? L : R);
+          int y1 = B + dungeonEnemyHplotPoints[4].hplotLists[i].points[1] * H;
+
+          if (pointCount == 2) {
+            dungeonRenderer_setPixel(x1, y1, 255, 255, 255);
+            continue;
+          }
           
           for (int j=2;j<pointCount;j+=2) {
-            int x2 = C + dungeonEnemyHplotPoints[0].hplotLists[i].points[j] * (dungeonEnemyHplotPoints[0].hplotLists[i].points[j] < 0 ? L : R);
-            int y2 = B + dungeonEnemyHplotPoints[0].hplotLists[i].points[j + 1] * H;
+            int x2 = C + dungeonEnemyHplotPoints[4].hplotLists[i].points[j] * (dungeonEnemyHplotPoints[4].hplotLists[i].points[j] < 0 ? L : R);
+            int y2 = B + dungeonEnemyHplotPoints[4].hplotLists[i].points[j + 1] * H;
             dungeonRenderer_drawLine(x1, y1, x2, y2);
             x1 = x2;
             y1 = y2;
