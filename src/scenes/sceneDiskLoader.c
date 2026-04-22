@@ -14,6 +14,7 @@
 #include "sceneSplash.h"
 #include "data/enemy.h"
 #include "data/bevery.h"
+#include "data/dungeonEnemy.h"
 
 #define DISK_SIZE 35 * 16 * 256
 #define DOS_TRACKS 35
@@ -1050,6 +1051,127 @@ static void sceneDiskLoader_loadCollisionsMap(uint8_t *disk, char* fileName, uin
   }
 }
 
+static int sceneDiskLoader_findBasicLineNumber(uint8_t *data, size_t dataSize, int lineNumber) {
+  if (!data) { return -1; }
+
+  for (size_t pos=0;pos+2<dataSize;pos++) {
+    int nextAddr = data[pos] | (data[pos + 1] << 8);
+    
+    if (nextAddr == lineNumber) {
+      return (int)pos;
+    }
+  }
+
+  return -1;
+}
+
+static float sceneDiskLoader_decodeDungeonCreaturePoint(uint8_t *instructions, uint8_t **offset) {
+  float point = 1;
+  if (instructions[1] == 0xC9) {
+    point = -1;
+  } else if (instructions[1] == 0XC1 || instructions[1] == 0x2C) {
+    *offset += 1;
+    return 0;
+  }
+
+  char asciiNum[8] = {0};
+  asciiNum[0] = '0';
+  size_t asciiInd = 2;
+  while (instructions[asciiInd] != 0xCA) {
+    asciiNum[asciiInd - 1] = instructions[asciiInd];
+    asciiInd++;
+  }
+  point *= atof(asciiNum);
+
+  *offset += asciiInd + 1;
+
+  return point;
+}
+
+static void sceneDiskLoader_decodeDungeonCreature(uint8_t *data, size_t dataSize, int lineNumber, int creatureIndex) {
+  if (!data || dataSize < 256) { return; }
+
+  int instructionsLine = sceneDiskLoader_findBasicLineNumber(data, dataSize, lineNumber);
+  if (instructionsLine < 0) { return; }
+
+  uint8_t *instructions = data + instructionsLine + 2;
+  size_t instructionsSize = dataSize - instructionsLine;
+
+  if (instructions[0] != 0x93) { return; }
+  instructions++;
+
+  int hplotIndex = 0;
+  int hplotCoordIndex = 0;
+
+  bool parsing = true;
+  while (parsing && instructionsSize > 0) {
+    float coordX = sceneDiskLoader_decodeDungeonCreaturePoint((uint8_t *)instructions, &instructions);
+
+    while (instructions[0] != 0x2C) { instructions++; }
+    instructions++;
+
+    float coordY = sceneDiskLoader_decodeDungeonCreaturePoint((uint8_t *)instructions, &instructions);
+
+    printf("%f,%f", coordX, coordY);
+    dungeonEnemyHplotPoints[creatureIndex].hplotLists[hplotIndex].points[hplotCoordIndex++] = coordX;
+    dungeonEnemyHplotPoints[creatureIndex].hplotLists[hplotIndex].points[hplotCoordIndex++] = coordY;
+
+    while (instructions[0] != 0xC1 && instructions[0] != 0x00 && instructions[0] != 0x3A) { instructions++; }
+
+    if (instructions[0] == 0xC1) { // TO
+      while (instructions[0] != 0x43) { instructions++; }
+    } else if (instructions[0] == 0x00) { // EOL
+      if (instructions[5] == 0x93) {
+        lineNumber += 10;
+        dungeonEnemyHplotPoints[creatureIndex].hplotLists[hplotIndex].pointCount = hplotCoordIndex;
+        hplotIndex++;
+        hplotCoordIndex = 0;
+        instructions += 6;
+
+        if (instructions[0] == 0xC1) {
+          dungeonEnemyHplotPoints[creatureIndex].hplotLists[hplotIndex].points[hplotCoordIndex++] = coordX;
+          dungeonEnemyHplotPoints[creatureIndex].hplotLists[hplotIndex].points[hplotCoordIndex++] = coordY;
+        }
+
+        while (instructions[0] != 0x43) { 
+          instructions++; 
+        }
+      }
+    } else if (instructions[0] == 0x3A) { // :
+      dungeonEnemyHplotPoints[creatureIndex].hplotLists[hplotIndex].pointCount = hplotCoordIndex;
+      if (instructions[1] == 0x93) {
+        lineNumber += 10;
+        hplotIndex++;
+        hplotCoordIndex = 0;
+        instructions += 2;
+      } else if (instructions[1] == 0xB1) {
+        parsing = false;
+      }
+    }
+  }
+
+  dungeonEnemyHplotPoints[creatureIndex].hplotListCount = hplotIndex + 1;
+}
+
+static void sceneDiskLoader_loadDungeonCreatures(uint8_t *disk, char *fileName) {
+  Buffer *fileBuffer = sceneDiskLoader_readDos33FileByName(disk, fileName);
+  if (fileBuffer && fileBuffer->data) {
+    uint32_t size = 0;
+    const uint8_t *data = sceneDiskLoader_maybeStripBloadHeader(fileBuffer->data, fileBuffer->size, &size);
+
+    if (!data || size < 256) {
+      free(fileBuffer->data);
+      free(fileBuffer);
+      return;
+    }
+
+    sceneDiskLoader_decodeDungeonCreature((uint8_t *)data, size, 10000, 0);
+    
+    free(fileBuffer->data);
+    free(fileBuffer);
+  }
+}
+
 static int sceneDiskLoader_verifyUltimaDisks() {
   if (!file_exists("program.dsk")) {
     strcpy(diskMsgText, "'program.dsk' not found!");
@@ -1328,7 +1450,12 @@ void sceneDiskLoader_extractUltimaAssets() {
     address = sceneDiskLoader_findVariableOffset(data, size, "LA%");
     sceneDiskLoader_decodeBidimentionalArray(data, address + variableHeaderCount, 4, OS_DUNGEON_TABLE_HEIGHT, dungeonLaddersTable);
 
+    address = sceneDiskLoader_findVariableOffset(data, size, "YY%");
+    sceneDiskLoader_decodeBidimentionalArray(data, address + variableHeaderCount, 1, OS_DUNGEON_TABLE_HEIGHT, dungeonEnemiesHeight);
+
     sceneDiskLoader_decodeEnemiesTable(data);
+
+    sceneDiskLoader_loadDungeonCreatures(disk1, "SET1");
 
     free(beveryBuffer->data);
     free(beveryBuffer);

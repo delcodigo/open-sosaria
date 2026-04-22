@@ -13,6 +13,7 @@
 #include "utils.h"
 
 int dungeonMap[OS_DUNGEON_MAP_WIDTH][OS_DUNGEON_MAP_HEIGHT] = {0};
+int monstersIndex;
 
 void sceneDungeon_generateFloor() {
   int tx = (int)(player.tx % OS_BTERRA_MAP_WIDTH);
@@ -104,6 +105,9 @@ void sceneDungeon_generateFloor() {
     dungeonMap[1][1] = 8;
     dungeonMap[7][3] = 0;
   }
+
+  monstersIndex = 20 + ((int)(player.dungeonDepth / 2.0f + 0.5f) - 1) * 5;
+  dungeonMap[3][1] = 100;
 }
 
 static void sceneDungeon_init() {

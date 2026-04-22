@@ -278,6 +278,16 @@ static bool playerDungeon_updateUnlock() {
   return false;
 }
 
+bool playerDungeon_updateExit() {
+  if (input.x == 1) {
+    input.x = 2;
+    uiConsole_replaceLastMessageFormat("%s%s", ultimaStrings[98], ultimaStrings[978]);
+    return true;
+  }
+
+  return false;
+}
+
 bool playerDungeon_update(float deltaTime) {
   bool acted = false;
 
@@ -297,6 +307,7 @@ bool playerDungeon_update(float deltaTime) {
         if (playerCommons_updateWait()) { acted = true; } else
         if (playerCommons_updateZtats()) { acted = true; } else
         if (playerDungeon_updateUnlock()) { acted = true; } else
+        if (playerDungeon_updateExit()) { acted = true; } else
         if (playerDungeon_updateRotation()) { acted = true; } else
         if (playerDungeon_updateMovement()) { acted = true; } else 
         if (playerDungeon_updateAutoPass(deltaTime)) { acted = true; }

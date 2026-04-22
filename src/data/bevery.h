@@ -32,6 +32,7 @@ extern int dungeonDoorsTable[OS_DUNGEON_TABLE_HEIGHT][6];
 extern int dungeonDoorsFrontTable[OS_DUNGEON_TABLE_HEIGHT][4];
 extern int dungeonTrapsTable[OS_DUNGEON_TABLE_HEIGHT][6];
 extern int dungeonLaddersTable[OS_DUNGEON_TABLE_HEIGHT][4];
+extern int dungeonEnemiesHeight[OS_DUNGEON_TABLE_HEIGHT][1];
 
 void bevery_free();
 

@@ -10,6 +10,8 @@
 #include "maths/matrix4.h"
 #include "data/bevery.h"
 #include "data/player.h"
+#include "data/dungeonEnemy.h"
+#include "data/enemy.h"
 #include "entities/ui/uiConsole.h"
 
 static uint8_t dungeonScreen[OS_SCREEN_WIDTH * OS_SCREEN_HEIGHT * 4] = {0};
@@ -306,12 +308,44 @@ void dungeonRenderer_update() {
         uiConsole_queueMessageFormat("^1%s^0", ultimaStrings[844]);
       }
     }
-    if ((int)(dungeonMap[player.px][player.py] / 100) < 1) {
+    int monsterInCell = (int)(dungeonMap[player.px + player.dx * distance][player.py + player.dy * distance] / 100);
+    if (monsterInCell < 1) {
       if (shouldBreak) {
         break;
       }
     } else {
+      int B = 79 + dungeonEnemiesHeight[distance-1][0];
+      int C = 139;
+      int L = C - l1;
+      int R = r1 - C;
+      int H = 2 * dungeonEnemiesHeight[distance-1][0];
 
+      if (monsterInCell + monstersIndex == 32) {
+        uiConsole_queueMessageFormat("^1%s^0", ultimaStrings[845]);
+      } else if (distance == 0 && monsterInCell + monstersIndex != 41) {
+        break;
+      } else {
+        uiConsole_queueMessageFormat("^1%s^0", enemyDefinitions[monsterInCell + monstersIndex].name);
+
+        int linesCount = dungeonEnemyHplotPoints[0].hplotListCount;
+        for (int i=0;i<linesCount;i++) {
+          int pointCount = dungeonEnemyHplotPoints[0].hplotLists[i].pointCount;
+          int x1 = C + dungeonEnemyHplotPoints[0].hplotLists[i].points[0] * (dungeonEnemyHplotPoints[0].hplotLists[i].points[0] < 0 ? L : R);
+          int y1 = B + dungeonEnemyHplotPoints[0].hplotLists[i].points[1] * H;
+          
+          for (int j=2;j<pointCount;j+=2) {
+            int x2 = C + dungeonEnemyHplotPoints[0].hplotLists[i].points[j] * (dungeonEnemyHplotPoints[0].hplotLists[i].points[j] < 0 ? L : R);
+            int y2 = B + dungeonEnemyHplotPoints[0].hplotLists[i].points[j + 1] * H;
+            dungeonRenderer_drawLine(x1, y1, x2, y2);
+            x1 = x2;
+            y1 = y2;
+          }
+        }
+
+        if (monsterInCell + monstersIndex != 41) {
+          break;
+        }
+      }
     }
   }
 

@@ -31,6 +31,7 @@ int dungeonDoorsTable[OS_DUNGEON_TABLE_HEIGHT][6] = {0};
 int dungeonDoorsFrontTable[OS_DUNGEON_TABLE_HEIGHT][4] = {0};
 int dungeonTrapsTable[OS_DUNGEON_TABLE_HEIGHT][6] = {0};
 int dungeonLaddersTable[OS_DUNGEON_TABLE_HEIGHT][4] = {0};
+int dungeonEnemiesHeight[OS_DUNGEON_TABLE_HEIGHT][1] = {0};
 
 void bevery_free() {
   for (int i=0;i<statsNamesSize;i++) {
