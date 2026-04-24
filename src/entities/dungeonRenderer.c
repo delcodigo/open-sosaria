@@ -276,11 +276,11 @@ void dungeonRenderer_update() {
       } else {
         uiConsole_queueMessageFormat("^1%s^0", enemyDefinitions[monsterInCell + monstersIndex].name);
 
-        int linesCount = dungeonEnemyHplotPoints[4].hplotListCount;
+        int linesCount = dungeonEnemyHplotPoints[9].hplotListCount;
         for (int i=0;i<linesCount;i++) {
-          int pointCount = dungeonEnemyHplotPoints[4].hplotLists[i].pointCount;
-          int x1 = C + dungeonEnemyHplotPoints[4].hplotLists[i].points[0] * (dungeonEnemyHplotPoints[4].hplotLists[i].points[0] < 0 ? L : R);
-          int y1 = B + dungeonEnemyHplotPoints[4].hplotLists[i].points[1] * H;
+          int pointCount = dungeonEnemyHplotPoints[9].hplotLists[i].pointCount;
+          int x1 = C + dungeonEnemyHplotPoints[9].hplotLists[i].points[0] * (dungeonEnemyHplotPoints[9].hplotLists[i].points[0] < 0 ? L : R);
+          int y1 = B + dungeonEnemyHplotPoints[9].hplotLists[i].points[1] * H;
 
           if (pointCount == 2) {
             dungeonRenderer_setPixel(x1, y1, 255, 255, 255);
@@ -288,8 +288,8 @@ void dungeonRenderer_update() {
           }
           
           for (int j=2;j<pointCount;j+=2) {
-            int x2 = C + dungeonEnemyHplotPoints[4].hplotLists[i].points[j] * (dungeonEnemyHplotPoints[4].hplotLists[i].points[j] < 0 ? L : R);
-            int y2 = B + dungeonEnemyHplotPoints[4].hplotLists[i].points[j + 1] * H;
+            int x2 = C + dungeonEnemyHplotPoints[9].hplotLists[i].points[j] * (dungeonEnemyHplotPoints[9].hplotLists[i].points[j] < 0 ? L : R);
+            int y2 = B + dungeonEnemyHplotPoints[9].hplotLists[i].points[j + 1] * H;
             dungeonRenderer_drawLine(x1, y1, x2, y2);
             x1 = x2;
             y1 = y2;
