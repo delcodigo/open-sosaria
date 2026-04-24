@@ -1073,6 +1073,11 @@ static float sceneDiskLoader_decodeDungeonCreaturePoint(uint8_t *instructions, u
     *offset += 1;
     return 0;
   }
+  
+  if (instructions[2] == 0x52 || instructions[2] == 0x48) {
+    *offset += 2;
+    return 0;
+  }
 
   char asciiNum[8] = {0};
   asciiNum[0] = '0';
@@ -1088,7 +1093,7 @@ static float sceneDiskLoader_decodeDungeonCreaturePoint(uint8_t *instructions, u
   return point;
 }
 
-static void sceneDiskLoader_decodeDungeonCreature(uint8_t *data, size_t dataSize, int lineNumber, int creatureIndex) {
+static void sceneDiskLoader_decodeDungeonCreature(uint8_t *data, size_t dataSize, int lineNumber) {
   if (!data || dataSize < 256) { return; }
 
   int instructionsLine = sceneDiskLoader_findBasicLineNumber(data, dataSize, lineNumber);
@@ -1100,6 +1105,7 @@ static void sceneDiskLoader_decodeDungeonCreature(uint8_t *data, size_t dataSize
   if (instructions[0] != 0x93) { return; }
   instructions++;
 
+  int creatureIndex = dungeonEnemyHplotPointsCount++;
   int hplotIndex = 0;
   int hplotCoordIndex = 0;
 
@@ -1156,6 +1162,30 @@ static void sceneDiskLoader_decodeDungeonCreature(uint8_t *data, size_t dataSize
   dungeonEnemyHplotPoints[creatureIndex].hplotListCount = hplotIndex + 1;
 }
 
+static void sceneDiskLoader_decodeGelatinousCube() {
+  int creatureIndex = dungeonEnemyHplotPointsCount++;
+  int hplotIndex = 0;
+  int hplotCoordIndex = 0;
+
+  dungeonEnemyHplotPoints[creatureIndex].hplotLists[hplotIndex].points[hplotCoordIndex++] = -1;
+  dungeonEnemyHplotPoints[creatureIndex].hplotLists[hplotIndex].points[hplotCoordIndex++] = 0;
+
+  dungeonEnemyHplotPoints[creatureIndex].hplotLists[hplotIndex].points[hplotCoordIndex++] = 1;
+  dungeonEnemyHplotPoints[creatureIndex].hplotLists[hplotIndex].points[hplotCoordIndex++] = 0;
+
+  dungeonEnemyHplotPoints[creatureIndex].hplotLists[hplotIndex].points[hplotCoordIndex++] = 1;
+  dungeonEnemyHplotPoints[creatureIndex].hplotLists[hplotIndex].points[hplotCoordIndex++] = -1;
+
+  dungeonEnemyHplotPoints[creatureIndex].hplotLists[hplotIndex].points[hplotCoordIndex++] = -1;
+  dungeonEnemyHplotPoints[creatureIndex].hplotLists[hplotIndex].points[hplotCoordIndex++] = -1;
+
+  dungeonEnemyHplotPoints[creatureIndex].hplotLists[hplotIndex].points[hplotCoordIndex++] = -1;
+  dungeonEnemyHplotPoints[creatureIndex].hplotLists[hplotIndex].points[hplotCoordIndex++] = 0;
+
+  dungeonEnemyHplotPoints[creatureIndex].hplotListCount = 1;
+  dungeonEnemyHplotPoints[creatureIndex].hplotLists[hplotIndex].pointCount = hplotCoordIndex;
+}
+
 static void sceneDiskLoader_loadDungeonCreatures(uint8_t *disk, char *fileName) {
   Buffer *fileBuffer = sceneDiskLoader_readDos33FileByName(disk, fileName);
   if (fileBuffer && fileBuffer->data) {
@@ -1168,11 +1198,16 @@ static void sceneDiskLoader_loadDungeonCreatures(uint8_t *disk, char *fileName) 
       return;
     }
 
-    sceneDiskLoader_decodeDungeonCreature((uint8_t *)data, size, 10000, 0);
-    sceneDiskLoader_decodeDungeonCreature((uint8_t *)data, size, 11000, 1);
-    sceneDiskLoader_decodeDungeonCreature((uint8_t *)data, size, 12000, 2);
-    sceneDiskLoader_decodeDungeonCreature((uint8_t *)data, size, 13000, 3);
-    sceneDiskLoader_decodeDungeonCreature((uint8_t *)data, size, 14000, 4);
+    sceneDiskLoader_decodeDungeonCreature((uint8_t *)data, size, 10000);
+    sceneDiskLoader_decodeDungeonCreature((uint8_t *)data, size, 11000);
+    sceneDiskLoader_decodeDungeonCreature((uint8_t *)data, size, 12000);
+    sceneDiskLoader_decodeDungeonCreature((uint8_t *)data, size, 13000);
+
+    if (fileName[3] == '2') {
+      sceneDiskLoader_decodeGelatinousCube();
+    } else {
+      sceneDiskLoader_decodeDungeonCreature((uint8_t *)data, size, 14000);
+    }
     
     free(fileBuffer->data);
     free(fileBuffer);
@@ -1463,6 +1498,7 @@ void sceneDiskLoader_extractUltimaAssets() {
     sceneDiskLoader_decodeEnemiesTable(data);
 
     sceneDiskLoader_loadDungeonCreatures(disk1, "SET1");
+    sceneDiskLoader_loadDungeonCreatures(disk1, "SET2");
 
     free(beveryBuffer->data);
     free(beveryBuffer);

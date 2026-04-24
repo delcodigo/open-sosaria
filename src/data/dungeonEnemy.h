@@ -12,5 +12,6 @@ typedef struct {
 } DungeonEnemyHplotData;
 
 extern DungeonEnemyHplotData dungeonEnemyHplotPoints[25];
+extern int dungeonEnemyHplotPointsCount;
 
 #endif
