@@ -1054,10 +1054,10 @@ static void sceneDiskLoader_loadCollisionsMap(uint8_t *disk, char* fileName, uin
 static int sceneDiskLoader_findBasicLineNumber(uint8_t *data, size_t dataSize, int lineNumber) {
   if (!data) { return -1; }
 
-  for (size_t pos=0;pos+2<dataSize;pos++) {
+  for (size_t pos=0;pos+3<dataSize;pos++) {
     int nextAddr = data[pos] | (data[pos + 1] << 8);
     
-    if (nextAddr == lineNumber) {
+    if (nextAddr == lineNumber && data[pos + 2] == 0x93) {
       return (int)pos;
     }
   }
@@ -1199,7 +1199,13 @@ static void sceneDiskLoader_loadDungeonCreatures(uint8_t *disk, char *fileName) 
     }
 
     sceneDiskLoader_decodeDungeonCreature((uint8_t *)data, size, 10000);
-    sceneDiskLoader_decodeDungeonCreature((uint8_t *)data, size, 11000);
+    
+    if (fileName[3] == '3') {
+      dungeonEnemyHplotPointsCount++;
+    } else {
+      sceneDiskLoader_decodeDungeonCreature((uint8_t *)data, size, 11000);
+    }
+
     sceneDiskLoader_decodeDungeonCreature((uint8_t *)data, size, 12000);
     sceneDiskLoader_decodeDungeonCreature((uint8_t *)data, size, 13000);
 
@@ -1499,6 +1505,7 @@ void sceneDiskLoader_extractUltimaAssets() {
 
     sceneDiskLoader_loadDungeonCreatures(disk1, "SET1");
     sceneDiskLoader_loadDungeonCreatures(disk1, "SET2");
+    sceneDiskLoader_loadDungeonCreatures(disk1, "SET3");
 
     free(beveryBuffer->data);
     free(beveryBuffer);

@@ -73,6 +73,19 @@ static int dungeonRenderer_getFrontTile(int distance) {
   return dungeonMap[player.px + player.dx * distance][player.py + player.dy * distance] % 100;
 }
 
+static void dungeonRenderer_renderChest(int distance) {
+  int t2 = distance + 1;
+  dungeonRenderer_drawLine(139-20/t2,dungeonTable[distance][3],139-20/t2,dungeonTable[distance][3]-20/t2);
+  dungeonRenderer_drawLine(139-20/t2,dungeonTable[distance][3]-20/t2,139+20/t2,dungeonTable[distance][3]-20/t2);
+  dungeonRenderer_drawLine(139+20/t2,dungeonTable[distance][3]-20/t2,139+20/t2,dungeonTable[distance][3]);
+  dungeonRenderer_drawLine(139+20/t2,dungeonTable[distance][3],139-20/t2,dungeonTable[distance][3]);
+  dungeonRenderer_drawLine(139-20/t2,dungeonTable[distance][3]-20/t2,139-10/t2,dungeonTable[distance][3]-30/t2);
+  dungeonRenderer_drawLine(139-10/t2,dungeonTable[distance][3]-30/t2,139+30/t2,dungeonTable[distance][3]-30/t2);
+  dungeonRenderer_drawLine(139+30/t2,dungeonTable[distance][3]-30/t2,139+30/t2,dungeonTable[distance][3]-10/t2);
+  dungeonRenderer_drawLine(139+30/t2,dungeonTable[distance][3]-10/t2,139+20/t2,dungeonTable[distance][3]);
+  dungeonRenderer_drawLine(139+20/t2,dungeonTable[distance][3]-20/t2,139+30/t2,dungeonTable[distance][3]-30/t2);
+}
+
 void dungeonRenderer_update() {
   dungeonRenderer_clear();
   bool shouldBreak = false;
@@ -244,16 +257,7 @@ void dungeonRenderer_update() {
         }
       }
       if (centerTile == 5) {
-        int t2 = distance + 1;
-        dungeonRenderer_drawLine(139-20/t2,dungeonTable[distance][3],139-20/t2,dungeonTable[distance][3]-20/t2);
-        dungeonRenderer_drawLine(139-20/t2,dungeonTable[distance][3]-20/t2,139+20/t2,dungeonTable[distance][3]-20/t2);
-        dungeonRenderer_drawLine(139+20/t2,dungeonTable[distance][3]-20/t2,139+20/t2,dungeonTable[distance][3]);
-        dungeonRenderer_drawLine(139+20/t2,dungeonTable[distance][3],139-20/t2,dungeonTable[distance][3]);
-        dungeonRenderer_drawLine(139-20/t2,dungeonTable[distance][3]-20/t2,139-10/t2,dungeonTable[distance][3]-30/t2);
-        dungeonRenderer_drawLine(139-10/t2,dungeonTable[distance][3]-30/t2,139+30/t2,dungeonTable[distance][3]-30/t2);
-        dungeonRenderer_drawLine(139+30/t2,dungeonTable[distance][3]-30/t2,139+30/t2,dungeonTable[distance][3]-10/t2);
-        dungeonRenderer_drawLine(139+30/t2,dungeonTable[distance][3]-10/t2,139+20/t2,dungeonTable[distance][3]);
-        dungeonRenderer_drawLine(139+20/t2,dungeonTable[distance][3]-20/t2,139+30/t2,dungeonTable[distance][3]-30/t2);
+        dungeonRenderer_renderChest(distance);
         uiConsole_queueMessageFormat("^1%s^0", ultimaStrings[844]);
       }
     }
@@ -271,16 +275,18 @@ void dungeonRenderer_update() {
 
       if (monsterInCell + monstersIndex == 32) {
         uiConsole_queueMessageFormat("^1%s^0", ultimaStrings[845]);
+        dungeonRenderer_renderChest(distance);
       } else if (distance == 0 && monsterInCell + monstersIndex != 41) {
         break;
       } else {
         uiConsole_queueMessageFormat("^1%s^0", enemyDefinitions[monsterInCell + monstersIndex].name);
 
-        int linesCount = dungeonEnemyHplotPoints[9].hplotListCount;
+        int monsterIndex = monsterInCell + (player.dungeonDepth / 2) * 5 - 1;
+        int linesCount = dungeonEnemyHplotPoints[monsterIndex].hplotListCount;
         for (int i=0;i<linesCount;i++) {
-          int pointCount = dungeonEnemyHplotPoints[9].hplotLists[i].pointCount;
-          int x1 = C + dungeonEnemyHplotPoints[9].hplotLists[i].points[0] * (dungeonEnemyHplotPoints[9].hplotLists[i].points[0] < 0 ? L : R);
-          int y1 = B + dungeonEnemyHplotPoints[9].hplotLists[i].points[1] * H;
+          int pointCount = dungeonEnemyHplotPoints[monsterIndex].hplotLists[i].pointCount;
+          int x1 = C + dungeonEnemyHplotPoints[monsterIndex].hplotLists[i].points[0] * (dungeonEnemyHplotPoints[monsterIndex].hplotLists[i].points[0] < 0 ? L : R);
+          int y1 = B + dungeonEnemyHplotPoints[monsterIndex].hplotLists[i].points[1] * H;
 
           if (pointCount == 2) {
             dungeonRenderer_setPixel(x1, y1, 255, 255, 255);
@@ -288,12 +294,16 @@ void dungeonRenderer_update() {
           }
           
           for (int j=2;j<pointCount;j+=2) {
-            int x2 = C + dungeonEnemyHplotPoints[9].hplotLists[i].points[j] * (dungeonEnemyHplotPoints[9].hplotLists[i].points[j] < 0 ? L : R);
-            int y2 = B + dungeonEnemyHplotPoints[9].hplotLists[i].points[j + 1] * H;
+            int x2 = C + dungeonEnemyHplotPoints[monsterIndex].hplotLists[i].points[j] * (dungeonEnemyHplotPoints[monsterIndex].hplotLists[i].points[j] < 0 ? L : R);
+            int y2 = B + dungeonEnemyHplotPoints[monsterIndex].hplotLists[i].points[j + 1] * H;
             dungeonRenderer_drawLine(x1, y1, x2, y2);
             x1 = x2;
             y1 = y2;
           }
+        }
+
+        if (monsterIndex == 11) {
+          dungeonRenderer_renderChest(distance);
         }
 
         if (monsterInCell + monstersIndex != 41) {
