@@ -1073,6 +1073,17 @@ static float sceneDiskLoader_decodeDungeonCreaturePoint(uint8_t *instructions, u
     *offset += 1;
     return 0;
   }
+
+  if (instructions[0] == 0x43 && instructions[1] == 0xC8 && instructions[2] == 0x52) {
+    *offset += 3;
+    return 1;
+  } else if (instructions[0] == 0x43 && instructions[1] == 0xC9 && instructions[2] == 0x4C) {
+    *offset += 3;
+    return -1;
+  } else if (instructions[0] == 0x42 && instructions[1] == 0xC9 && instructions[2] == 0x48) {
+    *offset += 3;
+    return -1;
+  }
   
   if (instructions[2] == 0x52 || instructions[2] == 0x48) {
     *offset += 2;
