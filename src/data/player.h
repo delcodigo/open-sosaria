@@ -52,6 +52,7 @@ extern bool isPlayerInCastle;
 void player_consumeFood();
 void player_consumeTownFood();
 void player_waitPenalty();
+void player_consumeDungeonFood();
 bool player_isAlive();
 int player_getEncumbrance();
 

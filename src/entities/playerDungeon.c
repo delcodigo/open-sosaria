@@ -24,6 +24,7 @@ static bool playerDungeon_updateRotation() {
     player.dy = -dx;
     keyRepeatDelay = 0.1f;
     uiConsole_replaceLastMessageFormat("%s%s", ultimaStrings[98], ultimaStrings[866]);
+    player_consumeDungeonFood();
     return true;
   } else if (input.right == 1) {
     input.right = 2;
@@ -32,6 +33,7 @@ static bool playerDungeon_updateRotation() {
     player.dy = dx;
     keyRepeatDelay = 0.1f;
     uiConsole_replaceLastMessageFormat("%s%s", ultimaStrings[98], ultimaStrings[867]);
+    player_consumeDungeonFood();
     return true;
   } else if (input.down == 1) {
     input.down = 2;
@@ -39,6 +41,7 @@ static bool playerDungeon_updateRotation() {
     player.dy = -player.dy;
     keyRepeatDelay = 0.1f;
     uiConsole_replaceLastMessageFormat("%s%s", ultimaStrings[98], ultimaStrings[865]);
+    player_consumeDungeonFood();
     return true;
   }
 
@@ -75,6 +78,8 @@ static bool playerDungeon_updateMovement() {
 
       vmExecuter_createWait(1);
     }
+
+    player_consumeDungeonFood();
 
     return true;
   }

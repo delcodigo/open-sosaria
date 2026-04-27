@@ -30,6 +30,12 @@ void player_waitPenalty() {
   uiConsole_updateStats();
 }
 
+void player_consumeDungeonFood() {
+  player.food -= 0.1f;
+  player.time += 1;
+  uiConsole_updateStats();
+}
+
 bool player_isAlive() {
   return player.health > 0 && player.food > 0;
 }
