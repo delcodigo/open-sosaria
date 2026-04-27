@@ -1211,7 +1211,11 @@ static void sceneDiskLoader_loadDungeonCreatures(uint8_t *disk, char *fileName) 
       return;
     }
 
-    sceneDiskLoader_decodeDungeonCreature((uint8_t *)data, size, 10000);
+    if (fileName[3] == '5') {
+      dungeonEnemyHplotPointsCount++;
+    } else {
+      sceneDiskLoader_decodeDungeonCreature((uint8_t *)data, size, 10000);
+    }
     
     if (fileName[3] == '3') {
       dungeonEnemyHplotPointsCount++;
@@ -1520,6 +1524,7 @@ void sceneDiskLoader_extractUltimaAssets() {
     sceneDiskLoader_loadDungeonCreatures(disk1, "SET2");
     sceneDiskLoader_loadDungeonCreatures(disk1, "SET3");
     sceneDiskLoader_loadDungeonCreatures(disk1, "SET4");
+    sceneDiskLoader_loadDungeonCreatures(disk1, "SET5");
 
     free(beveryBuffer->data);
     free(beveryBuffer);
