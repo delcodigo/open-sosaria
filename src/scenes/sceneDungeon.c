@@ -1,3 +1,4 @@
+#include <string.h>
 #include <math.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -13,12 +14,44 @@
 #include "utils.h"
 
 int dungeonMap[OS_DUNGEON_MAP_WIDTH][OS_DUNGEON_MAP_HEIGHT] = {0};
+int monsters[100][4] = {0};
 int monstersIndex;
+
+static void sceneDungeon_spawnEnemies() {
+  monstersIndex = 20 + ((int)(player.dungeonDepth / 2.0f + 0.5f) - 1) * 5;
+
+  for (int i=monstersIndex;i<monstersIndex+5;i++) {
+    monsters[i - 1][0] = 1;
+  }
+
+  if (monstersIndex > 40) {
+    monstersIndex = 40;
+  }
+
+  for (int i=0;i<3;i++) {
+    int mn = 0;
+    do {
+      mn = (int)(rand01() * 5 + 1);
+    } while (monsters[monstersIndex + mn - 1][0] == 0);
+
+    monsters[monstersIndex + mn - 1][0] = 0;
+    monsters[monstersIndex + mn - 1][3] = (int)(mn * pow(player.dungeonDepth, 2) * rand01() + 10);
+
+    do {
+      monsters[monstersIndex + mn - 1][1] = (int)(rand01() * 9 + 1);
+      monsters[monstersIndex + mn - 1][2] = (int)(rand01() * 9 + 1);
+    } while (dungeonMap[monsters[monstersIndex + mn - 1][1]][monsters[monstersIndex + mn - 1][2]] != 0);
+
+    dungeonMap[monsters[monstersIndex + mn - 1][1]][monsters[monstersIndex + mn - 1][2]] = 100 * mn;
+  }
+}
 
 void sceneDungeon_generateFloor() {
   int tx = (int)(player.tx % OS_BTERRA_MAP_WIDTH);
   int ty = (int)(player.ty % OS_BTERRA_MAP_HEIGHT);
   int world = ((int)player.ty / OS_BTERRA_MAP_HEIGHT) * 2 + ((int)player.tx / OS_BTERRA_MAP_WIDTH);
+
+  memset(monsters, 0, sizeof(monsters));
 
   srand(-world - tx * 16 - ty * 256 - player.dungeonDepth * pow(256, 2) - 1);
   
@@ -106,7 +139,38 @@ void sceneDungeon_generateFloor() {
     dungeonMap[7][3] = 0;
   }
 
-  monstersIndex = 20 + ((int)(player.dungeonDepth / 2.0f + 0.5f) - 1) * 5;
+  sceneDungeon_spawnEnemies();
+}
+
+static void sceneDungeon_moveEnemies() {
+  for (int i=1;i<=5;i++) {
+    if (monsters[monstersIndex + i - 1][0] == 1) { continue; }
+
+    int xx = player.px - monsters[monstersIndex + i - 1][1];
+    int yy = player.py - monsters[monstersIndex + i - 1][2];
+    int dx = xx >= 0 ? 1 : -1;
+    int dy = yy >= 0 ? 1 : -1;
+    float ra = sqrtf(xx*xx + yy*yy);
+
+    if (ra < 1.4) { return; }
+    if (ra > 3 && player.px != xx && player.py != yy) { continue; }
+
+    if (xx == 0) {
+      int zz = dungeonMap[monsters[monstersIndex + i - 1][1]][monsters[monstersIndex + i - 1][2] + dy];
+      if (zz != 1 && zz != 12 && zz != 2 && zz < 21) {
+        dungeonMap[monsters[monstersIndex + i - 1][1]][monsters[monstersIndex + i - 1][2]] -= 100 * i;
+        monsters[monstersIndex + i - 1][2] += dy;
+        dungeonMap[monsters[monstersIndex + i - 1][1]][monsters[monstersIndex + i - 1][2]] += 100 * i;
+      }
+    } else {
+      int zz = dungeonMap[monsters[monstersIndex + i - 1][1] + dx][monsters[monstersIndex + i - 1][2]];
+      if (zz != 1 && zz != 12 && zz != 2 && zz < 21) {
+        dungeonMap[monsters[monstersIndex + i - 1][1]][monsters[monstersIndex + i - 1][2]] -= 100 * i;
+        monsters[monstersIndex + i - 1][1] += dx;
+        dungeonMap[monsters[monstersIndex + i - 1][1]][monsters[monstersIndex + i - 1][2]] += 100 * i;
+      }
+    }
+  }
 }
 
 static void sceneDungeon_init() {
@@ -141,6 +205,7 @@ static void sceneDungeon_update(float deltaTime) {
     if (playerActed) {
       playerActed = false;
       
+      sceneDungeon_moveEnemies();
       dungeonRenderer_update();
       uiConsole_addMessage(ultimaStrings[98]);
     }
