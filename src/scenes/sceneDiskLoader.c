@@ -1069,7 +1069,7 @@ static float sceneDiskLoader_decodeDungeonCreaturePoint(uint8_t *instructions, u
   float point = 1;
   if (instructions[1] == 0xC9) {
     point = -1;
-  } else if (instructions[1] == 0XC1 || instructions[1] == 0x2C || instructions[1] == 0x3A) {
+  } else if (instructions[1] == 0XC1 || instructions[1] == 0x2C || instructions[1] == 0x3A || instructions[1] == 0x00) {
     *offset += 1;
     return 0;
   }
@@ -1151,6 +1151,8 @@ static void sceneDiskLoader_decodeDungeonCreature(uint8_t *data, size_t dataSize
         while (instructions[0] != 0x43) { 
           instructions++; 
         }
+      } else if (instructions[5] == 0xB1) {
+        parsing = false;
       }
     } else if (instructions[0] == 0x3A) { // :
       dungeonEnemyHplotPoints[creatureIndex].hplotLists[hplotIndex].pointCount = hplotCoordIndex;
@@ -1517,6 +1519,7 @@ void sceneDiskLoader_extractUltimaAssets() {
     sceneDiskLoader_loadDungeonCreatures(disk1, "SET1");
     sceneDiskLoader_loadDungeonCreatures(disk1, "SET2");
     sceneDiskLoader_loadDungeonCreatures(disk1, "SET3");
+    sceneDiskLoader_loadDungeonCreatures(disk1, "SET4");
 
     free(beveryBuffer->data);
     free(beveryBuffer);
