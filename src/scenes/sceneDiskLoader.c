@@ -439,14 +439,19 @@ static void sceneDiskLoader_emitQuotedStringsFromAppleBasicLine(const unsigned c
       }
 
       size_t end = start;
+      size_t strEnd = start;
 
       while (end < lineLength && lineData[end] != '"') {
+        if (lineData[strEnd] != '\a') {
+          strEnd++;
+        }
+
         end++;
       }
 
       if (end >= lineLength) { return; }
 
-      size_t length = end - start;
+      size_t length = strEnd - start;
       if (length > 0 && length < 41) {
         if (shouldAppend) {
           size_t existingLength = strlen(ultimaStrings[ultimaStringCount]);

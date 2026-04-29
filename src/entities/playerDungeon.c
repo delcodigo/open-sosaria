@@ -4,6 +4,8 @@
 #include "playerDungeon.h"
 #include "playerCommons.h"
 #include "data/player.h"
+#include "data/bevery.h"
+#include "data/enemy.h"
 #include "engine/input.h"
 #include "scenes/sceneDiskLoader.h"
 #include "scenes/sceneDungeon.h"
@@ -283,10 +285,77 @@ static bool playerDungeon_updateUnlock() {
   return false;
 }
 
-bool playerDungeon_updateExit() {
+static bool playerDungeon_updateExit() {
   if (input.x == 1) {
     input.x = 2;
     uiConsole_replaceLastMessageFormat("%s%s", ultimaStrings[98], ultimaStrings[978]);
+    return true;
+  }
+
+  return false;
+}
+
+static bool playerDungeon_updateAttack() {
+  if (input.a == 1) {
+    input.a = 2;
+    uiConsole_replaceLastMessageFormat("%s%s", ultimaStrings[98], ultimaStrings[868]);
+
+    int weapon = player.weapon;
+    if (weapon == 4 || (weapon > 7 && weapon < 11)) {
+      uiConsole_queueMessageFormat("%s%s", ultimaStrings[869], weaponNames[player.weapon]);
+      uiConsole_queueMessage(ultimaStrings[870]);
+      return true;
+    }
+
+    int range = 1;
+    if (weapon == 7 || weapon == 12 || weapon > 13) {
+      range = 9;
+    }
+
+    int enemy = -1;
+    int rangeIndex = -1;
+    for (int i=1;i<=range;i++) {
+      int tile = dungeonMap[player.px + player.dx * i][player.py + player.dy * i];
+      if (tile == 1 || tile == 3 || tile == 4 || tile == 12) {
+        uiConsole_queueMessage(ultimaStrings[871]);
+        return true;
+      }
+
+      if (tile > 19) {
+        enemy = (int)(tile / 100);
+        rangeIndex = i;
+        break;
+      }
+    }
+
+    if (enemy == -1) {
+      uiConsole_queueMessage(ultimaStrings[872]);
+      return true;
+    }
+
+    uiConsole_queueMessage(enemyDefinitions[monstersIndex + enemy].name);
+    uiConsole_queueMessageFormat("%s%s", ultimaStrings[873], weaponNames[player.weapon]);
+
+    int agility = (player.agility / 4 + player.weapon) * rand01();
+    int enemyAgility = (enemy + (monstersIndex - 20) / 3) * rand01() + player.dungeonDepth;
+    
+    if (agility < enemyAgility && agility < 20) {
+      uiConsole_queueMessage(ultimaStrings[874]);
+      return true;
+    }
+
+    int damage = (int)((player.strength / 5 + player.weapon * 3) * rand01() + (int)(player.strength / 5));
+    uiConsole_queueMessageFormat("%s%d", ultimaStrings[875], damage);
+
+    monsters[monstersIndex + enemy][3] -= damage;
+    if (monsters[monstersIndex + enemy][3] < 0) {
+      monsters[monstersIndex + enemy][0] = 1;
+      uiConsole_queueMessageFormat("%s%s", enemyDefinitions[monstersIndex + enemy].name, ultimaStrings[876]);
+      dungeonMap[player.px + player.dx * rangeIndex][player.py + player.dy * rangeIndex] -= enemy * 100;
+
+      // TODO: Respawn logic
+    }
+
     return true;
   }
 
@@ -313,6 +382,7 @@ bool playerDungeon_update(float deltaTime) {
         if (playerCommons_updateZtats()) { acted = true; } else
         if (playerDungeon_updateUnlock()) { acted = true; } else
         if (playerDungeon_updateExit()) { acted = true; } else
+        if (playerDungeon_updateAttack()) { acted = true; } else
         if (playerDungeon_updateRotation()) { acted = true; } else
         if (playerDungeon_updateMovement()) { acted = true; } else 
         if (playerDungeon_updateAutoPass(deltaTime)) { acted = true; }

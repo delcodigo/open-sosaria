@@ -281,7 +281,7 @@ void dungeonRenderer_update() {
       } else {
         uiConsole_queueMessageFormat("^1%s^0", enemyDefinitions[monsterInCell + monstersIndex].name);
 
-        int monsterIndex = monsterInCell + (player.dungeonDepth / 2) * 5 - 1;
+        int monsterIndex = monsterInCell + ((player.dungeonDepth - 1) / 2) * 5 - 1;
         int linesCount = dungeonEnemyHplotPoints[monsterIndex].hplotListCount;
         for (int i=0;i<linesCount;i++) {
           int pointCount = dungeonEnemyHplotPoints[monsterIndex].hplotLists[i].pointCount;

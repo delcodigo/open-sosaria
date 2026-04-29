@@ -148,25 +148,25 @@ static void sceneDungeon_moveEnemies() {
 
     int xx = player.px - monsters[monstersIndex + i - 1][1];
     int yy = player.py - monsters[monstersIndex + i - 1][2];
-    int dx = xx >= 0 ? 1 : -1;
-    int dy = yy >= 0 ? 1 : -1;
+    int dx = (xx > 0) - (xx < 0);
+    int dy = (yy > 0) - (yy < 0);
     float ra = sqrtf(xx*xx + yy*yy);
 
     if (ra < 1.4) { return; }
-    if (ra > 3 && player.px != xx && player.py != yy) { continue; }
+    if (ra > 3 && player.px != monsters[monstersIndex + i - 1][1] && player.py != monsters[monstersIndex + i - 1][2]) { continue; }
 
-    if (xx == 0) {
-      int zz = dungeonMap[monsters[monstersIndex + i - 1][1]][monsters[monstersIndex + i - 1][2] + dy];
-      if (zz != 1 && zz != 12 && zz != 2 && zz < 21) {
-        dungeonMap[monsters[monstersIndex + i - 1][1]][monsters[monstersIndex + i - 1][2]] -= 100 * i;
-        monsters[monstersIndex + i - 1][2] += dy;
-        dungeonMap[monsters[monstersIndex + i - 1][1]][monsters[monstersIndex + i - 1][2]] += 100 * i;
-      }
-    } else {
+    if (xx != 0) {
       int zz = dungeonMap[monsters[monstersIndex + i - 1][1] + dx][monsters[monstersIndex + i - 1][2]];
       if (zz != 1 && zz != 12 && zz != 2 && zz < 21) {
         dungeonMap[monsters[monstersIndex + i - 1][1]][monsters[monstersIndex + i - 1][2]] -= 100 * i;
         monsters[monstersIndex + i - 1][1] += dx;
+        dungeonMap[monsters[monstersIndex + i - 1][1]][monsters[monstersIndex + i - 1][2]] += 100 * i;
+      }
+    } else {
+      int zz = dungeonMap[monsters[monstersIndex + i - 1][1]][monsters[monstersIndex + i - 1][2] + dy];
+      if (zz != 1 && zz != 12 && zz != 2 && zz < 21) {
+        dungeonMap[monsters[monstersIndex + i - 1][1]][monsters[monstersIndex + i - 1][2]] -= 100 * i;
+        monsters[monstersIndex + i - 1][2] += dy;
         dungeonMap[monsters[monstersIndex + i - 1][1]][monsters[monstersIndex + i - 1][2]] += 100 * i;
       }
     }
