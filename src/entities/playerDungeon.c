@@ -353,7 +353,43 @@ static bool playerDungeon_updateAttack() {
       uiConsole_queueMessageFormat("%s%s", enemyDefinitions[monstersIndex + enemy].name, ultimaStrings[876]);
       dungeonMap[player.px + player.dx * rangeIndex][player.py + player.dy * rangeIndex] -= enemy * 100;
 
-      // TODO: Respawn logic
+      vmExecuter_createWait(0.6f);
+
+      int monster = 0;
+      do {
+      monster = (int)(rand01() * 5 + 1);
+      } while (monsters[monstersIndex + monster][0] == 0);
+
+      monsters[monstersIndex + monster][0] = 1;
+      monsters[monstersIndex + monster][3] = (int)(monster * pow(player.dungeonDepth, 2) * rand01() * 2 + 15);
+      
+      int mx = -1;
+      int my = -1;
+      do {
+        mx = (int)(rand01() * 9 + 1);
+        my = (int)(rand01() * 9 + 1);
+      } while (dungeonMap[mx][my] != 0 || mx == player.px || my == player.py);
+
+      dungeonMap[mx][my] = monster * 100;
+
+      int earnedXP = (int)(rand01() * player.dungeonDepth * enemy * 5 + player.dungeonDepth);
+      player.experience += earnedXP;
+      hp += earnedXP;
+      uiConsole_queueMessageFormat("%s%d%s", ultimaStrings[913], earnedXP, ultimaStrings[914]);
+      uiConsole_updateStats();
+
+      if (enemy == 5 && monstersIndex > 20) {
+        int questIndex = (int)(monstersIndex / 5 - 5);
+        if (player.quests[questIndex * 2 + 1] > 0) {
+          player.quests[questIndex * 2 + 1] = -player.quests[questIndex * 2 + 1];
+          uiConsole_queueMessage(ultimaStrings[915]);
+        }
+      }
+
+      int earnedGold = (int)(rand01() * pow(player.dungeonDepth, 2) * 9 + 9);
+      player.gold += earnedGold;
+      uiConsole_queueMessageFormat("%s%d%s", ultimaStrings[916], earnedGold, ultimaStrings[917]);
+      uiConsole_updateStats();
     }
 
     return true;
