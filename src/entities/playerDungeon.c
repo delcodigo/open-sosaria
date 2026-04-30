@@ -223,7 +223,23 @@ static bool playerDungeon_updateOpen() {
       return true;
     }
 
-    // TODO: Spawn a monster
+    int monster = 0;
+    int tries = 0;
+    do {
+      monster = (int)(rand01() * 5 + 1);
+    }while (monsters[monstersIndex + monster][0] != 0 && tries++ < 6);
+
+    if (tries >= 6) {
+      return true;
+    }
+
+    uiConsole_queueMessage(ultimaStrings[942]);
+    vmExecuter_createWait(0.6f);
+    monsters[monstersIndex + monster][0] = 0;
+    monsters[monstersIndex + monster][1] = player.px + player.dx;
+    monsters[monstersIndex + monster][2] = player.py + player.dy;
+    monsters[monstersIndex + monster][3] = (int)(monster * pow(player.dungeonDepth, 2) * rand01() * 2 + 15);
+    dungeonMap[player.px + player.dx][player.py + player.dy] = monster * 100;
 
     return true;
   }
