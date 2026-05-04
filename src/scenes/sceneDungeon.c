@@ -9,6 +9,7 @@
 #include "entities/playerDungeon.h"
 #include "entities/vmExecuter.h"
 #include "data/player.h"
+#include "data/enemy.h"
 #include "sceneDiskLoader.h"
 #include "config.h"
 #include "utils.h"
@@ -142,9 +143,28 @@ void sceneDungeon_generateFloor() {
   sceneDungeon_spawnEnemies();
 }
 
+static void sceneDungeon_enemyAttack(int monster) {
+  uiConsole_queueMessageFormat("%s%s", ultimaStrings[991], enemyDefinitions[monstersIndex + monster].name);
+  float attack = rand01() * 10.0f + 3 * player.dungeonDepth;
+  float dodge = player.stamina / 3.0f * rand01() + player.armor * 3;
+  if (dodge > 20 || attack < dodge) {
+    uiConsole_queueMessage(ultimaStrings[992]);
+    return;
+  }
+  int q = monstersIndex + monster;
+  if (q == 23 || q == 37 || q == 30 || q == 42) {
+    // TODO: Special attack
+    return;
+  }
+  int damage = (int)(player.dungeonDepth + player.dungeonDepth * monster * player.dungeonDepth * rand01() + player.dungeonDepth);
+  uiConsole_queueMessageFormat("%s%d", ultimaStrings[993], damage);
+  player.health -= damage;
+  uiConsole_updateStats();
+}
+
 static void sceneDungeon_moveEnemies() {
   for (int i=1;i<=5;i++) {
-    if (monsters[monstersIndex + i - 1][0] == 1) { continue; }
+    if (monsters[monstersIndex + i][0] == 1) { continue; }
 
     int xx = player.px - monsters[monstersIndex + i - 1][1];
     int yy = player.py - monsters[monstersIndex + i - 1][2];
@@ -152,7 +172,10 @@ static void sceneDungeon_moveEnemies() {
     int dy = (yy > 0) - (yy < 0);
     float ra = sqrtf(xx*xx + yy*yy);
 
-    if (ra < 1.4) { return; }
+    if (ra < 1.4) { 
+      sceneDungeon_enemyAttack(i);
+      return; 
+    }
     if (ra > 3 && player.px != monsters[monstersIndex + i - 1][1] && player.py != monsters[monstersIndex + i - 1][2]) { continue; }
 
     if (xx != 0) {
