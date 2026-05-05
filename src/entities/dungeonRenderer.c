@@ -20,6 +20,8 @@ static Geometry dungeonGeometry;
 static bool dungeonTextureIsLoaded = false;
 static bool dungeonTextureNeedsUpdate = false;
 static float dungeonTransformMatrix[16] = {0};
+static uint8_t colorPurple[3] = {146, 0, 255};
+static uint8_t colorGreen[3] = {36, 182, 0};
 
 void dungeonRenderer_init() {
   geometry_setSprite(&dungeonGeometry, OS_SCREEN_WIDTH, OS_SCREEN_HEIGHT, 0, 0, 1, 1);
@@ -56,8 +58,52 @@ void dungeonRenderer_drawLine(int x0, int y0, int x1, int y1) {
     dungeonRenderer_setPixel(x0, y0, 255, 255, 255);
     if (x0 == x1 && y0 == y1) break;
     int e2 = 2 * err;
-    if (e2 > -dy) { err -= dy; x0 += stepX; }
+    if (e2 > -dy) { err -= dy; x0 += stepX; } else
     if (e2 < dx)  { err += dx; y0 += stepY; }
+  }
+}
+
+static void dungeonRenderer_hgrColoring() {
+  for (int y=0;y<160;y++){
+    for (int x=0;x<OS_SCREEN_WIDTH;x++) {
+      bool isOn = dungeonScreen[(y * OS_SCREEN_WIDTH + x) * 4] > 0;
+      bool isLeftOn = (x > 0 && dungeonScreen[(y * OS_SCREEN_WIDTH + (x - 1)) * 4] > 0);
+      bool isRightOn = (x < OS_SCREEN_WIDTH - 1 && dungeonScreen[(y * OS_SCREEN_WIDTH + (x + 1)) * 4] > 0);
+
+      if (isOn && !isLeftOn && !isRightOn) {
+        bool isOdd = (x & 1) != 0;
+        int index = (y * OS_SCREEN_WIDTH + x) * 4;
+        int r = isOdd ? colorGreen[0] : colorPurple[0];
+        int g = isOdd ? colorGreen[1] : colorPurple[1];
+        int b = isOdd ? colorGreen[2] : colorPurple[2];
+
+        dungeonScreen[index] = r;
+        dungeonScreen[index + 1] = g;
+        dungeonScreen[index + 2] = b;
+        dungeonScreen[index + 3] = 255;
+      }
+    }
+  }
+
+  for (int y=0;y<160;y++){
+    for (int x=0;x<OS_SCREEN_WIDTH;x++) {
+      bool isOff = dungeonScreen[(y * OS_SCREEN_WIDTH + x) * 4] == 0;
+      bool isLeftOn = (x > 0 && dungeonScreen[(y * OS_SCREEN_WIDTH + (x - 1)) * 4] > 0);
+      bool isRightOn = (x < OS_SCREEN_WIDTH - 1 && dungeonScreen[(y * OS_SCREEN_WIDTH + (x + 1)) * 4] > 0);
+
+      if (isOff && isLeftOn && isRightOn) {
+        bool isOdd = (x & 1) == 0;
+        int index = (y * OS_SCREEN_WIDTH + x) * 4;
+        int r = isOdd ? colorGreen[0] : colorPurple[0];
+        int g = isOdd ? colorGreen[1] : colorPurple[1];
+        int b = isOdd ? colorGreen[2] : colorPurple[2];
+
+        dungeonScreen[index] = r;
+        dungeonScreen[index + 1] = g;
+        dungeonScreen[index + 2] = b;
+        dungeonScreen[index + 3] = 255;
+      }
+    }
   }
 }
 
@@ -314,6 +360,7 @@ void dungeonRenderer_update() {
   }
 
   dungeonTextureNeedsUpdate = true;
+  dungeonRenderer_hgrColoring();
 }
 
 void dungeonRenderer_render(float *viewMatrix) {
