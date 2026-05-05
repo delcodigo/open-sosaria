@@ -23,7 +23,7 @@
 
 static Text diskMsg;
 static char diskMsgText[41] = {0};
-char ultimaStrings[1000][41];
+char ultimaStrings[1200][41];
 static int ultimaStringCount = 0;
 UltimaAssets ultimaAssets = {0};
 float loaderTime = 0.0f;
@@ -747,6 +747,32 @@ static void sceneDiskLoader_extractBasicStrings(uint8_t *disk, const char *fileN
   }
 }
 
+static void sceneDiskLoader_extractBinaryStrings(uint8_t *disk, const char *fileName) {
+  Buffer *fileBuffer = sceneDiskLoader_readDos33FileByName(disk, fileName);
+  if (fileBuffer && fileBuffer->data) {
+    size_t start = 0;
+    while (start + 1 < fileBuffer->size) {
+      if (fileBuffer->data[start] == 0x22) {
+        size_t end = start + 1;
+        while (end < fileBuffer->size && fileBuffer->data[end] != 0x22) {
+          end++;
+        }
+        if (end >= fileBuffer->size) {
+          break;
+        }
+        size_t length = end - start - 1;
+        memcpy(ultimaStrings[ultimaStringCount], (const char *) (fileBuffer->data + start + 1), length);
+        ultimaStrings[ultimaStringCount][length] = '\0';
+        printf("Extracted string: [%d] '%s'\n", ultimaStringCount, ultimaStrings[ultimaStringCount]);
+        ultimaStringCount++;
+      }
+      start++;
+    }
+  }
+  free(fileBuffer->data);
+  free(fileBuffer);
+}
+
 bool sceneDiskLoader_parseShapeTable(const uint8_t *dataRaw, uint32_t sizeRaw, ShapeTable *table) {
   if (!dataRaw || !table) { return false; }
 
@@ -1457,6 +1483,10 @@ void sceneDiskLoader_extractUltimaAssets() {
   sceneDiskLoader_extractBasicStrings(disk1, "TWN MOVE");
   sceneDiskLoader_extractBasicStrings(disk1, "CAS MOVE");
   sceneDiskLoader_extractBasicStrings(disk1, "DNG MOVE 1");
+  sceneDiskLoader_extractBinaryStrings(disk1, "SET1");
+  sceneDiskLoader_extractBinaryStrings(disk1, "SET2");
+  sceneDiskLoader_extractBinaryStrings(disk1, "SET4");
+  sceneDiskLoader_extractBinaryStrings(disk1, "SET5");
 
   // Load town collisions map
   sceneDiskLoader_loadCollisionsMap(disk2, "BTWN", ultimaAssets.townCollisionMap);

@@ -10,6 +10,7 @@
 #include "entities/vmExecuter.h"
 #include "data/player.h"
 #include "data/enemy.h"
+#include "data/bevery.h"
 #include "sceneDiskLoader.h"
 #include "config.h"
 #include "utils.h"
@@ -143,6 +144,41 @@ void sceneDungeon_generateFloor() {
   sceneDungeon_spawnEnemies();
 }
 
+static bool sceneDungeon_enemySpecialAttack(int monster) {
+  int enemy = monstersIndex + monster;
+  if (enemy == 23) {
+    for (int i=0;i<OS_WEAPONS_COUNT;i++) {
+      if (player.weapons[i] > 0 && player.weapon-1 != i) {
+        uiConsole_queueMessageFormat("%s%s", ultimaStrings[999], weaponNames[i+1]);
+        player.weapons[i] -= 1;
+        return true;
+      }
+    }
+  } else if (enemy == 37) {
+    if (player.armor == 0) {
+      return false;
+    }
+
+    uiConsole_queueMessage(ultimaStrings[1000]);
+    player.armors[player.armor-1] -= 1;
+    player.armor = 0;
+    return true;
+  } else if (enemy == 30) {
+    player.food /= 2;
+    uiConsole_queueMessage(ultimaStrings[1001]);
+    uiConsole_updateStats();
+    return true;
+  } else if (enemy == 42) {
+    if (rand01() >= 0.5) {
+      uiConsole_queueMessage(ultimaStrings[1002]);
+      player.intelligence = (int)(player.intelligence * 0.6f + 5);
+      return true;
+    }
+  }
+
+  return false;
+}
+
 static void sceneDungeon_enemyAttack(int monster) {
   uiConsole_queueMessageFormat("%s%s", ultimaStrings[991], enemyDefinitions[monstersIndex + monster].name);
   float attack = rand01() * 10.0f + 3 * player.dungeonDepth;
@@ -153,8 +189,9 @@ static void sceneDungeon_enemyAttack(int monster) {
   }
   int q = monstersIndex + monster;
   if (q == 23 || q == 37 || q == 30 || q == 42) {
-    // TODO: Special attack
-    return;
+    if (sceneDungeon_enemySpecialAttack(monster)) {
+      return;
+    }
   }
   int damage = (int)(player.dungeonDepth + player.dungeonDepth * monster * player.dungeonDepth * rand01() + player.dungeonDepth);
   uiConsole_queueMessageFormat("%s%d", ultimaStrings[993], damage);
