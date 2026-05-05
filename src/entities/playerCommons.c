@@ -174,13 +174,13 @@ static bool playerCommons_readyArmorEquip() {
       if (armorNames[i][0] == armorChar[0]) {
         if (player.armors[i - 1] < 1 && i > 0) {
           uiConsole_addMessageFormat("%.15s%.15s", ultimaStrings[212], armorNames[i]);
-          return false;
+          return true;
         }
 
         uiConsole_addMessageFormat("%.15s%.15s", ultimaStrings[213], armorNames[i]);
         inputTextfield = NULL;
         player.armor = i - 1;
-        return false;
+        return true;
       }
     }
 
