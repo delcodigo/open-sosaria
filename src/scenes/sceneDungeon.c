@@ -22,8 +22,8 @@ int monstersIndex;
 static void sceneDungeon_spawnEnemies() {
   monstersIndex = 20 + ((int)(player.dungeonDepth / 2.0f + 0.5f) - 1) * 5;
 
-  for (int i=monstersIndex;i<monstersIndex+5;i++) {
-    monsters[i - 1][0] = 1;
+  for (int i=monstersIndex;i<=monstersIndex+5;i++) {
+    monsters[i][0] = 1;
   }
 
   if (monstersIndex > 40) {
@@ -34,17 +34,17 @@ static void sceneDungeon_spawnEnemies() {
     int mn = 0;
     do {
       mn = (int)(rand01() * 5 + 1);
-    } while (monsters[monstersIndex + mn - 1][0] == 0);
+    } while (monsters[monstersIndex + mn][0] == 0);
 
-    monsters[monstersIndex + mn - 1][0] = 0;
-    monsters[monstersIndex + mn - 1][3] = (int)(mn * pow(player.dungeonDepth, 2) * rand01() + 10);
+    monsters[monstersIndex + mn][0] = 0;
+    monsters[monstersIndex + mn][3] = (int)(mn * pow(player.dungeonDepth, 2) * rand01() + 10);
 
     do {
-      monsters[monstersIndex + mn - 1][1] = (int)(rand01() * 9 + 1);
-      monsters[monstersIndex + mn - 1][2] = (int)(rand01() * 9 + 1);
-    } while (dungeonMap[monsters[monstersIndex + mn - 1][1]][monsters[monstersIndex + mn - 1][2]] != 0);
+      monsters[monstersIndex + mn][1] = (int)(rand01() * 9 + 1);
+      monsters[monstersIndex + mn][2] = (int)(rand01() * 9 + 1);
+    } while (dungeonMap[monsters[monstersIndex + mn][1]][monsters[monstersIndex + mn][2]] != 0);
 
-    dungeonMap[monsters[monstersIndex + mn - 1][1]][monsters[monstersIndex + mn - 1][2]] = 100 * mn;
+    dungeonMap[monsters[monstersIndex + mn][1]][monsters[monstersIndex + mn][2]] = 100 * mn;
   }
 }
 
@@ -154,7 +154,7 @@ static bool sceneDungeon_enemySpecialAttack(int monster) {
         return true;
       }
     }
-  } else if (enemy == 37) {
+  } else if (enemy == 30) {
     if (player.armor == 0) {
       return false;
     }
@@ -163,7 +163,7 @@ static bool sceneDungeon_enemySpecialAttack(int monster) {
     player.armors[player.armor-1] -= 1;
     player.armor = 0;
     return true;
-  } else if (enemy == 30) {
+  } else if (enemy == 37) {
     player.food /= 2;
     uiConsole_queueMessage(ultimaStrings[1001]);
     uiConsole_updateStats();
@@ -203,8 +203,8 @@ static void sceneDungeon_moveEnemies() {
   for (int i=1;i<=5;i++) {
     if (monsters[monstersIndex + i][0] == 1) { continue; }
 
-    int xx = player.px - monsters[monstersIndex + i - 1][1];
-    int yy = player.py - monsters[monstersIndex + i - 1][2];
+    int xx = player.px - monsters[monstersIndex + i][1];
+    int yy = player.py - monsters[monstersIndex + i][2];
     int dx = (xx > 0) - (xx < 0);
     int dy = (yy > 0) - (yy < 0);
     float ra = sqrtf(xx*xx + yy*yy);
@@ -213,21 +213,21 @@ static void sceneDungeon_moveEnemies() {
       sceneDungeon_enemyAttack(i);
       return; 
     }
-    if (ra > 3 && player.px != monsters[monstersIndex + i - 1][1] && player.py != monsters[monstersIndex + i - 1][2]) { continue; }
+    if (ra > 3 && player.px != monsters[monstersIndex + i][1] && player.py != monsters[monstersIndex + i][2]) { continue; }
 
     if (xx != 0) {
-      int zz = dungeonMap[monsters[monstersIndex + i - 1][1] + dx][monsters[monstersIndex + i - 1][2]];
+      int zz = dungeonMap[monsters[monstersIndex + i][1] + dx][monsters[monstersIndex + i][2]];
       if (zz != 1 && zz != 12 && zz != 2 && zz < 21) {
-        dungeonMap[monsters[monstersIndex + i - 1][1]][monsters[monstersIndex + i - 1][2]] -= 100 * i;
-        monsters[monstersIndex + i - 1][1] += dx;
-        dungeonMap[monsters[monstersIndex + i - 1][1]][monsters[monstersIndex + i - 1][2]] += 100 * i;
+        dungeonMap[monsters[monstersIndex + i][1]][monsters[monstersIndex + i][2]] -= 100 * i;
+        monsters[monstersIndex + i][1] += dx;
+        dungeonMap[monsters[monstersIndex + i][1]][monsters[monstersIndex + i][2]] += 100 * i;
       }
     } else {
-      int zz = dungeonMap[monsters[monstersIndex + i - 1][1]][monsters[monstersIndex + i - 1][2] + dy];
+      int zz = dungeonMap[monsters[monstersIndex + i][1]][monsters[monstersIndex + i][2] + dy];
       if (zz != 1 && zz != 12 && zz != 2 && zz < 21) {
-        dungeonMap[monsters[monstersIndex + i - 1][1]][monsters[monstersIndex + i - 1][2]] -= 100 * i;
-        monsters[monstersIndex + i - 1][2] += dy;
-        dungeonMap[monsters[monstersIndex + i - 1][1]][monsters[monstersIndex + i - 1][2]] += 100 * i;
+        dungeonMap[monsters[monstersIndex + i][1]][monsters[monstersIndex + i][2]] -= 100 * i;
+        monsters[monstersIndex + i][2] += dy;
+        dungeonMap[monsters[monstersIndex + i][1]][monsters[monstersIndex + i][2]] += 100 * i;
       }
     }
   }

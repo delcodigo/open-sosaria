@@ -329,7 +329,6 @@ static bool playerDungeon_updateAttack() {
     }
 
     int enemy = -1;
-    int rangeIndex = -1;
     for (int i=1;i<=range;i++) {
       int tile = dungeonMap[player.px + player.dx * i][player.py + player.dy * i];
       if (tile == 1 || tile == 3 || tile == 4 || tile == 12) {
@@ -339,7 +338,6 @@ static bool playerDungeon_updateAttack() {
 
       if (tile > 19) {
         enemy = (int)(tile / 100);
-        rangeIndex = i;
         break;
       }
     }
@@ -367,26 +365,24 @@ static bool playerDungeon_updateAttack() {
     if (monsters[monstersIndex + enemy][3] < 0) {
       monsters[monstersIndex + enemy][0] = 1;
       uiConsole_queueMessageFormat("%s%s", enemyDefinitions[monstersIndex + enemy].name, ultimaStrings[876]);
-      dungeonMap[player.px + player.dx * rangeIndex][player.py + player.dy * rangeIndex] -= enemy * 100;
+      dungeonMap[monsters[monstersIndex + enemy][1]][monsters[monstersIndex + enemy][2]] -= enemy * 100;
 
       vmExecuter_createWait(0.6f);
 
       int monster = 0;
       do {
-      monster = (int)(rand01() * 5 + 1);
+        monster = (int)(rand01() * 5 + 1);
       } while (monsters[monstersIndex + monster][0] == 0);
 
-      monsters[monstersIndex + monster][0] = 1;
+      monsters[monstersIndex + monster][0] = 0;
       monsters[monstersIndex + monster][3] = (int)(monster * pow(player.dungeonDepth, 2) * rand01() * 2 + 15);
       
-      int mx = -1;
-      int my = -1;
       do {
-        mx = (int)(rand01() * 9 + 1);
-        my = (int)(rand01() * 9 + 1);
-      } while (dungeonMap[mx][my] != 0 || mx == player.px || my == player.py);
+        monsters[monstersIndex + monster][1] = (int)(rand01() * 9 + 1);
+        monsters[monstersIndex + monster][2] = (int)(rand01() * 9 + 1);
+      } while (dungeonMap[monsters[monstersIndex + monster][1]][monsters[monstersIndex + monster][2]] != 0 || monsters[monstersIndex + monster][1] == player.px || monsters[monstersIndex + monster][2] == player.py);
 
-      dungeonMap[mx][my] = monster * 100;
+      dungeonMap[monsters[monstersIndex + monster][1]][monsters[monstersIndex + monster][2]] = monster * 100;
 
       int earnedXP = (int)(rand01() * player.dungeonDepth * enemy * 5 + player.dungeonDepth);
       player.experience += earnedXP;
