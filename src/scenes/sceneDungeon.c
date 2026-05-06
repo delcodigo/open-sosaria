@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "sceneDungeon.h"
+#include "sceneOverworld.h"
 #include "entities/ui/uiztats.h"
 #include "entities/ui/uiConsole.h"
 #include "entities/dungeonRenderer.h"
@@ -256,7 +257,17 @@ bool sceneDungeon_isSolid(int x, int y) {
 }
 
 static void sceneDungeon_update(float deltaTime) {
+  if (lagTime > 0) {
+    lagTime -= deltaTime;
+    if (lagTime < 0) { lagTime = 0; }
+  }
+  
   if (!queuedMessagesCount && lagTime <= 0 && !vmExecuter_update(deltaTime)) {
+    if (respawnPlayer) {
+      scene_load(&sceneOverworld);
+      return;
+    }
+
     if (ztatsActive) {
       uiZtats_update(deltaTime);
       return;
@@ -267,7 +278,12 @@ static void sceneDungeon_update(float deltaTime) {
       
       sceneDungeon_moveEnemies();
       dungeonRenderer_update();
-      uiConsole_addMessage(ultimaStrings[98]);
+
+      if (player_isAlive()){
+        uiConsole_addMessage(ultimaStrings[98]);
+      } else {
+        sceneOverworld_attemptResurrection();
+      }
     }
 
     if (player_isAlive() && playerDungeon_update(deltaTime)) {
