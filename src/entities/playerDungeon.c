@@ -315,6 +315,7 @@ static bool playerDungeon_updateAttack() {
   if (input.a == 1) {
     input.a = 2;
     uiConsole_replaceLastMessageFormat("%s%s", ultimaStrings[98], ultimaStrings[868]);
+    vmExecuter_createWait(0.6f);
 
     int weapon = player.weapon;
     if (weapon == 4 || (weapon > 7 && weapon < 11)) {
@@ -360,14 +361,12 @@ static bool playerDungeon_updateAttack() {
 
     int damage = (int)((player.strength / 5 + player.weapon * 3) * rand01() + (int)(player.strength / 5));
     uiConsole_queueMessageFormat("%s%d", ultimaStrings[875], damage);
-
+    
     monsters[monstersIndex + enemy][3] -= damage;
     if (monsters[monstersIndex + enemy][3] < 0) {
       monsters[monstersIndex + enemy][0] = 1;
       uiConsole_queueMessageFormat("%s%s", enemyDefinitions[monstersIndex + enemy].name, ultimaStrings[876]);
       dungeonMap[monsters[monstersIndex + enemy][1]][monsters[monstersIndex + enemy][2]] -= enemy * 100;
-
-      vmExecuter_createWait(0.6f);
 
       int monster = 0;
       do {
