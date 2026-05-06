@@ -311,6 +311,55 @@ static bool playerDungeon_updateExit() {
   return false;
 }
 
+static void playerDungeon_onEnemyDestroyed(int enemy) {
+  int monster = 0;
+  do {
+    monster = (int)(rand01() * 5 + 1);
+  } while (monsters[monstersIndex + monster][0] == 0);
+
+  monsters[monstersIndex + monster][0] = 0;
+  monsters[monstersIndex + monster][3] = (int)(monster * pow(player.dungeonDepth, 2) * rand01() * 2 + 15);
+  
+  do {
+    monsters[monstersIndex + monster][1] = (int)(rand01() * 9 + 1);
+    monsters[monstersIndex + monster][2] = (int)(rand01() * 9 + 1);
+  } while (dungeonMap[monsters[monstersIndex + monster][1]][monsters[monstersIndex + monster][2]] != 0 || monsters[monstersIndex + monster][1] == player.px || monsters[monstersIndex + monster][2] == player.py);
+
+  dungeonMap[monsters[monstersIndex + monster][1]][monsters[monstersIndex + monster][2]] = monster * 100;
+
+  int earnedXP = (int)(rand01() * player.dungeonDepth * enemy * 5 + player.dungeonDepth);
+  player.experience += earnedXP;
+  hp += earnedXP;
+  uiConsole_queueMessageFormat("%s%d%s", ultimaStrings[913], earnedXP, ultimaStrings[914]);
+  uiConsole_updateStats();
+
+  if (enemy == 5 && monstersIndex > 20) {
+    int questIndex = (int)(monstersIndex / 5 - 5);
+    if (player.quests[questIndex * 2 + 1] > 0) {
+      player.quests[questIndex * 2 + 1] = -player.quests[questIndex * 2 + 1];
+      uiConsole_queueMessage(ultimaStrings[915]);
+    }
+  }
+
+  int earnedGold = (int)(rand01() * pow(player.dungeonDepth, 2) * 9 + 9);
+  player.gold += earnedGold;
+  uiConsole_queueMessageFormat("%s%d%s", ultimaStrings[916], earnedGold, ultimaStrings[917]);
+  uiConsole_updateStats();
+}
+
+static void playerDungeon_applyDamage(int enemy, int damage) {
+  uiConsole_queueMessageFormat("%s%d", ultimaStrings[875], damage);
+    
+  monsters[monstersIndex + enemy][3] -= damage;
+  if (monsters[monstersIndex + enemy][3] < 0) {
+    monsters[monstersIndex + enemy][0] = 1;
+    uiConsole_queueMessageFormat("%s%s", enemyDefinitions[monstersIndex + enemy].name, ultimaStrings[876]);
+    dungeonMap[monsters[monstersIndex + enemy][1]][monsters[monstersIndex + enemy][2]] -= enemy * 100;
+
+    playerDungeon_onEnemyDestroyed(enemy);
+  }
+}
+
 static bool playerDungeon_updateAttack() {
   if (input.a == 1) {
     input.a = 2;
@@ -360,50 +409,142 @@ static bool playerDungeon_updateAttack() {
     }
 
     int damage = (int)((player.strength / 5 + player.weapon * 3) * rand01() + (int)(player.strength / 5));
-    uiConsole_queueMessageFormat("%s%d", ultimaStrings[875], damage);
-    
-    monsters[monstersIndex + enemy][3] -= damage;
-    if (monsters[monstersIndex + enemy][3] < 0) {
-      monsters[monstersIndex + enemy][0] = 1;
-      uiConsole_queueMessageFormat("%s%s", enemyDefinitions[monstersIndex + enemy].name, ultimaStrings[876]);
-      dungeonMap[monsters[monstersIndex + enemy][1]][monsters[monstersIndex + enemy][2]] -= enemy * 100;
-
-      int monster = 0;
-      do {
-        monster = (int)(rand01() * 5 + 1);
-      } while (monsters[monstersIndex + monster][0] == 0);
-
-      monsters[monstersIndex + monster][0] = 0;
-      monsters[monstersIndex + monster][3] = (int)(monster * pow(player.dungeonDepth, 2) * rand01() * 2 + 15);
-      
-      do {
-        monsters[monstersIndex + monster][1] = (int)(rand01() * 9 + 1);
-        monsters[monstersIndex + monster][2] = (int)(rand01() * 9 + 1);
-      } while (dungeonMap[monsters[monstersIndex + monster][1]][monsters[monstersIndex + monster][2]] != 0 || monsters[monstersIndex + monster][1] == player.px || monsters[monstersIndex + monster][2] == player.py);
-
-      dungeonMap[monsters[monstersIndex + monster][1]][monsters[monstersIndex + monster][2]] = monster * 100;
-
-      int earnedXP = (int)(rand01() * player.dungeonDepth * enemy * 5 + player.dungeonDepth);
-      player.experience += earnedXP;
-      hp += earnedXP;
-      uiConsole_queueMessageFormat("%s%d%s", ultimaStrings[913], earnedXP, ultimaStrings[914]);
-      uiConsole_updateStats();
-
-      if (enemy == 5 && monstersIndex > 20) {
-        int questIndex = (int)(monstersIndex / 5 - 5);
-        if (player.quests[questIndex * 2 + 1] > 0) {
-          player.quests[questIndex * 2 + 1] = -player.quests[questIndex * 2 + 1];
-          uiConsole_queueMessage(ultimaStrings[915]);
-        }
-      }
-
-      int earnedGold = (int)(rand01() * pow(player.dungeonDepth, 2) * 9 + 9);
-      player.gold += earnedGold;
-      uiConsole_queueMessageFormat("%s%d%s", ultimaStrings[916], earnedGold, ultimaStrings[917]);
-      uiConsole_updateStats();
-    }
+    playerDungeon_applyDamage(enemy, damage);
 
     return true;
+  }
+
+  return false;
+}
+
+static bool playerDungeon_updateCast() {
+  if (input.c == 1) {
+    input.c = 2;
+    uiConsole_replaceLastMessageFormat("%s%s", ultimaStrings[98], ultimaStrings[878]);
+    
+    if (player.spell != 0 && player.spells[player.spell] < 0) {
+      uiConsole_queueMessageFormat("%s%s%s", ultimaStrings[879], spellNames[player.spell], ultimaStrings[880]);
+      return true;
+    }
+
+    player.spells[player.spell]--;
+
+    if (rand01() > player.intelligence / 100.0f + 0.5f && player.type != 2) {
+      uiConsole_queueMessageFormat("%s %s", spellNames[player.spell], ultimaStrings[882]);
+      return true;
+    }
+
+    int tile;
+    switch (player.spell) {
+      case 1:
+        uiConsole_queueMessageFormat("%s %s", spellNames[player.spell], ultimaStrings[884]);
+        if (dungeonMap[player.px][player.py] == 6) {
+          uiConsole_queueMessage(ultimaStrings[885]);
+          dungeonMap[player.px][player.py] = 0;
+        } else {
+          uiConsole_queueMessage(ultimaStrings[887]);
+        }
+        return true;
+      
+      case 2:
+        uiConsole_queueMessageFormat("%s %s", spellNames[player.spell], ultimaStrings[888]);
+        if (dungeonMap[player.px][player.py] == 5) {
+          uiConsole_queueMessage(ultimaStrings[889]);
+          dungeonMap[player.px][player.py] = 0;
+        } else {
+          uiConsole_queueMessage(ultimaStrings[891]);
+        }
+        return true;
+      
+      case 3:
+        uiConsole_queueMessageFormat("%s %s", spellNames[player.spell], ultimaStrings[892]);
+        for (int zz=1;zz<=5;zz++) {
+          tile = dungeonMap[player.px + player.dx * zz][player.py + player.dy * zz];
+          if (tile > 100) {
+            tile = (int)(tile / 100);
+            int damage = (int)(player.wisdom / 2 + 10 + 1);
+            playerDungeon_applyDamage(tile, damage);
+            return true;
+          }
+          if (tile == 2 || tile == 1 || tile == 3 || tile == 4) {
+            uiConsole_queueMessage(ultimaStrings[893]);
+            return true;
+          }
+        }
+        uiConsole_queueMessage(ultimaStrings[894]);
+        return true;
+      
+      case 4:
+        uiConsole_queueMessageFormat("%s %s", spellNames[player.spell], ultimaStrings[895]);
+        uiConsole_queueMessage(ultimaStrings[896]);
+        return true;
+      
+      case 5:
+        uiConsole_queueMessageFormat("%s %s", spellNames[player.spell], ultimaStrings[897]);
+        tile = dungeonMap[player.px][player.py];
+        if (tile == 10) {
+          uiConsole_queueMessage(ultimaStrings[898]);
+        } else {
+          uiConsole_queueMessage(ultimaStrings[899]);
+          dungeonMap[player.px][player.py] = 7;
+        }
+        return true;
+
+      case 6:
+        uiConsole_queueMessageFormat("%s %s", spellNames[player.spell], ultimaStrings[900]);
+        uiConsole_queueMessage(ultimaStrings[901]);
+        dungeonMap[player.px][player.py] = 8;
+        return true;
+
+      case 7:
+        do {
+          player.px = (int)(rand01() * 5) * 2 + 1;
+          player.py = (int)(rand01() * 5) * 2 + 1;
+        } while (dungeonMap[player.px][player.py] != 0);
+        uiConsole_queueMessageFormat("%s %s", spellNames[player.spell], ultimaStrings[902]);
+        uiConsole_queueMessage(ultimaStrings[903]);
+        return true;
+
+      case 8:
+        uiConsole_queueMessageFormat("%s %s", spellNames[player.spell], ultimaStrings[904]);
+        tile = dungeonMap[player.px + player.dx][player.py + player.dy];
+        if (tile != 0) {
+          uiConsole_queueMessage(ultimaStrings[905]);
+        } else {
+          dungeonMap[player.px + player.dx][player.py + player.dy] = 12;
+          uiConsole_queueMessage(ultimaStrings[906]);
+        }
+        return true;
+
+      case 9:
+        uiConsole_queueMessageFormat("%s %s", spellNames[player.spell], ultimaStrings[907]);
+        tile = dungeonMap[player.px + player.dx][player.py + player.dy];
+        if (tile != 12) {
+          uiConsole_queueMessage(ultimaStrings[908]);
+        } else {
+          dungeonMap[player.px + player.dx][player.py + player.dy] = 0;
+          uiConsole_queueMessage(ultimaStrings[909]);
+        }
+        return true;
+
+      case 10:
+        uiConsole_queueMessageFormat("%s %s", spellNames[player.spell], ultimaStrings[910]);
+        tile = dungeonMap[player.px + player.dx][player.py + player.dy];
+        if (tile < 21) {
+          uiConsole_queueMessage(ultimaStrings[911]);
+          return true;
+        }
+        int enemy = (int)(tile / 100);
+        uiConsole_queueMessageFormat("%s%s", enemyDefinitions[monstersIndex + enemy].name, ultimaStrings[912]);
+        monsters[monstersIndex + enemy][0] = 1;
+        dungeonMap[player.px + player.dx][player.py + player.dy] -= enemy * 100;
+        playerDungeon_onEnemyDestroyed(enemy);
+        return true;
+      
+      default:
+        uiConsole_queueMessageFormat("%s %s", spellNames[player.spell], ultimaStrings[883]);
+        return true;
+    }
   }
 
   return false;
@@ -430,6 +571,7 @@ bool playerDungeon_update(float deltaTime) {
         if (playerDungeon_updateUnlock()) { acted = true; } else
         if (playerDungeon_updateExit()) { acted = true; } else
         if (playerDungeon_updateAttack()) { acted = true; } else
+        if (playerDungeon_updateCast()) { acted = true; } else
         if (playerDungeon_updateRotation()) { acted = true; } else
         if (playerDungeon_updateMovement()) { acted = true; } else 
         if (playerDungeon_updateAutoPass(deltaTime)) { acted = true; }
