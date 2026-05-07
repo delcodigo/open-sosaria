@@ -15,7 +15,7 @@ Recreate the original game behavior on modern PCs while preserving historical me
 
 ## Required Game Data (Bring Your Own)
 
-To run the future engine implementation, you must supply:
+To run the engine, you must supply:
 
 - `disk1.dsk`
 - `disk2.dsk`
@@ -27,7 +27,7 @@ bin/disk1.dsk
 bin/disk2.dsk
 ```
 
-If files are missing, the runtime should fail with a clear error message.
+If files are missing, the runtime will fail with a clear error message.
 
 ## Historical Context
 
@@ -79,12 +79,13 @@ On some MSYS2 setups, use `mingw32-make` if `make` is not available in PATH.
 ```
 
 
-## Current Implementation (v0.2.0)
+## Current Implementation (v0.3.0)
 
 The engine now includes:
 
 - **Full Towns and Castles:** All towns and castles are fully implemented with feature parity to the original Apple II release.
 - **Overworld (Nearly Complete):** Overworld map, player movement, and collision are implemented. The only major features missing are the **Time Machine** and **Space Shuttle**.
+- **Dungeons (Feature Parity Achieved):** Full dungeon support is now complete. Players can enter dungeons, delve up to 10 levels deep, fight enemies, and complete quests by killing the required monster.
 - **Disk Verification:** Validates that `program.dsk` and `player.dsk` exist and contain the required Apple II Ultima files with correct sizes.
 - **Disk Loader Scene:** Core disk loading flow is working and displays status messages during boot (file verification and error messages).
 - **Asset Extraction:** Reads and parses DOS 3.3 disk catalogs and file structures from the Apple II disks.
@@ -95,7 +96,6 @@ The engine now includes:
 ## Next Steps
 
 - Complete the overworld by implementing the **Time Machine** and **Space Shuttle** mechanics.
-- Implement the **Dungeons**.
 - Develop the **Space Minigame**.
 - Create the **Mondain Encounter** (final boss battle).
 - Continue refining game logic, sprite rendering, and Apple II game mechanics.

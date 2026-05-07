@@ -400,6 +400,37 @@ where `rank` is the attacking monster rank.
 - This engine reinterpretation reads the `BEVERY` memory image and locates Applesoft variables and arrays inside it, then converts them into local engine data structures.
 - The extraction path is implemented in `bever.c` and `bever.h`.
 
+## Dungeons
+
+- Dungeon enemy rendering routines are located in the original `SET[1-5]` files (tokenized Applesoft BASIC). These contain lines **11000**, **12000**, **13000**, and **14000** for general enemy rendering and an extra **15000** line for special actions of certain enemies (e.g. the thief).
+- **Thieves** will always steal your weakest non-equipped weapon.
+- **Gelatinous cube** will always disintegrate your currently equipped armor.
+- **Gremlins** will always steal half of your current food.
+- **Mind whippers** have a 50% chance of performing a mental attack: intelligence is reduced by 60%, then 5 is added back. The resulting intelligence is clamped to a minimum of **12**, unless the player's *initial* intelligence was **10**, in which case it becomes **11**.
+- Dungeons are full of hidden traps and hidden doors — remember to use the **I**nspect command on the tile directly in front of you regularly.
+- The rendering system is designed exclusively for **1-tile-wide corridors**. It does not support rooms or any other structures that are not straight corridors.
+
+### Hidden Traps
+
+- Stepping on a hidden trap drops the player to the next dungeon level and inflicts damage.
+- Possessing **Rope & Spikes** in inventory completely prevents falling through hidden traps.
+- Using **I**nspect on a hidden trap reveals it, preventing accidental falls. Once revealed, the player can manually descend to the next level with no penalty.
+
+### Dungeon Spellcasting
+
+- Spellcasting in dungeons has a failure chance: fails if `rand01() > player.intelligence / 100.0f + 0.5f`.
+- All spells **always succeed** if the player class is **Wizard**.
+- **Open**: Opens a coffin on the player's current tile (no enemy spawning risk).
+- **Unlock**: Unlocks a chest on the player's current tile (no trap damage risk).
+- **PROJECTILE** (Magic Missile): Attacks an enemy up to 5 tiles directly in front of the player, dealing `⌊player.wisdom / 2 + 11⌋` damage.
+- **Steal**: Does not work inside dungeons.
+- **Ladder Down**: Spawns a ladder to descend one level. **Warning**: Do not use on level 10 (will soft-lock the game).
+- **Ladder Up**: Spawns a ladder to ascend one level (can be used to exit the dungeon).
+- **Blink**: Teleports the player to a random empty space on the current dungeon level.
+- **Create**: Creates a force field that blocks passage for everyone.
+- **Destroy**: Destroys a force field.
+- **Kill**: Instantly kills an enemy directly in front of the player.
+
 ## Notes
 
 These findings are based on reinterpretation and observed behavior, and should be refined further as additional engine details are validated.
