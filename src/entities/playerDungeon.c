@@ -338,6 +338,7 @@ static void playerDungeon_onEnemyDestroyed(int enemy) {
     if (player.quests[questIndex * 2 + 1] > 0) {
       player.quests[questIndex * 2 + 1] = -player.quests[questIndex * 2 + 1];
       uiConsole_queueMessage(ultimaStrings[915]);
+      vmExecuter_createWait(2.0);
     }
   }
 
@@ -441,6 +442,10 @@ static bool playerDungeon_updateCast() {
         if (dungeonMap[player.px][player.py] == 6) {
           uiConsole_queueMessage(ultimaStrings[885]);
           dungeonMap[player.px][player.py] = 0;
+          int gold = (int)(rand01() * pow(player.dungeonDepth, 2) * 9 + 9);
+          player.gold += gold;
+          uiConsole_queueMessageFormat("%s%d%s", ultimaStrings[916], gold, ultimaStrings[917]);
+          uiConsole_updateStats();
         } else {
           uiConsole_queueMessage(ultimaStrings[887]);
         }
@@ -451,6 +456,10 @@ static bool playerDungeon_updateCast() {
         if (dungeonMap[player.px][player.py] == 5) {
           uiConsole_queueMessage(ultimaStrings[889]);
           dungeonMap[player.px][player.py] = 0;
+          int gold = (int)(rand01() * pow(player.dungeonDepth, 2) * 9 + 9);
+          player.gold += gold;
+          uiConsole_queueMessageFormat("%s%d%s", ultimaStrings[916], gold, ultimaStrings[917]);
+          uiConsole_updateStats();
         } else {
           uiConsole_queueMessage(ultimaStrings[891]);
         }
