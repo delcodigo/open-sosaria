@@ -18,6 +18,7 @@
 #include "scenes/sceneTown.h"
 #include "scenes/sceneCastle.h"
 #include "scenes/sceneDungeon.h"
+#include "scenes/sceneSpace.h"
 #include "maths/matrix4.h"
 #include "vehicleOverworld.h"
 #include "config.h"
@@ -34,6 +35,8 @@ static float enemyTransformationMatrix[16];
 static bool renderEnemy = false;
 
 static int lastSignpost = -1;
+static int liftoffCountdown = 11;
+static char liftoffCountdownString[22];
 
 void playerOverworld_init() {
   playerOverworld_updateGeometry();
@@ -449,12 +452,16 @@ static bool playerOverworld_updateBoard() {
     } else if (vehicleTile == 3 || vehicleTile == 4 || vehicleTile == 5) {
       player.vehicle = vehicleTile;
       uiConsole_addMessageFormat("%.15s%.15s", ultimaStrings[144], vehicleNames[vehicleTile]);
-    } else if (vehicleTile == 6) {
-      player.vehicle = 6;
-      uiConsole_addMessage(ultimaStrings[141]);
     } else if (vehicleTile == 7) {
       player.vehicle = 7;
+      uiConsole_addMessage(ultimaStrings[141]);
+    } else if (vehicleTile == 6) {
+      player.vehicle = 6;
       uiConsole_addMessage(ultimaStrings[142]);
+      vmExecuter_createWait(1);
+      playerState = PLAYER_STATE_SHUTTLE_COUNTDOWN;
+      memset(liftoffCountdownString, 0, sizeof(liftoffCountdownString));
+      liftoffCountdown = 11;
     }
 
     vehiclesMap[player.ty][player.tx] = 0;
@@ -673,6 +680,27 @@ static bool playerOverworld_updateEnter() {
   return false;
 }
 
+static void playerOverworld_updateLiftoffCountdown() {
+  if (liftoffCountdown == 11) {
+    uiConsole_queueMessage(" ");
+    uiConsole_queueMessage(ultimaStrings[846]);
+    uiConsole_queueMessage(" ");
+    keyRepeatDelay = 0.5f;
+    liftoffCountdown--;
+    return;
+  }
+
+  char countdown[4] = {0};
+  snprintf(countdown, sizeof(countdown), "%d-", liftoffCountdown--);
+  strcat(liftoffCountdownString, countdown);
+  uiConsole_replaceLastMessage(liftoffCountdownString);
+  keyRepeatDelay = 1;
+
+  if (liftoffCountdown == 0) {
+    vmExecuter_createSceneTransition(1, &sceneSpace);
+  }
+}
+
 void playerOverworld_setCameraFollow() {
   camera_setPosition3f(&camera, (player.tx + 1) * OS_TILE_WIDTH - OS_SCREEN_WIDTH / 2, (player.ty + 1) * OS_TILE_HEIGHT - OS_SCREEN_HEIGHT / 2, 10);
 }
@@ -702,6 +730,8 @@ bool playerOverworld_update(float deltaTime) {
       case PLAYER_STATE_READY_TYPE:
         if (playerCommons_updateReady()) { acted = true; }
         break;
+      case PLAYER_STATE_SHUTTLE_COUNTDOWN:
+        playerOverworld_updateLiftoffCountdown();
       default:
         break;
     }
