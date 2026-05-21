@@ -207,6 +207,8 @@ static void sceneSpace_init() {
   }
 
   camera_setPosition3f(&camera, 0, 0, 10);
+  uiConsole_setSpaceLabels();
+  uiConsole_updateSpaceStats();
 
   uiConsole_queueMessage(ultimaStrings[1010]);
   uiConsole_queueMessage(ultimaStrings[98]);

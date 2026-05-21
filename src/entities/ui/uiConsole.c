@@ -58,6 +58,11 @@ void uiConsole_init() {
   uiConsole_updateStats();
 }
 
+void uiConsole_setSpaceLabels() {
+  text_update(&statsLabels[2], ultimaStrings[1070]);
+  text_update(&statsLabels[3], ultimaStrings[1072]);
+}
+
 void uiConsole_queueMessage(const char *message) {
   if (queuedMessagesCount < 20) {
     strncpy(queuedMessages[queuedMessagesCount], message, sizeof(queuedMessages[queuedMessagesCount]));
@@ -161,6 +166,18 @@ void uiConsole_updateStats() {
   text_update(&stats[2], player.experience > 99999 ? "*****" : statStr);
   snprintf(statStr, sizeof(statStr), "%d", player.gold);
   text_update(&stats[3], player.gold > 99999 ? "*****" : statStr);
+}
+
+void uiConsole_updateSpaceStats() {
+  char statStr[7] = {0};
+  snprintf(statStr, sizeof(statStr), "%d", player.health);
+  text_update(&stats[0], player.health > 99999 ? "*****" : statStr);
+  snprintf(statStr, sizeof(statStr), "%d", (int)player.food);
+  text_update(&stats[1], (int)player.food > 99999 ? "*****" : statStr);
+  snprintf(statStr, sizeof(statStr), "%d", player.shield);
+  text_update(&stats[2], player.shield > 99999 ? "*****" : statStr);
+  snprintf(statStr, sizeof(statStr), "%d", player.fuel);
+  text_update(&stats[3], player.fuel > 99999 ? "*****" : statStr);
 }
 
 static void uiConsole_updateTypewriter(float deltaTime) {

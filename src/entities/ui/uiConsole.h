@@ -14,6 +14,7 @@ typedef struct {
 } ConsoleLine;
 
 void uiConsole_init();
+void uiConsole_setSpaceLabels();
 void uiConsole_queueMessage(const char *message);
 void uiConsole_queueMessageFormat(const char *format, ...);
 void uiConsole_addMessage(const char *message);
@@ -21,6 +22,7 @@ void uiConsole_addMessageFormat(const char *format, ...);
 void uiConsole_replaceLastMessage(const char *message);
 void uiConsole_replaceLastMessageFormat(const char *format, ...);
 void uiConsole_updateStats();
+void uiConsole_updateSpaceStats();
 void uiConsole_update(float deltaTime);
 void uiConsole_free();
 
