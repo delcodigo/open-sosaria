@@ -12,6 +12,10 @@ typedef struct {
   Geometry geometry;
 } SpaceShape;
 
+extern Geometry playerShipGeometries[3];
+extern int spaceMap[11][11];
 extern Scene sceneSpace;
+
+void sceneSpace_transformShape(float *transformMatrix, float x, float y, float rotation);
 
 #endif

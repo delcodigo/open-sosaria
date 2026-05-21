@@ -4,6 +4,7 @@
 #include "engine/geometry.h"
 #include "entities/ui/uiConsole.h"
 #include "sceneDiskLoader.h"
+#include "entities/playerSpace.h"
 #include "data/player.h"
 #include "maths/matrix4.h"
 #include "utils.h"
@@ -16,7 +17,8 @@
 #define SHAPE_SPACE_STATION 20
 #define SHAPE_SPACE_STAR 21
 
-SpaceShape shapes[11];
+static SpaceShape shapes[11];
+
 Geometry playerShipGeometries[3];
 int spaceMap[11][11];
 
@@ -214,7 +216,7 @@ static void sceneSpace_init() {
   uiConsole_queueMessage(ultimaStrings[98]);
 }
 
-static void sceneSpace_transformShape(float *transformMatrix, float x, float y, float rotation) {
+void sceneSpace_transformShape(float *transformMatrix, float x, float y, float rotation) {
   matrix4_setIdentity(transformMatrix);
   matrix4_setPosition(transformMatrix, x, y, 0);
   matrix4_setRotationZ(transformMatrix, (rotation * 5.625f) * M_PI / 180.0f);
@@ -233,12 +235,7 @@ static void sceneSpace_render() {
     geometry_render(&shapes[i].geometry, ultimaAssets.spaceSprites.textureId, transformMatrix, viewMatrix);
   }
 
-  int playerShip = 0;
-  if (player.vehicle == 7) { playerShip = 2; } else
-  if (player.vehicle == 8) { playerShip = 1; }
-
-  sceneSpace_transformShape(transformMatrix, player.px, player.py, player.rotation);
-  geometry_render(&playerShipGeometries[playerShip], ultimaAssets.spaceSprites.textureId, transformMatrix, viewMatrix);
+  playerSpace_render(viewMatrix);
 }
 
 static void sceneSpace_update(float deltaTime) {
