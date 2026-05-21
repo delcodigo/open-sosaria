@@ -227,7 +227,7 @@ static void sceneSpace_render() {
   float transformMatrix[16];
 
   for (int i=0;i<=8;i++) {
-    if (shapes[i].shapeId <= 0) {
+    if (shapes[i].shapeId < 0) {
       continue;
     }
 
@@ -239,12 +239,29 @@ static void sceneSpace_render() {
 }
 
 static void sceneSpace_update(float deltaTime) {
+  if (playerActed) {
+    uiConsole_addMessage(ultimaStrings[98]);
+    playerActed = false;
+  }
+
+  if (playerSpace_update(deltaTime)) {
+    playerActed = true;
+  }
+
   sceneSpace_render();
   uiConsole_update(deltaTime);
 }
 
 static void sceneSpace_free() {
+  for (int i=0;i<3;i++) {
+    geometry_free(&playerShipGeometries[i]);
+  }
 
+  for (int i=0;i<11;i++) {
+    if (shapes[i].shapeId >= 0){
+      geometry_free(&shapes[i].geometry);
+    }
+  }
 }
 
 Scene sceneSpace = {
