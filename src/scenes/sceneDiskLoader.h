@@ -23,6 +23,7 @@ typedef struct {
   UltimaImage overworldTiles;
   UltimaImage enemySprites;
   UltimaImage townCastleSprites;
+  UltimaImage spaceSprites;
   UltimaImage blackSprite;
 
   uint8_t bterraMaps[OS_BTERRA_COUNT][OS_BTERRA_MAP_WIDTH][OS_BTERRA_MAP_HEIGHT];

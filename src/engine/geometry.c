@@ -75,6 +75,21 @@ void geometry_setSprite(Geometry *geometry, float width, float height, float tx1
   geometry_build(geometry, vertices, 4, indices, 6);
 }
 
+void geometry_setSpriteOffset(Geometry *geometry, float ofX, float ofY, float width, float height, float tx1, float ty1, float tx2, float ty2) {
+  float vertices[] = {
+    -ofX, -ofY, 0.0f, tx1, ty1,
+    width-ofX, -ofY, 0.0f, tx2, ty1,
+    -ofX, height-ofY, 0.0f, tx1, ty2,
+    width-ofX, height-ofY, 0.0f, tx2, ty2
+  };
+  unsigned int indices[] = {
+    0, 1, 2,
+    2, 1, 3
+  };
+
+  geometry_build(geometry, vertices, 4, indices, 6);
+}
+
 void geometry_render(const Geometry *geometry, GLuint textureId, float *transformMatrix, float *viewMatrix) {
   if (!geometry) { return; }
 

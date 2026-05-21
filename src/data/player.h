@@ -37,6 +37,10 @@ typedef struct {
   int dungeonDepth;
   int dx;
   int dy;
+  int shield;
+  int fuel;
+  int rotation;
+  bool isDocked;
 } Player;
 
 extern Player player;

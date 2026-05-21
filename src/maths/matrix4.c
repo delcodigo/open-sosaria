@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <math.h>
 #include "matrix4.h"
 
 void matrix4_set(float *matrix, 
@@ -25,6 +26,16 @@ void matrix4_setPosition(float *matrix, float x, float y, float z) {
   matrix[12] = x;
   matrix[13] = y;
   matrix[14] = z;
+}
+
+void matrix4_setRotationZ(float *matrix, float angle) {
+  float c = cosf(angle);
+  float s = sinf(angle);
+
+  matrix[0] = c;
+  matrix[1] = s;
+  matrix[4] = -s;
+  matrix[5] = c;
 }
 
 void matrix4_multiply(float *matrixA, float *matrixB) {

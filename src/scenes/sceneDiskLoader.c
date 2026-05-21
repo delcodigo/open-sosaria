@@ -1010,7 +1010,7 @@ static bool sceneDiskLoader_renderEnemiesShapeTable(const ShapeTable *table, Ult
   return true;
 }
 
-static bool sceneDiskLoader_renderShapeTable(const ShapeTable *table, UltimaImage *outImage, int tileWidth, int tileHeight) {
+static bool sceneDiskLoader_renderShapeTable(const ShapeTable *table, UltimaImage *outImage, int tileWidth, int tileHeight, int offsetX, int offsetY) {
   if (!table || !outImage) { return false; }
 
   const int cols = 8;
@@ -1024,8 +1024,8 @@ static bool sceneDiskLoader_renderShapeTable(const ShapeTable *table, UltimaImag
   for (int s=0;s<table->count;s++) {
     int cx = (s % cols) * tileWidth;
     int cy = (s / cols) * tileHeight;
-    int x = cx;
-    int y = cy;
+    int x = cx + offsetX;
+    int y = cy + offsetY;
 
     uint16_t start = table->starts[s];
     uint16_t end = table->ends[s];
@@ -1454,12 +1454,25 @@ void sceneDiskLoader_extractUltimaAssets() {
   if (twnCasShapesBuffer && twnCasShapesBuffer->data) {
     ShapeTable table = {0};
     if (sceneDiskLoader_parseShapeTable(twnCasShapesBuffer->data, twnCasShapesBuffer->size, &table)) {
-      sceneDiskLoader_renderShapeTable(&table, &ultimaAssets.townCastleSprites, OS_TOWN_CASTLE_SPRITE_WIDTH, OS_TOWN_CASTLE_SPRITE_HEIGHT);
+      sceneDiskLoader_renderShapeTable(&table, &ultimaAssets.townCastleSprites, OS_TOWN_CASTLE_SPRITE_WIDTH, OS_TOWN_CASTLE_SPRITE_HEIGHT, 0, 0);
       sceneDiskLoader_freeShapeTable(&table);
     }
 
     free(twnCasShapesBuffer->data);
     free(twnCasShapesBuffer);
+  }
+
+  // Extract space sprite
+  Buffer *spaceShapesBuffer = sceneDiskLoader_readDos33FileByName(disk1, "SPA.SHAPES");
+  if (spaceShapesBuffer &&  spaceShapesBuffer->data) {
+    ShapeTable table = {0};
+    if (sceneDiskLoader_parseShapeTable(spaceShapesBuffer->data, spaceShapesBuffer->size, &table)) {
+      sceneDiskLoader_renderShapeTable(&table, &ultimaAssets.spaceSprites, 24, 24, 12, 12);
+      sceneDiskLoader_freeShapeTable(&table);
+    }
+
+    free(spaceShapesBuffer->data);
+    free(spaceShapesBuffer);
   }
 
   // Extract Bterra maps
@@ -1487,6 +1500,7 @@ void sceneDiskLoader_extractUltimaAssets() {
   sceneDiskLoader_extractBinaryStrings(disk1, "SET2");
   sceneDiskLoader_extractBinaryStrings(disk1, "SET4");
   sceneDiskLoader_extractBinaryStrings(disk1, "SET5");
+  sceneDiskLoader_extractBasicStrings(disk1, "SPA MOVE");
 
   // Load town collisions map
   sceneDiskLoader_loadCollisionsMap(disk2, "BTWN", ultimaAssets.townCollisionMap);
