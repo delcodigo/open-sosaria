@@ -47,7 +47,7 @@ static void sceneSpace_setShapeGeometry(int shapeId, Geometry *geometry) {
   float tx2 = tx1 + 15.0f / (float) ultimaAssets.spaceSprites.width;
   float ty2 = ty1 + 15.0f / (float) ultimaAssets.spaceSprites.height;
 
-  geometry_setSpriteOffset(geometry, 7.5f, 7.5f, 15, 15, tx1, ty1, tx2, ty2);
+  geometry_setSpriteOffset(geometry, 7, 7, 15, 15, tx1, ty1, tx2, ty2);
 }
 
 static void sceneSpace_init() {

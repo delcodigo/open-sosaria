@@ -1010,7 +1010,18 @@ static bool sceneDiskLoader_renderEnemiesShapeTable(const ShapeTable *table, Ult
   return true;
 }
 
-static bool sceneDiskLoader_renderShapeTable(const ShapeTable *table, UltimaImage *outImage, int tileWidth, int tileHeight, int offsetX, int offsetY) {
+static void sceneDiskLoader_addTransparency(UltimaImage *image) {
+  if (!image || !image->data) { return; }
+
+  for (unsigned int i=0;i<image->width*image->height*4;i+=4) {
+    bool isBlack = image->data[i] == 0 && image->data[i+1] == 0 && image->data[i+2] == 0;
+    if (isBlack) {
+      image->data[i+3] = 0;
+    }
+  }
+}
+
+static bool sceneDiskLoader_renderShapeTable(const ShapeTable *table, UltimaImage *outImage, int tileWidth, int tileHeight, int offsetX, int offsetY, bool transparent) {
   if (!table || !outImage) { return false; }
 
   const int cols = 8;
@@ -1039,6 +1050,10 @@ static bool sceneDiskLoader_renderShapeTable(const ShapeTable *table, UltimaImag
   }
 
   sceneDiskLoader_colorHGRShapeTable(originalWidth, originalHeight, outImage);
+
+  if (transparent) {
+    sceneDiskLoader_addTransparency(outImage);
+  }
 
   outImage->textureId = texture_load(outImage->width, outImage->height, outImage->data);
   sceneDiskLoader_freeImage(outImage);
@@ -1454,7 +1469,7 @@ void sceneDiskLoader_extractUltimaAssets() {
   if (twnCasShapesBuffer && twnCasShapesBuffer->data) {
     ShapeTable table = {0};
     if (sceneDiskLoader_parseShapeTable(twnCasShapesBuffer->data, twnCasShapesBuffer->size, &table)) {
-      sceneDiskLoader_renderShapeTable(&table, &ultimaAssets.townCastleSprites, OS_TOWN_CASTLE_SPRITE_WIDTH, OS_TOWN_CASTLE_SPRITE_HEIGHT, 0, 0);
+      sceneDiskLoader_renderShapeTable(&table, &ultimaAssets.townCastleSprites, OS_TOWN_CASTLE_SPRITE_WIDTH, OS_TOWN_CASTLE_SPRITE_HEIGHT, 0, 0, false);
       sceneDiskLoader_freeShapeTable(&table);
     }
 
@@ -1467,7 +1482,8 @@ void sceneDiskLoader_extractUltimaAssets() {
   if (spaceShapesBuffer &&  spaceShapesBuffer->data) {
     ShapeTable table = {0};
     if (sceneDiskLoader_parseShapeTable(spaceShapesBuffer->data, spaceShapesBuffer->size, &table)) {
-      sceneDiskLoader_renderShapeTable(&table, &ultimaAssets.spaceSprites, 24, 24, 12, 12);
+      sceneDiskLoader_addTransparency(&ultimaAssets.spaceSprites);
+      sceneDiskLoader_renderShapeTable(&table, &ultimaAssets.spaceSprites, 24, 24, 12, 12, true);
       sceneDiskLoader_freeShapeTable(&table);
     }
 

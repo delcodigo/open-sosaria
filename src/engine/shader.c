@@ -19,7 +19,9 @@ static const char *fragment_shader_source =
     "uniform sampler2D uTexture;\n"
     "varying vec2 vTexCoord;\n"
     "void main() {\n"
-    "    gl_FragColor = texture2D(uTexture, vTexCoord);\n"
+    "    vec4 color = texture2D(uTexture, vTexCoord);\n"
+    "    if (color.a == 0.0) { discard; }\n"
+    "    gl_FragColor = color;\n"
     "}\n";
 
 
