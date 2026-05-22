@@ -8,6 +8,32 @@
 #include "scenes/sceneDiskLoader.h"
 
 static float playerTransformMatrix[16];
+static Geometry thrustGeometry;
+static int thrustOffset[2] = {0};
+static float thrustVisible = 0;
+
+void playerSpace_init() {
+  player.sx = 5;
+  player.sy = 5;
+  player.dx = 0;
+  player.dy = 0;
+  player.shield = 1000;
+  player.fuel = 1000;
+  player.rotation = 48;
+  player.isDocked = false;
+  if (player.vehicle == 7) {
+    player.fuel = 1500;
+  } else if (player.vehicle == 8) {
+    player.shield = 2000;
+  }
+
+  float tx1 = 6.0f * 24.0f / (float) ultimaAssets.spaceSprites.width;
+  float ty1 = 2.0f * 24.0f / (float) ultimaAssets.spaceSprites.height;
+  float tx2 = tx1 + 24.0f / (float) ultimaAssets.spaceSprites.width;
+  float ty2 = ty1 + 24.0f / (float) ultimaAssets.spaceSprites.height;
+
+  geometry_setSpriteOffset(&thrustGeometry, 12, 12, 24, 24, tx1, ty1, tx2, ty2);
+}
 
 static bool playerSpace_updateTurning() {
   if (input.left == 1) {
@@ -20,6 +46,7 @@ static bool playerSpace_updateTurning() {
       return true;
     }
 
+    thrustVisible = 0;
     player.rotation -= 16;
     if (player.rotation < 0) { player.rotation = 48; }
 
@@ -37,6 +64,7 @@ static bool playerSpace_updateTurning() {
       return true;
     }
 
+    thrustVisible = 0;
     player.rotation += 16;
     if (player.rotation > 48) { player.rotation = 0; }
 
@@ -72,7 +100,9 @@ static bool playerSpace_updateThrusting() {
       xx = 8;
     }
 
-    // TODO: Draw thrust fire
+    thrustOffset[0] = xx;
+    thrustOffset[1] = yy;
+    thrustVisible = 0.075f;
 
     player.dx -= (xx > 0) ? 1 : (xx < 0) ? -1 : 0;
     player.dy -= (yy > 0) ? 1 : (yy < 0) ? -1 : 0;
@@ -83,6 +113,7 @@ static bool playerSpace_updateThrusting() {
     if (player.dx < -5) { player.dx = -5; } 
 
     player.fuel -= 5;
+    uiConsole_updateSpaceStats();
 
     return true;
   }
@@ -117,6 +148,9 @@ static bool playerSpace_updateRetro() {
     if (player.dy > 5) { player.dy = 5; }
     if (player.dy < -5) { player.dy = -5; }
 
+    player.fuel -= 5;
+    uiConsole_updateSpaceStats();
+
     uiConsole_replaceLastMessageFormat("%s%s", ultimaStrings[98], ultimaStrings[1064]);
 
     return true;
@@ -142,6 +176,16 @@ bool playerSpace_update(float deltaTime) {
   player.sx += (float) player.dx * speed;
   player.sy += (float) player.dy * speed;
 
+  if (player.sx < 15) { player.sx = 265; } else
+  if (player.sx > 265) { player.sx = 15; }
+
+  if (player.sy < 10) { player.sy = 150; } else
+  if (player.sy > 150) { player.sy = 10; }
+
+  if (thrustVisible > 0) {
+    thrustVisible -= deltaTime;
+  }
+
   return acted;
 }
 
@@ -150,6 +194,15 @@ void playerSpace_render(float *viewMatrix) {
   if (player.vehicle == 7) { playerShip = 2; } else
   if (player.vehicle == 8) { playerShip = 1; }
 
+  if (thrustVisible > 0) {
+    sceneSpace_transformShape(playerTransformMatrix, (int) (player.sx + thrustOffset[0]), (int) (player.sy + thrustOffset[1]), player.rotation);
+    geometry_render(&thrustGeometry, ultimaAssets.spaceSprites.textureId, playerTransformMatrix, viewMatrix);
+  }
+
   sceneSpace_transformShape(playerTransformMatrix, (int) player.sx, (int) player.sy, player.rotation);
   geometry_render(&playerShipGeometries[playerShip], ultimaAssets.spaceSprites.textureId, playerTransformMatrix, viewMatrix);
+}
+
+void playerSpace_free() {
+  geometry_free(&thrustGeometry);
 }

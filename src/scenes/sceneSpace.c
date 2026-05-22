@@ -51,19 +51,7 @@ static void sceneSpace_setShapeGeometry(int shapeId, Geometry *geometry) {
 }
 
 static void sceneSpace_init() {
-  player.sx = 5;
-  player.sy = 5;
-  player.dx = 0;
-  player.dy = 0;
-  player.shield = 1000;
-  player.fuel = 1000;
-  player.rotation = 48;
-  player.isDocked = false;
-  if (player.vehicle == 7) {
-    player.fuel = 1500;
-  } else if (player.vehicle == 8) {
-    player.shield = 2000;
-  }
+  playerSpace_init();
 
   int data[] = { 81, 49152, 17681, 49152, 0, 49152, 49152, 49152, 0, 49152 };
   for (int i=1;i<=10;i++) {
@@ -253,6 +241,8 @@ static void sceneSpace_update(float deltaTime) {
 }
 
 static void sceneSpace_free() {
+  playerSpace_free();
+  
   for (int i=0;i<3;i++) {
     geometry_free(&playerShipGeometries[i]);
   }
