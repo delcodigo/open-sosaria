@@ -51,8 +51,8 @@ static void sceneSpace_setShapeGeometry(int shapeId, Geometry *geometry) {
 }
 
 static void sceneSpace_init() {
-  player.px = 5;
-  player.py = 5;
+  player.sx = 5;
+  player.sy = 5;
   player.dx = 0;
   player.dy = 0;
   player.shield = 1000;
@@ -88,8 +88,8 @@ static void sceneSpace_init() {
 
   spaceMap[5][5] = 1301 - 32767;
 
-  srand(-player.px - 10 * (-player.py));
-  int zx = spaceMap[player.px][player.py] + 32767;
+  srand(-player.sx - 10 * (-player.sy));
+  int zx = spaceMap[(int)player.sx][(int)player.sy] + 32767;
 
   // Default shape data initialization
   for (int i=0;i<=8;i++) {
@@ -191,10 +191,10 @@ static void sceneSpace_init() {
 
   bool valid = false;
   do {
-    player.px = sceneSpace_getRandomX();
-    player.py = sceneSpace_getRandomY();
-    shapes[9].x = player.px;
-    shapes[9].y = player.py;
+    player.sx = sceneSpace_getRandomX();
+    player.sy = sceneSpace_getRandomY();
+    shapes[9].x = player.sx;
+    shapes[9].y = player.sy;
     valid = true;
     for (int i=0;i<=8;i++) {
       if (sceneSpace_getDistanceBetweenShapes(&shapes[9], &shapes[i]) < 30) {

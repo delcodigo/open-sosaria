@@ -37,6 +37,8 @@ typedef struct {
   int dungeonDepth;
   int dx;
   int dy;
+  float sx;
+  float sy;
   int shield;
   int fuel;
   int rotation;
