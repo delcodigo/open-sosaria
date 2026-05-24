@@ -38,11 +38,22 @@ static int lastSignpost = -1;
 static int liftoffCountdown = 11;
 static char liftoffCountdownString[22];
 
+static void playerOverworldExitSpaceShuttle() {
+  if (player.vehicle != 6) { return; }
+
+  vehiclesMap[player.ty][player.tx] = player.vehicle;
+  player.vehicle = 0;
+  playerState = PLAYER_STATE_IDLE;
+  liftoffCountdown = 11;
+}
+
 void playerOverworld_init() {
+  playerOverworldExitSpaceShuttle();
   playerOverworld_updateGeometry();
   matrix4_setIdentity(transformationMatrix);
   matrix4_setIdentity(enemyTransformationMatrix);
   playerOverworld_setCameraFollow();
+
 }
 
 bool playerOverworld_tryAndDodgeEnemies(int mx, int my) {

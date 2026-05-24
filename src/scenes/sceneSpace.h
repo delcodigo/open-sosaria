@@ -17,5 +17,6 @@ extern int spaceMap[11][11];
 extern Scene sceneSpace;
 
 void sceneSpace_transformShape(float *transformMatrix, float x, float y, float rotation);
+void sceneSpace_checkLandingOnPlanet();
 
 #endif

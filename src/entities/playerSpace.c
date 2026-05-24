@@ -158,6 +158,22 @@ static bool playerSpace_updateRetro() {
   return false;
 }
 
+static void playerSpace_updateMovement(float deltaTime) {
+  if (player.dx == 0 && player.dy == 0) { return; }
+
+  float speed = 3.0f * deltaTime;
+  player.sx += (float) player.dx * speed;
+  player.sy += (float) player.dy * speed;
+
+  if (player.sx < 15) { player.sx = 265; } else
+  if (player.sx > 265) { player.sx = 15; }
+
+  if (player.sy < 10) { player.sy = 150; } else
+  if (player.sy > 150) { player.sy = 10; }
+
+  sceneSpace_checkLandingOnPlanet();
+}
+
 bool playerSpace_update(float deltaTime) {
   bool acted = false;
   
@@ -172,15 +188,7 @@ bool playerSpace_update(float deltaTime) {
     }
   }
 
-  float speed = 3.0f * deltaTime;
-  player.sx += (float) player.dx * speed;
-  player.sy += (float) player.dy * speed;
-
-  if (player.sx < 15) { player.sx = 265; } else
-  if (player.sx > 265) { player.sx = 15; }
-
-  if (player.sy < 10) { player.sy = 150; } else
-  if (player.sy > 150) { player.sy = 10; }
+  playerSpace_updateMovement(deltaTime);  
 
   if (thrustVisible > 0) {
     thrustVisible -= deltaTime;

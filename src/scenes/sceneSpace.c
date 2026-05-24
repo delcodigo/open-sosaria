@@ -4,7 +4,9 @@
 #include "engine/geometry.h"
 #include "entities/ui/uiConsole.h"
 #include "sceneDiskLoader.h"
+#include "sceneOverworld.h"
 #include "entities/playerSpace.h"
+#include "entities/vmExecuter.h"
 #include "data/player.h"
 #include "maths/matrix4.h"
 #include "utils.h"
@@ -210,6 +212,20 @@ void sceneSpace_transformShape(float *transformMatrix, float x, float y, float r
   matrix4_setRotationZ(transformMatrix, (rotation * 5.625f) * M_PI / 180.0f);
 }
 
+void sceneSpace_checkLandingOnPlanet() {
+  shapes[9].x = player.sx;
+  shapes[9].y = player.sy;
+
+  for (int i=0;i<9;i++) {
+    if (sceneSpace_getDistanceBetweenShapes(&shapes[i], &shapes[9]) <= 15) {
+      if (shapes[i].shapeId == SHAPE_SPACE_PLANET) {
+        vmExecuter_createSceneTransition(1, &sceneOverworld);
+        return;
+      }
+    }
+  }
+}
+
 static void sceneSpace_render() {
   float *viewMatrix = camera_getViewProjectionMatrix(&camera);
   float transformMatrix[16];
@@ -227,13 +243,15 @@ static void sceneSpace_render() {
 }
 
 static void sceneSpace_update(float deltaTime) {
-  if (playerActed) {
-    uiConsole_addMessage(ultimaStrings[98]);
-    playerActed = false;
-  }
+  if (!queuedMessagesCount && lagTime <= 0 && !vmExecuter_update(deltaTime)) {
+    if (playerActed) {
+      uiConsole_addMessage(ultimaStrings[98]);
+      playerActed = false;
+    }
 
-  if (playerSpace_update(deltaTime)) {
-    playerActed = true;
+    if (playerSpace_update(deltaTime)) {
+      playerActed = true;
+    }
   }
 
   sceneSpace_render();
@@ -242,7 +260,7 @@ static void sceneSpace_update(float deltaTime) {
 
 static void sceneSpace_free() {
   playerSpace_free();
-  
+
   for (int i=0;i<3;i++) {
     geometry_free(&playerShipGeometries[i]);
   }
