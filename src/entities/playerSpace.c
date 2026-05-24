@@ -171,7 +171,7 @@ static void playerSpace_updateMovement(float deltaTime) {
   if (player.sy < 10) { player.sy = 150; } else
   if (player.sy > 150) { player.sy = 10; }
 
-  sceneSpace_checkLandingOnPlanet();
+  sceneSpace_checkCollisions();
 }
 
 bool playerSpace_update(float deltaTime) {

@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <math.h>
+#include <string.h>
 #include "sceneSpace.h"
 #include "engine/geometry.h"
 #include "entities/ui/uiConsole.h"
@@ -20,6 +21,7 @@
 #define SHAPE_SPACE_STAR 21
 
 static SpaceShape shapes[11];
+static bool darkDeath = false;
 
 Geometry playerShipGeometries[3];
 int spaceMap[11][11];
@@ -53,6 +55,7 @@ static void sceneSpace_setShapeGeometry(int shapeId, Geometry *geometry) {
 }
 
 static void sceneSpace_init() {
+  darkDeath = false;
   playerSpace_init();
 
   int data[] = { 81, 49152, 17681, 49152, 0, 49152, 49152, 49152, 0, 49152 };
@@ -212,14 +215,29 @@ void sceneSpace_transformShape(float *transformMatrix, float x, float y, float r
   matrix4_setRotationZ(transformMatrix, (rotation * 5.625f) * M_PI / 180.0f);
 }
 
-void sceneSpace_checkLandingOnPlanet() {
+static void sceneSpace_crashDeath() {
+  darkDeath = true;
+
+  int htab = 19 - (strlen(player.name) + 16) / 2;
+
+  uiConsole_addMessageFormat("%*s%s%s", htab, " ", player.name, ultimaStrings[1099]);
+  uiConsole_addMessage(ultimaStrings[1100]);
+  uiConsole_addMessageFormat("%*s%s", 9, " ", ultimaStrings[1101]);
+  uiConsole_addMessage(" ");
+}
+
+void sceneSpace_checkCollisions() {
   shapes[9].x = player.sx;
   shapes[9].y = player.sy;
 
   for (int i=0;i<9;i++) {
     if (sceneSpace_getDistanceBetweenShapes(&shapes[i], &shapes[9]) <= 15) {
       if (shapes[i].shapeId == SHAPE_SPACE_PLANET) {
-        vmExecuter_createSceneTransition(1, &sceneOverworld);
+        if (player.vehicle != 6) {
+          sceneSpace_crashDeath();
+        } else {
+          vmExecuter_createSceneTransition(1, &sceneOverworld);
+        }
         return;
       }
     }
@@ -227,6 +245,8 @@ void sceneSpace_checkLandingOnPlanet() {
 }
 
 static void sceneSpace_render() {
+  if (darkDeath) { return; }
+
   float *viewMatrix = camera_getViewProjectionMatrix(&camera);
   float transformMatrix[16];
 
@@ -255,7 +275,11 @@ static void sceneSpace_update(float deltaTime) {
   }
 
   sceneSpace_render();
-  uiConsole_update(deltaTime);
+  if (darkDeath) {
+    uiConsole_renderConsoleOnly();
+  } else {
+    uiConsole_update(deltaTime);
+  }
 }
 
 static void sceneSpace_free() {

@@ -17,7 +17,7 @@ static ConsoleLine consoleLines[4];
 static const unsigned char textureData[] = {0,0,0,255};
 static GLuint blackPanelTextureId;
 static float transformMatrix[16];
-static char queuedMessages[20][35] = { 0 };
+static char queuedMessages[20][40] = { 0 };
 int queuedMessagesCount = 0;
 static float timeToNextMessage = 0.0f;
 static bool dequeuing = false;
@@ -50,7 +50,7 @@ void uiConsole_init() {
 
   for (int i=0;i<4;i++) {
     memset(consoleLines[i].line, ' ', sizeof(consoleLines[i].line));
-    consoleLines[i].line[29] = '\0';
+    consoleLines[i].line[39] = '\0';
     consoleLines[i].isFlashing = false;
     text_create(&consoleLines[i].text, consoleLines[i].line);
   }
@@ -72,7 +72,7 @@ void uiConsole_queueMessage(const char *message) {
 }
 
 void uiConsole_queueMessageFormat(const char *format, ...) {
-  char message[35] = {0};
+  char message[40] = {0};
   va_list args;
   va_start(args, format);
   vsnprintf(message, sizeof(message), format, args);
@@ -125,14 +125,14 @@ void uiConsole_addMessage(const char *message) {
 
   int length = strlen(message);
   strncpy(consoleLines[3].line, message, sizeof(consoleLines[3].line));
-  consoleLines[3].line[length < 29 ? length : 29] = '\0';
+  consoleLines[3].line[length < 39 ? length : 39] = '\0';
   consoleLines[3].isFlashing = false;
   uiConsole_detectFlashing(3);
   text_update(&consoleLines[3].text, consoleLines[3].line);
 }
 
 void uiConsole_addMessageFormat(const char *format, ...) {
-  char message[35] = {0};
+  char message[40] = {0};
   va_list args;
   va_start(args, format);
   vsnprintf(message, sizeof(message), format, args);
@@ -142,13 +142,13 @@ void uiConsole_addMessageFormat(const char *format, ...) {
 
 void uiConsole_replaceLastMessage(const char *message) {
   strncpy(consoleLines[3].line, message, sizeof(consoleLines[3].line));
-  consoleLines[3].line[29] = '\0';
+  consoleLines[3].line[39] = '\0';
   uiConsole_detectFlashing(3);
   text_update(&consoleLines[3].text, consoleLines[3].line);
 }
 
 void uiConsole_replaceLastMessageFormat(const char *format, ...) {
-  char message[35] = {0};
+  char message[40] = {0};
   va_list args;
   va_start(args, format);
   vsnprintf(message, sizeof(message), format, args);
@@ -204,6 +204,17 @@ static void uiConsole_updateTypewriter(float deltaTime) {
       }
       queuedMessagesCount--;
     }
+  }
+}
+
+void uiConsole_renderConsoleOnly() {
+  int cx = camera_getX(&camera);
+  int cy = camera_getY(&camera) + 160;
+
+  for (int i=0;i<4;i++) {
+    int sy = cy + OS_FONT_GLYPH_HEIGHT * i;
+
+    text_renderxyz(&consoleLines[i].text, cx, sy, 3);
   }
 }
 
