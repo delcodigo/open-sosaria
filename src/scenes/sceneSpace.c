@@ -226,6 +226,14 @@ static void sceneSpace_crashDeath() {
   uiConsole_addMessage(" ");
 }
 
+void sceneSpace_crunchCollision() {
+  uiConsole_addMessage(ultimaStrings[1044]);
+  player.dx = (player.dx > 0) ? -1 : (player.dx < 0) ? 1 : 0;
+  player.dy = (player.dy > 0) ? -1 : (player.dy < 0) ? 1 : 0;
+  player.shield -= (int)(player.shield / 4.0f + 5);
+  uiConsole_updateSpaceStats();
+}
+
 static void sceneSpace_tryAndDock() {
   SpaceShape spaceStation = shapes[4];
   bool isDocked = false;
@@ -235,7 +243,11 @@ static void sceneSpace_tryAndDock() {
   int dy = player.dy;
   int rt = player.rotation;
 
-  if (sx == spaceStation.x+1 && sy >= spaceStation.y - 13 && dx == 0 && dy == 1 && rt == 32) {
+  if (sy < spaceStation.y - 13 || sy > spaceStation.y + 14 || sx < spaceStation.x - 13 || sx > spaceStation.x + 14) {
+    return;
+  }
+
+  if (sx == spaceStation.x+1 && sy == spaceStation.y - 13 && dx == 0 && dy == 1 && rt == 32) {
     isDocked = true;
   } else if (sx == spaceStation.x && sy == spaceStation.y + 14 && dx == 0 && dy == -1 && rt == 0) {
     isDocked = true;
@@ -251,7 +263,7 @@ static void sceneSpace_tryAndDock() {
     player.dy = 0;
     player.isDocked = true;
   } else {
-    // TODO: Crunch
+    sceneSpace_crunchCollision();
   }
 }
 
@@ -272,6 +284,8 @@ void sceneSpace_checkCollisions() {
         sceneSpace_crashDeath();
       } else if (shapes[i].shapeId == SHAPE_SPACE_STATION) {
         sceneSpace_tryAndDock();
+      } else {
+        sceneSpace_crunchCollision();
       }
     }
   }

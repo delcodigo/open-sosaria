@@ -258,8 +258,8 @@ void uiConsole_update(float deltaTime) {
     }
     
     text_renderxyz(&consoleLines[i].text, cx, sy, 3);
-    text_renderxyz(&statsLabels[i], cx + 203, sy, 3);
-    text_renderxyz(&stats[i], cx + 238, sy, 3);
+    text_renderxyz(&statsLabels[i], cx + 203, sy, 4);
+    text_renderxyz(&stats[i], cx + 238, sy, 4);
   }
 
   if (flashTime >= 0.15f) {

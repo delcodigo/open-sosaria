@@ -42,7 +42,7 @@ static bool playerSpace_updateTurning() {
     uiConsole_replaceLastMessageFormat("%s%s", ultimaStrings[98], ultimaStrings[1056]);
     
     if (player.isDocked) {
-      // TODO: Crunch against space station
+      sceneSpace_crunchCollision();
       return true;
     }
 
@@ -60,7 +60,7 @@ static bool playerSpace_updateTurning() {
     uiConsole_replaceLastMessageFormat("%s%s", ultimaStrings[98], ultimaStrings[1062]);
     
     if (player.isDocked) {
-      // TODO: Crunch against space station
+      sceneSpace_crunchCollision();
       return true;
     }
 
@@ -84,7 +84,7 @@ static bool playerSpace_updateThrusting() {
     uiConsole_replaceLastMessageFormat("%s%s", ultimaStrings[98], ultimaStrings[1058]);
 
     if (player.isDocked) {
-      // TODO: Crunch against space station
+      sceneSpace_crunchCollision();
       return true;
     }
 
