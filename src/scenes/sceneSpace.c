@@ -3,6 +3,7 @@
 #include <string.h>
 #include "sceneSpace.h"
 #include "engine/geometry.h"
+#include "entities/playerCommons.h"
 #include "entities/ui/uiConsole.h"
 #include "sceneDiskLoader.h"
 #include "sceneOverworld.h"
@@ -22,6 +23,7 @@
 
 static SpaceShape shapes[11];
 static bool darkDeath = false;
+static bool mustCrash = false;
 
 Geometry playerShipGeometries[3];
 int spaceMap[11][11];
@@ -217,6 +219,7 @@ void sceneSpace_transformShape(float *transformMatrix, float x, float y, float r
 
 static void sceneSpace_crashDeath() {
   darkDeath = true;
+  playerState = PLAYER_STATE_SHUTTLE_DEAD;
 
   int htab = 19 - (strlen(player.name) + 16) / 2;
 
@@ -232,6 +235,38 @@ void sceneSpace_crunchCollision() {
   player.dy = (player.dy > 0) ? -1 : (player.dy < 0) ? 1 : 0;
   player.shield -= (int)(player.shield / 4.0f + 5);
   uiConsole_updateSpaceStats();
+
+  if (player.shield <= 0) {
+    sceneSpace_crashDeath();
+  }
+}
+
+static void sceneSpace_dockedAtSpaceStation() {
+  uiConsole_addMessage(ultimaStrings[1043]);
+  player.dx = 0;
+  player.dy = 0;
+  player.isDocked = true;
+
+  uiConsole_addMessage(ultimaStrings[1078]);
+
+  if (player.gold < 500) {
+    uiConsole_queueMessageFormat("^T1%s", ultimaStrings[1079]);
+    uiConsole_queueMessageFormat("^T1%s", ultimaStrings[1080]);
+    uiConsole_queueMessageFormat("^T1%s", ultimaStrings[1081]);
+    uiConsole_queueMessageFormat("^T1%s", ultimaStrings[1082]);
+    uiConsole_queueMessage(ultimaStrings[1083]);
+    return;
+  }
+
+  if (player.armors[4] < 1 && player.armors[5] < 1) {
+    uiConsole_queueMessageFormat("^T1%s", ultimaStrings[1084]);
+    uiConsole_queueMessageFormat("^T1%s", ultimaStrings[1085]);
+    uiConsole_queueMessageFormat("^T1%s", ultimaStrings[1086]);
+    uiConsole_queueMessageFormat("^T1%s", ultimaStrings[1087]);
+    uiConsole_queueMessageFormat("^T1%s", ultimaStrings[1088]);
+    mustCrash = true;
+    return;
+  }
 }
 
 static void sceneSpace_tryAndDock() {
@@ -258,10 +293,7 @@ static void sceneSpace_tryAndDock() {
   }
 
   if (isDocked) {
-    uiConsole_addMessage(ultimaStrings[1043]);
-    player.dx = 0;
-    player.dy = 0;
-    player.isDocked = true;
+    sceneSpace_dockedAtSpaceStation();
   } else {
     sceneSpace_crunchCollision();
   }
@@ -311,6 +343,10 @@ static void sceneSpace_render() {
 
 static void sceneSpace_update(float deltaTime) {
   if (!queuedMessagesCount && lagTime <= 0 && !vmExecuter_update(deltaTime)) {
+    if (mustCrash) {
+      sceneSpace_crashDeath();
+    }
+
     if (playerActed) {
       uiConsole_addMessage(ultimaStrings[98]);
       playerActed = false;

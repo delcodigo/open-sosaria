@@ -27,6 +27,8 @@ void playerSpace_init() {
     player.shield = 2000;
   }
 
+  playerState = PLAYER_STATE_IDLE;
+
   float tx1 = 6.0f * 24.0f / (float) ultimaAssets.spaceSprites.width;
   float ty1 = 2.0f * 24.0f / (float) ultimaAssets.spaceSprites.height;
   float tx2 = tx1 + 24.0f / (float) ultimaAssets.spaceSprites.width;
@@ -178,9 +180,16 @@ bool playerSpace_update(float deltaTime) {
   bool acted = false;
   
   if (keyRepeatDelay <= 0) {
-    if (playerSpace_updateTurning()) { acted = true; } else 
-    if (playerSpace_updateThrusting()) { acted = true; } else 
-    if (playerSpace_updateRetro()) { acted = true; }
+    switch (playerState) {
+      case PLAYER_STATE_IDLE:
+        if (playerSpace_updateTurning()) { acted = true; } else 
+        if (playerSpace_updateThrusting()) { acted = true; } else 
+        if (playerSpace_updateRetro()) { acted = true; }
+        break;
+      
+      default:
+        break;
+    }
   } else {
     keyRepeatDelay -= deltaTime;
     if (keyRepeatDelay < 0) {
