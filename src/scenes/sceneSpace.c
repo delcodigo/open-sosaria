@@ -226,6 +226,35 @@ static void sceneSpace_crashDeath() {
   uiConsole_addMessage(" ");
 }
 
+static void sceneSpace_tryAndDock() {
+  SpaceShape spaceStation = shapes[4];
+  bool isDocked = false;
+  int sx = (int) floorf(player.sx);
+  int sy = (int) floorf(player.sy);
+  int dx = player.dx;
+  int dy = player.dy;
+  int rt = player.rotation;
+
+  if (sx == spaceStation.x+1 && sy >= spaceStation.y - 13 && dx == 0 && dy == 1 && rt == 32) {
+    isDocked = true;
+  } else if (sx == spaceStation.x && sy == spaceStation.y + 14 && dx == 0 && dy == -1 && rt == 0) {
+    isDocked = true;
+  } else if (sy == spaceStation.y+1 && sx == spaceStation.x + 14 && dy == 0 && dx == -1 && rt == 48) {
+    isDocked = true;
+  } else if (sy == spaceStation.y && sx == spaceStation.x - 13 && dy == 0 && dx == 1 && rt == 16) {
+    isDocked = true;
+  }
+
+  if (isDocked) {
+    uiConsole_addMessage(ultimaStrings[1043]);
+    player.dx = 0;
+    player.dy = 0;
+    player.isDocked = true;
+  } else {
+    // TODO: Crunch
+  }
+}
+
 void sceneSpace_checkCollisions() {
   shapes[9].x = player.sx;
   shapes[9].y = player.sy;
@@ -239,6 +268,10 @@ void sceneSpace_checkCollisions() {
           vmExecuter_createSceneTransition(1, &sceneOverworld);
         }
         return;
+      } else if (shapes[i].shapeId == SHAPE_SPACE_STAR) {
+        sceneSpace_crashDeath();
+      } else if (shapes[i].shapeId == SHAPE_SPACE_STATION) {
+        sceneSpace_tryAndDock();
       }
     }
   }
