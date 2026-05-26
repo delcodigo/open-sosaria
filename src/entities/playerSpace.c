@@ -55,6 +55,7 @@ static bool playerSpace_updateTurning() {
     if (player.rotation < 0) { player.rotation = 48; }
 
     player.fuel -= 2;
+    if (player.fuel < 0) { player.fuel = 0; }
     uiConsole_updateSpaceStats();
 
     return true;
@@ -73,6 +74,7 @@ static bool playerSpace_updateTurning() {
     if (player.rotation > 48) { player.rotation = 0; }
 
     player.fuel -= 2;
+    if (player.fuel < 0) { player.fuel = 0; }
     uiConsole_updateSpaceStats();
 
     return true;
@@ -117,6 +119,7 @@ static bool playerSpace_updateThrusting() {
     if (player.dx < -5) { player.dx = -5; } 
 
     player.fuel -= 5;
+    if (player.fuel < 0) { player.fuel = 0; }
     uiConsole_updateSpaceStats();
 
     return true;
@@ -153,6 +156,7 @@ static bool playerSpace_updateRetro() {
     if (player.dy < -5) { player.dy = -5; }
 
     player.fuel -= 5;
+    if (player.fuel < 0) { player.fuel = 0; }
     uiConsole_updateSpaceStats();
 
     uiConsole_replaceLastMessageFormat("%s%s", ultimaStrings[98], ultimaStrings[1064]);
@@ -222,12 +226,26 @@ static bool playerSpace_updateBoard() {
   return false;
 }
 
+static bool playerSpace_updateNoFuelDrift() {
+  if (lastKey != 0 && player.fuel <= 0) {
+    lastKey = 0;
+
+    uiConsole_replaceLastMessageFormat("%s%s", ultimaStrings[98], ultimaStrings[1046]);
+    uiConsole_queueMessage(ultimaStrings[1047]);
+
+    return true;
+  }
+
+  return false;
+}
+
 bool playerSpace_update(float deltaTime) {
   bool acted = false;
   
   if (keyRepeatDelay <= 0) {
     switch (playerState) {
       case PLAYER_STATE_IDLE:
+        if (playerSpace_updateNoFuelDrift()) { acted = true; } else
         if (playerSpace_updateBoard()) { acted = true; } else
         if (playerSpace_updateTurning()) { acted = true; } else 
         if (playerSpace_updateThrusting()) { acted = true; } else 
