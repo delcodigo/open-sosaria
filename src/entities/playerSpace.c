@@ -1,3 +1,4 @@
+#include <math.h>
 #include "playerSpace.h"
 #include "data/player.h"
 #include "data/bevery.h"
@@ -14,6 +15,8 @@ static int thrustOffset[2] = {0};
 static float thrustVisible = 0;
 
 void playerSpace_init() {
+  player.px = 5;
+  player.py = 5;
   player.sx = 5;
   player.sy = 5;
   player.dx = 0;
@@ -239,6 +242,47 @@ static bool playerSpace_updateNoFuelDrift() {
   return false;
 }
 
+static bool playerSpace_updateInfo() {
+  if (input.i == 1) {
+    input.i = 2;
+
+    uiConsole_replaceLastMessageFormat("%s%s", ultimaStrings[98], ultimaStrings[1031]);
+    uiConsole_queueMessage(ultimaStrings[1032]);
+
+    int px = 0;
+    int py = 0;
+    
+    for (int yy=1;yy<=3;yy++) {
+      char line[4] = {0};
+      int lineIndex = 0;
+
+      for (int xx=1;xx<=3;xx++) {
+        px = player.px - 2 + xx;
+        py = player.py - 2 + yy;
+        float sector = spaceMap[px][py] + 32767;
+
+        if (floorf((sector - pow(4, 8) * floorf(sector / pow(4, 8))) / pow(4, 7)) > 0) {
+          line[lineIndex++] = '^';
+        } else if (floorf((sector - pow(4, 3) * floorf(sector / pow(4, 3))) / pow(4, 2)) > 0) {
+          line[lineIndex++] = 'B';
+        } else if (floorf((sector - pow(4, 2) * floorf(sector / pow(4, 2))) / 4.0f) > 0) {
+          line[lineIndex++] = 'O';
+        } else if (floorf(sector - 4 * floorf(sector / 4.0f)) > 0) {
+          line[lineIndex++] = '*';
+        } else {
+          line[lineIndex++] = '-';
+        }
+      }
+
+      uiConsole_queueMessage(line);
+    }
+
+    return true;
+  }
+
+  return false;
+}
+
 bool playerSpace_update(float deltaTime) {
   bool acted = false;
   
@@ -247,6 +291,7 @@ bool playerSpace_update(float deltaTime) {
       case PLAYER_STATE_IDLE:
         if (playerSpace_updateNoFuelDrift()) { acted = true; } else
         if (playerSpace_updateBoard()) { acted = true; } else
+        if (playerSpace_updateInfo()) { acted = true; } else
         if (playerSpace_updateTurning()) { acted = true; } else 
         if (playerSpace_updateThrusting()) { acted = true; } else 
         if (playerSpace_updateRetro()) { acted = true; }
