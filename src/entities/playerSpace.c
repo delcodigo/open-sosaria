@@ -176,6 +176,37 @@ static void playerSpace_updateMovement(float deltaTime) {
   sceneSpace_checkCollisions();
 }
 
+static bool playerSpace_updateSpaceStation() {
+  int shapeId = 0;
+  int rotation = 0;
+
+  if (input.up == 1) {
+    input.up = 2;
+    shapeId = 7;
+    rotation = 32;
+    uiConsole_queueMessage(ultimaStrings[1092]);
+  } else if (input.left == 1) {
+    input.left = 2;
+    shapeId = 6;
+    rotation = 16;
+    uiConsole_queueMessage(ultimaStrings[1091]);
+  } else if (input.down == 1) {
+    input.down = 2;
+    shapeId = 5;
+    rotation = 0;
+    uiConsole_queueMessage(ultimaStrings[1090]);
+  } else if (input.right == 1) {
+    input.right = 2;
+    shapeId = 8;
+    rotation = 48;
+    uiConsole_queueMessage(ultimaStrings[1093]);
+  } else {
+    return false;
+  }
+
+  return sceneSpace_tryBoardVessel(shapeId, rotation);
+}
+
 bool playerSpace_update(float deltaTime) {
   bool acted = false;
   
@@ -185,6 +216,11 @@ bool playerSpace_update(float deltaTime) {
         if (playerSpace_updateTurning()) { acted = true; } else 
         if (playerSpace_updateThrusting()) { acted = true; } else 
         if (playerSpace_updateRetro()) { acted = true; }
+        playerSpace_updateMovement(deltaTime);
+        break;
+      
+      case PLAYER_STATE_SPACE_STATION:
+        if (playerSpace_updateSpaceStation()) { acted = true; }
         break;
       
       default:
@@ -196,8 +232,6 @@ bool playerSpace_update(float deltaTime) {
       keyRepeatDelay = 0;
     }
   }
-
-  playerSpace_updateMovement(deltaTime);  
 
   if (thrustVisible > 0) {
     thrustVisible -= deltaTime;

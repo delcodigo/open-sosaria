@@ -241,6 +241,55 @@ void sceneSpace_crunchCollision() {
   }
 }
 
+bool sceneSpace_tryBoardVessel(int shapeId, int rotation) {
+  if (shapes[shapeId].shapeId == 0) {
+    uiConsole_replaceLastMessageFormat("%s%s%d", ultimaStrings[1089], ultimaStrings[1096], shapeId - 3);
+    uiConsole_queueMessage(ultimaStrings[1097]);
+    uiConsole_queueMessage(ultimaStrings[1089]);
+    return false;
+  }
+
+  SpaceShape *shape = &shapes[shapeId];
+  player.sx = shape->x;
+  player.sy = shape->y;
+  player.rotation = rotation;
+
+  shapes[9].x = shape->x;
+  shapes[9].x = shape->y;
+
+  shapeId = shape->shapeId;
+  int A = shape->shapeId - 12;
+  if (A == 7) {
+    A = 6;
+  }
+  spaceMap[player.px][player.py] -= pow(4, A);
+
+  shape->shapeId = 0;
+  shape->x = -15;
+  shape->y = -15;
+  geometry_free(&shape->geometry);
+
+  if (shapeId == 17) {
+    player.vehicle = 7;
+    player.shield = 100;
+    player.fuel = 5000;
+  } else if (shapeId == 16) {
+    player.vehicle = 8;
+    player.shield = 5000;
+    player.fuel = 1000;
+  } else {
+    player.vehicle = 6;
+    player.shield = 1000;
+    player.fuel = 1000;
+  }
+
+  playerState = PLAYER_STATE_IDLE;
+
+  uiConsole_updateSpaceStats();
+
+  return true;
+}
+
 static void sceneSpace_dockedAtSpaceStation() {
   uiConsole_addMessage(ultimaStrings[1043]);
   player.dx = 0;
@@ -258,7 +307,7 @@ static void sceneSpace_dockedAtSpaceStation() {
     return;
   }
 
-  if (player.armors[4] < 1 && player.armors[5] < 1) {
+  if (player.armors[3] < 1 && player.armors[4] < 1) {
     uiConsole_queueMessageFormat("^T1%s", ultimaStrings[1084]);
     uiConsole_queueMessageFormat("^T1%s", ultimaStrings[1085]);
     uiConsole_queueMessageFormat("^T1%s", ultimaStrings[1086]);
@@ -267,6 +316,30 @@ static void sceneSpace_dockedAtSpaceStation() {
     mustCrash = true;
     return;
   }
+
+  int shapeIndex = (int)(player.rotation / 16.0f) + 5;
+  int shapeId = SHAPE_SPACE_SHUTTLE;
+
+  if (player.vehicle == 7) { shapeId = SHAPE_SPACE_ZEPHER; } else
+  if (player.vehicle == 8) { shapeId = SHAPE_SPACE_CRUISER; }
+
+  shapes[shapeIndex].shapeId = shapeId;
+  shapes[shapeIndex].x = player.sx;
+  shapes[shapeIndex].y = player.sy;
+  shapes[shapeIndex].rotation = player.rotation;
+  sceneSpace_setShapeGeometry(shapes[shapeIndex].shapeId, &shapes[shapeIndex].geometry);
+
+  int A = shapeId - 12;
+  if (A == 7) {
+    A = 6;
+  }
+
+  spaceMap[player.px][player.py] += pow(4, A);
+
+  player.gold -= 500;
+  playerState = PLAYER_STATE_SPACE_STATION;
+
+  uiConsole_queueMessage(ultimaStrings[1089]);
 }
 
 static void sceneSpace_tryAndDock() {
@@ -281,6 +354,11 @@ static void sceneSpace_tryAndDock() {
   if (sy < spaceStation.y - 13 || sy > spaceStation.y + 14 || sx < spaceStation.x - 13 || sx > spaceStation.x + 14) {
     return;
   }
+
+  if (sy >= spaceStation.y + 14 && dy == 1) { return; }
+  if (sx >= spaceStation.x + 14 && dx == 1) { return; }
+  if (sy <= spaceStation.y - 13 && dy == -1) { return; }
+  if (sx <= spaceStation.x - 13 && dx == -1) { return; }
 
   if (sx == spaceStation.x+1 && sy == spaceStation.y - 13 && dx == 0 && dy == 1 && rt == 32) {
     isDocked = true;
@@ -316,6 +394,7 @@ void sceneSpace_checkCollisions() {
         sceneSpace_crashDeath();
       } else if (shapes[i].shapeId == SHAPE_SPACE_STATION) {
         sceneSpace_tryAndDock();
+        return;
       } else {
         sceneSpace_crunchCollision();
       }
