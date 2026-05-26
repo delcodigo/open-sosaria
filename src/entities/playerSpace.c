@@ -1,5 +1,6 @@
 #include "playerSpace.h"
 #include "data/player.h"
+#include "data/bevery.h"
 #include "engine/engine.h"
 #include "engine/input.h"
 #include "playerCommons.h"
@@ -28,6 +29,7 @@ void playerSpace_init() {
   }
 
   playerState = PLAYER_STATE_IDLE;
+  keyRepeatDelay = 0;
 
   float tx1 = 6.0f * 24.0f / (float) ultimaAssets.spaceSprites.width;
   float ty1 = 2.0f * 24.0f / (float) ultimaAssets.spaceSprites.height;
@@ -207,12 +209,26 @@ static bool playerSpace_updateSpaceStation() {
   return sceneSpace_tryBoardVessel(shapeId, rotation);
 }
 
+static bool playerSpace_updateBoard() {
+  if (input.b == 1) {
+    input.b = 2;
+
+    uiConsole_replaceLastMessageFormat("%s%s%s", ultimaStrings[98], ultimaStrings[1052], vehicleNames[player.vehicle]);
+    uiConsole_queueMessage(ultimaStrings[1098]);
+
+    return true;
+  }
+
+  return false;
+}
+
 bool playerSpace_update(float deltaTime) {
   bool acted = false;
   
   if (keyRepeatDelay <= 0) {
     switch (playerState) {
       case PLAYER_STATE_IDLE:
+        if (playerSpace_updateBoard()) { acted = true; } else
         if (playerSpace_updateTurning()) { acted = true; } else 
         if (playerSpace_updateThrusting()) { acted = true; } else 
         if (playerSpace_updateRetro()) { acted = true; }

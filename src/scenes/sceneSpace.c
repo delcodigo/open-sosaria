@@ -15,7 +15,7 @@
 
 #define SHAPE_SPACE_SHUTTLE 15
 #define SHAPE_SPACE_CRUISER 16
-#define SHAPE_SPACE_ZEPHER 17
+#define SHAPE_SPACE_PHANTOM 17
 #define SHAPE_SPACE_PLANET 18
 #define SHAPE_TIME_MACHINE 19
 #define SHAPE_SPACE_STATION 20
@@ -320,7 +320,7 @@ static void sceneSpace_dockedAtSpaceStation() {
   int shapeIndex = (int)(player.rotation / 16.0f) + 5;
   int shapeId = SHAPE_SPACE_SHUTTLE;
 
-  if (player.vehicle == 7) { shapeId = SHAPE_SPACE_ZEPHER; } else
+  if (player.vehicle == 7) { shapeId = SHAPE_SPACE_PHANTOM; } else
   if (player.vehicle == 8) { shapeId = SHAPE_SPACE_CRUISER; }
 
   shapes[shapeIndex].shapeId = shapeId;
