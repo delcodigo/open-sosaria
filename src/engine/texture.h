@@ -3,7 +3,8 @@
 
 #include <GLFW/glfw3.h>
 
-GLuint texture_load(unsigned int width, unsigned int height, const unsigned char* data);
+GLuint texture_load(unsigned int width, unsigned int height, const unsigned char *data);
+void texture_update(GLuint texture, unsigned int width, unsigned int height, const unsigned char *data);
 void texture_free(GLuint texture);
 
 #endif

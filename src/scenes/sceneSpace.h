@@ -15,6 +15,7 @@ typedef struct {
 extern Geometry playerShipGeometries[3];
 extern int spaceMap[11][11];
 extern Scene sceneSpace;
+extern bool isFirstPersonView;
 
 bool sceneSpace_tryBoardVessel(int shapeId, int rotation);
 void sceneSpace_transformShape(float *transformMatrix, float x, float y, float rotation);

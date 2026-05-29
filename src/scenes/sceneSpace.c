@@ -9,6 +9,7 @@
 #include "sceneOverworld.h"
 #include "entities/playerSpace.h"
 #include "entities/vmExecuter.h"
+#include "entities/space3D.h"
 #include "data/player.h"
 #include "maths/matrix4.h"
 #include "utils.h"
@@ -24,6 +25,8 @@
 static SpaceShape shapes[11];
 static bool darkDeath = false;
 static bool mustCrash = false;
+
+bool isFirstPersonView = false;
 
 Geometry playerShipGeometries[3];
 int spaceMap[11][11];
@@ -59,6 +62,7 @@ static void sceneSpace_setShapeGeometry(int shapeId, Geometry *geometry) {
 static void sceneSpace_init() {
   darkDeath = false;
   playerSpace_init();
+  space3D_init();
 
   int data[] = { 81, 49152, 17681, 49152, 0, 49152, 49152, 49152, 0, 49152 };
   for (int i=1;i<=10;i++) {
@@ -436,16 +440,22 @@ static void sceneSpace_update(float deltaTime) {
     }
   }
 
-  sceneSpace_render();
-  if (darkDeath) {
-    uiConsole_renderConsoleOnly();
-  } else {
+  if (isFirstPersonView) {
+    space3D_render(camera_getViewProjectionMatrix(&camera));
     uiConsole_update(deltaTime);
+  } else {
+    sceneSpace_render();
+    if (darkDeath) {
+      uiConsole_renderConsoleOnly();
+    } else {
+      uiConsole_update(deltaTime);
+    }
   }
 }
 
 static void sceneSpace_free() {
   playerSpace_free();
+  space3D_free();
 
   for (int i=0;i<3;i++) {
     geometry_free(&playerShipGeometries[i]);

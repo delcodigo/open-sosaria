@@ -283,6 +283,30 @@ static bool playerSpace_updateInfo() {
   return false;
 }
 
+static bool playerSpace_updateViewChange() {
+  if (input.v == 1) {
+    input.v = 2;
+
+    uiConsole_replaceLastMessageFormat("%s%s", ultimaStrings[98], ultimaStrings[1049]);
+
+    if (player.isDocked) {
+      uiConsole_queueMessage(ultimaStrings[1050]);
+      uiConsole_queueMessage(ultimaStrings[1051]);
+
+      return true;
+    }
+
+    uiConsole_queueMessage(ultimaStrings[1022]);
+
+    isFirstPersonView = true;
+    playerState = PLAYER_STATE_SPACE_FIRST_PERSON;
+
+    return true;
+  }
+
+  return false;
+}
+
 bool playerSpace_update(float deltaTime) {
   bool acted = false;
   
@@ -293,6 +317,7 @@ bool playerSpace_update(float deltaTime) {
         if (playerSpace_updateBoard()) { acted = true; } else
         if (playerSpace_updateInfo()) { acted = true; } else
         if (playerSpace_updateTurning()) { acted = true; } else 
+        if (playerSpace_updateViewChange()) { acted = true; } else 
         if (playerSpace_updateThrusting()) { acted = true; } else 
         if (playerSpace_updateRetro()) { acted = true; }
         playerSpace_updateMovement(deltaTime);

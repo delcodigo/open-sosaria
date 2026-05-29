@@ -1,6 +1,6 @@
 #include "texture.h"
 
-GLuint texture_load(unsigned int width, unsigned int height, const unsigned char* data) {
+GLuint texture_load(unsigned int width, unsigned int height, const unsigned char *data) {
   GLuint texture;
 
   glGenTextures(1, &texture);
@@ -14,6 +14,12 @@ GLuint texture_load(unsigned int width, unsigned int height, const unsigned char
   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
 
   return texture;
+}
+
+void texture_update(GLuint texture, unsigned int width, unsigned int height, const unsigned char *data) {
+  glBindTexture(GL_TEXTURE_2D, texture);
+
+  glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, data);
 }
 
 void texture_free(GLuint texture) {
