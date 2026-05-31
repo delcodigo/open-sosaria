@@ -441,6 +441,7 @@ static void sceneSpace_update(float deltaTime) {
   }
 
   if (isFirstPersonView) {
+    space3D_update(deltaTime);
     space3D_render(camera_getViewProjectionMatrix(&camera));
     uiConsole_update(deltaTime);
   } else {
