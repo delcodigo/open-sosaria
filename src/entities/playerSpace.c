@@ -291,6 +291,12 @@ static bool playerSpace_updateViewChange() {
 
     uiConsole_replaceLastMessageFormat("%s%s", ultimaStrings[98], ultimaStrings[1049]);
 
+    if (isFirstPersonView && enemyCrafts > 0) {
+      uiConsole_queueMessage(ultimaStrings[1039]);
+      uiConsole_queueMessage(ultimaStrings[1040]);
+      return true;
+    }
+
     if (player.isDocked) {
       uiConsole_queueMessage(ultimaStrings[1050]);
       uiConsole_queueMessage(ultimaStrings[1051]);
@@ -300,8 +306,13 @@ static bool playerSpace_updateViewChange() {
 
     uiConsole_queueMessage(ultimaStrings[1022]);
 
-    isFirstPersonView = true;
-    playerState = PLAYER_STATE_SPACE_FIRST_PERSON;
+    if (!isFirstPersonView) {
+      isFirstPersonView = true;
+      playerState = PLAYER_STATE_SPACE_FIRST_PERSON;
+    } else {
+      isFirstPersonView = false;
+      playerState = PLAYER_STATE_IDLE;
+    }
 
     return true;
   }
@@ -357,7 +368,8 @@ bool playerSpace_update(float deltaTime) {
         break;
       
       case PLAYER_STATE_SPACE_FIRST_PERSON:
-        if (playerSpace_update3DMovement()) { acted = true; }
+        if (playerSpace_update3DMovement()) { acted = true; } else
+        if (playerSpace_updateViewChange()) { acted = true; } 
         break;
       
       default:

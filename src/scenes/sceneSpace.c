@@ -27,6 +27,7 @@ static bool darkDeath = false;
 static bool mustCrash = false;
 
 bool isFirstPersonView = false;
+int enemyCrafts = 0;
 
 Geometry playerShipGeometries[3];
 int spaceMap[11][11];
