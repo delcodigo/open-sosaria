@@ -14,6 +14,8 @@ static Geometry thrustGeometry;
 static int thrustOffset[2] = {0};
 static float thrustVisible = 0;
 
+Vector2f targetCentre = {0};
+
 void playerSpace_init() {
   player.px = 5;
   player.py = 5;
@@ -307,6 +309,33 @@ static bool playerSpace_updateViewChange() {
   return false;
 }
 
+static bool playerSpace_update3DMovement() {
+  if (input.up == 1) {
+    input.up = 2;
+    targetCentre.y = 40;
+    return true;
+  } else if (input.down == 1) {
+    input.down = 2;
+    targetCentre.y = 88;
+    return true;
+  } else if (input.left == 1) {
+    input.left = 2;
+    targetCentre.x = 80;
+    return true;
+  } else if (input.right == 1) {
+    input.right = 2;
+    targetCentre.x = 176;
+    return true;
+  } else if (input.space == 1) {
+    input.space = 2;
+    targetCentre.x = 128;
+    targetCentre.y = 64;
+    return true;
+  }
+
+  return false;
+}
+
 bool playerSpace_update(float deltaTime) {
   bool acted = false;
   
@@ -325,6 +354,10 @@ bool playerSpace_update(float deltaTime) {
       
       case PLAYER_STATE_SPACE_STATION:
         if (playerSpace_updateSpaceStation()) { acted = true; }
+        break;
+      
+      case PLAYER_STATE_SPACE_FIRST_PERSON:
+        if (playerSpace_update3DMovement()) { acted = true; }
         break;
       
       default:

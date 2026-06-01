@@ -4,6 +4,7 @@
 #include "engine/texture.h"
 #include "maths/matrix4.h"
 #include "maths/vector2.h"
+#include "entities/playerSpace.h"
 #include "config.h"
 #include "utils.h"
 
@@ -12,7 +13,6 @@ static unsigned char screenData[OS_SCREEN_WIDTH * OS_SCREEN_HEIGHT * 4] = {0};
 static GLuint screenTexture;
 static bool textureNeedsUpdate;
 static float transformMatrix[16];
-static Vector2f targetCentre = {0};
 static Vector2f starsPosition[14] = {0};
 static const int starsCount = sizeof(starsPosition) / sizeof(Vector2f);
 static float starsSpreadRate = 1;
