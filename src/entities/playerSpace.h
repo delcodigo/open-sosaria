@@ -8,6 +8,7 @@ extern Vector2f targetCentre;
 
 void playerSpace_init();
 void playerSpace_render(float *viewMatrix);
+void playerSpace_performHyperJump();
 bool playerSpace_update(float deltaTime);
 void playerSpace_free();
 

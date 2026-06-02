@@ -5,6 +5,10 @@
 #include "maths/matrix4.h"
 #include "maths/vector2.h"
 #include "entities/playerSpace.h"
+#include "entities/playerCommons.h"
+#include "entities/ui/uiConsole.h"
+#include "scenes/sceneDiskLoader.h"
+#include "scenes/sceneSpace.h"
 #include "config.h"
 #include "utils.h"
 
@@ -18,6 +22,9 @@ static const int starsCount = sizeof(starsPosition) / sizeof(Vector2f);
 static float starsSpreadRate = 1;
 static uint8_t colorPurple[3] = {146, 0, 255};
 static uint8_t colorGreen[3] = {36, 182, 0};
+static float hyperJumpKeepTimer = 0;
+float starsSpeedModifier = 1;
+HYPER_JUMP_STATE hyperJumpingState = HYPER_JUMP_STATE_OFF;
 
 static void space3D_initStars() {
   targetCentre.x = 128;
@@ -80,10 +87,48 @@ void space3D_render(float *viewMatrix) {
   geometry_render(&screenGeometry, screenTexture, transformMatrix, viewMatrix);
 }
 
-void space3D_update(float delta) {
+static void space3D_updateHyperJump(float deltaTime) {
+  switch (hyperJumpingState) {
+    case HYPER_JUMP_STATE_ACCELERATE:
+      starsSpeedModifier += deltaTime * 1;
+      if (starsSpeedModifier >= 9){
+        starsSpeedModifier = 9;
+        hyperJumpKeepTimer = 5;
+        hyperJumpingState = HYPER_JUMP_STATE_KEEP;
+      }
+      break;
+
+    case HYPER_JUMP_STATE_KEEP:
+      hyperJumpKeepTimer -= deltaTime;
+      if (hyperJumpKeepTimer <= 0) {
+        hyperJumpKeepTimer = 0;
+        hyperJumpingState = HYPER_JUMP_STATE_STOP;
+      }
+      break;
+
+    case HYPER_JUMP_STATE_STOP:
+      starsSpeedModifier -= deltaTime * 2;
+      if (starsSpeedModifier <= 1){
+        starsSpeedModifier = 1;
+        hyperJumpingState = HYPER_JUMP_STATE_OFF;
+        playerState = PLAYER_STATE_SPACE_FIRST_PERSON;
+        playerSpace_performHyperJump();
+        sceneSpace_initializeShapes();
+        uiConsole_replaceLastMessage(ultimaStrings[98]);
+      }
+      break;
+
+    default:
+      break;
+  }
+}
+
+void space3D_update(float deltaTime) {
+  space3D_updateHyperJump(deltaTime);
+
   for (int i=0;i<starsCount;i++) {
-    float newX = starsPosition[i].x + (starsPosition[i].x - targetCentre.x) * starsSpreadRate * delta;
-    float newY = starsPosition[i].y + (starsPosition[i].y - targetCentre.y) * starsSpreadRate * delta;
+    float newX = starsPosition[i].x + (starsPosition[i].x - targetCentre.x) * starsSpreadRate * deltaTime * starsSpeedModifier;
+    float newY = starsPosition[i].y + (starsPosition[i].y - targetCentre.y) * starsSpreadRate * deltaTime * starsSpeedModifier;
 
     if (newX < 1 || newY < 1 || newX > 255 || newY > 127) {
       newX = targetCentre.x + rand01() * 32 - 16;

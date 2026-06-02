@@ -6,6 +6,7 @@
 #include "engine/input.h"
 #include "playerCommons.h"
 #include "entities/ui/uiConsole.h"
+#include "space3D.h"
 #include "scenes/sceneSpace.h"
 #include "scenes/sceneDiskLoader.h"
 
@@ -309,6 +310,8 @@ static bool playerSpace_updateViewChange() {
     if (!isFirstPersonView) {
       isFirstPersonView = true;
       playerState = PLAYER_STATE_SPACE_FIRST_PERSON;
+      int zz = (int)sqrtf(player.dx * player.dx + player.dy * player.dy);
+      starsSpeedModifier = zz > 1 ? zz < 10 ? zz : 9 : 1;
     } else {
       isFirstPersonView = false;
       playerState = PLAYER_STATE_IDLE;
@@ -324,27 +327,82 @@ static bool playerSpace_update3DMovement() {
   if (input.up == 1) {
     input.up = 2;
     targetCentre.y = 40;
-    return true;
   } else if (input.down == 1) {
     input.down = 2;
     targetCentre.y = 88;
-    return true;
   } else if (input.left == 1) {
     input.left = 2;
     targetCentre.x = 80;
-    return true;
   } else if (input.right == 1) {
     input.right = 2;
     targetCentre.x = 176;
-    return true;
   } else if (input.space == 1) {
     input.space = 2;
     targetCentre.x = 128;
     targetCentre.y = 64;
+  }
+
+  return false;
+}
+
+static bool playerSpace_update3DSpeed() {
+  if (lastKey != 0 && lastKey >= 49 && lastKey <= 57) {
+    starsSpeedModifier = (lastKey - 48);
     return true;
   }
 
   return false;
+}
+
+static bool playerSpace_updateHyperJump() {
+  if (input.h == 1) {
+    input.h = 2;
+
+    if (!isFirstPersonView) {
+      uiConsole_replaceLastMessageFormat("%s%s", ultimaStrings[98], ultimaStrings[1053]);
+      uiConsole_queueMessage(ultimaStrings[1054]);
+      return true;
+    }
+
+    uiConsole_replaceLastMessageFormat("%s%s", ultimaStrings[98], ultimaStrings[1029]);
+    uiConsole_queueMessage(" ");
+    
+    targetCentre.x = 128;
+    targetCentre.y = 64;
+    hyperJumpingState = HYPER_JUMP_STATE_ACCELERATE;
+    playerState = PLAYER_STATE_SPACE_HYPER_JUMP;
+
+    player.fuel -= 100;
+    if (player.fuel < 0) {
+      player.fuel = 0;
+    }
+
+    uiConsole_updateSpaceStats();
+  }
+
+  return false;
+}
+
+void playerSpace_performHyperJump() {
+  int dx = player.dx > 0 ? 1 : player.dx < 0 ? -1 : 0;
+  int dy = player.dy > 0 ? 1 : player.dy < 0 ? -1 : 0;
+
+  player.px += dx;
+  player.py += dy;
+  player.dx = 0;
+  player.dy = 0;
+
+  if (player.px < 1) {
+    player.px = 9;
+  } else if (player.px > 9) {
+    player.px = 1;
+  }
+
+  if (player.py < 1) {
+    player.py = 9;
+  } else if (player.py > 9) {
+    player.py = 1;
+  }
 }
 
 bool playerSpace_update(float deltaTime) {
@@ -358,6 +416,7 @@ bool playerSpace_update(float deltaTime) {
         if (playerSpace_updateInfo()) { acted = true; } else
         if (playerSpace_updateTurning()) { acted = true; } else 
         if (playerSpace_updateViewChange()) { acted = true; } else 
+        if (playerSpace_updateHyperJump()) { acted = true; } else
         if (playerSpace_updateThrusting()) { acted = true; } else 
         if (playerSpace_updateRetro()) { acted = true; }
         playerSpace_updateMovement(deltaTime);
@@ -369,6 +428,9 @@ bool playerSpace_update(float deltaTime) {
       
       case PLAYER_STATE_SPACE_FIRST_PERSON:
         if (playerSpace_update3DMovement()) { acted = true; } else
+        if (playerSpace_updateInfo()) { acted = true; } else
+        if (playerSpace_update3DSpeed()) { acted = true; } else
+        if (playerSpace_updateHyperJump()) { acted = true; } else
         if (playerSpace_updateViewChange()) { acted = true; } 
         break;
       

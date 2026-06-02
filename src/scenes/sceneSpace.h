@@ -18,6 +18,7 @@ extern Scene sceneSpace;
 extern bool isFirstPersonView;
 extern int enemyCrafts;
 
+void sceneSpace_initializeShapes();
 bool sceneSpace_tryBoardVessel(int shapeId, int rotation);
 void sceneSpace_transformShape(float *transformMatrix, float x, float y, float rotation);
 void sceneSpace_crunchCollision();

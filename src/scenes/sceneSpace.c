@@ -60,36 +60,8 @@ static void sceneSpace_setShapeGeometry(int shapeId, Geometry *geometry) {
   geometry_setSpriteOffset(geometry, 7, 7, 15, 15, tx1, ty1, tx2, ty2);
 }
 
-static void sceneSpace_init() {
-  darkDeath = false;
-  playerSpace_init();
-  space3D_init();
-
-  int data[] = { 81, 49152, 17681, 49152, 0, 49152, 49152, 49152, 0, 49152 };
-  for (int i=1;i<=10;i++) {
-    shapes[i].x = data[i - 1];
-  }
-
-  for (int x=0;x<11;x++) {
-    for (int y=0;y<11;y++) {
-      spaceMap[x][y] = -32767;
-    }
-  }
-
-  srand(-1);
-  for (int xx=2;xx<=8;xx++) {
-    for (int yy=2;yy<=8;yy++) {
-      spaceMap[xx][yy] = shapes[(int)(rand01() * 10 + 1)].x - 32767;
-      if (rand01() < 0.4f) {
-        spaceMap[xx][yy] = -32767;
-      }
-    }
-  }
-
-  spaceMap[5][5] = 1301 - 32767;
-
-  srand(-player.sx - 10 * (-player.sy));
-  int zx = spaceMap[(int)player.sx][(int)player.sy] + 32767;
+void sceneSpace_initializeShapes() {
+  int zx = spaceMap[player.px][player.py] + 32767;
 
   // Default shape data initialization
   for (int i=0;i<=8;i++) {
@@ -203,6 +175,39 @@ static void sceneSpace_init() {
       }
     }
   } while (!valid);
+}
+
+static void sceneSpace_init() {
+  darkDeath = false;
+  playerSpace_init();
+  space3D_init();
+
+  int data[] = { 81, 49152, 17681, 49152, 0, 49152, 49152, 49152, 0, 49152 };
+  for (int i=1;i<=10;i++) {
+    shapes[i].x = data[i - 1];
+  }
+
+  for (int x=0;x<11;x++) {
+    for (int y=0;y<11;y++) {
+      spaceMap[x][y] = -32767;
+    }
+  }
+
+  srand(-1);
+  for (int xx=2;xx<=8;xx++) {
+    for (int yy=2;yy<=8;yy++) {
+      spaceMap[xx][yy] = shapes[(int)(rand01() * 10 + 1)].x - 32767;
+      if (rand01() < 0.4f) {
+        spaceMap[xx][yy] = -32767;
+      }
+    }
+  }
+
+  spaceMap[5][5] = 1301 - 32767;
+
+  srand(-player.sx - 10 * (-player.sy));
+  
+  sceneSpace_initializeShapes();
 
   for (int i=0;i<3;i++) {
     sceneSpace_setShapeGeometry(SHAPE_SPACE_SHUTTLE + i, &playerShipGeometries[i]);

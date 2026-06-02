@@ -41,6 +41,7 @@ typedef struct {
   int u;
   int k;
   int v;
+  int h;
 } SosariaInput;
 
 extern Textfield *inputTextfield;
