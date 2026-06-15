@@ -23,6 +23,7 @@ void uiConsole_replaceLastMessage(const char *message);
 void uiConsole_replaceLastMessageFormat(const char *format, ...);
 void uiConsole_updateStats();
 void uiConsole_updateSpaceStats();
+void uiConsole_clearQueue();
 void uiConsole_renderConsoleOnly();
 void uiConsole_update(float deltaTime);
 void uiConsole_free();

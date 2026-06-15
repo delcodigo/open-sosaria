@@ -233,6 +233,7 @@ static void sceneSpace_crashDeath() {
 
   int htab = 19 - (strlen(player.name) + 16) / 2;
 
+  uiConsole_clearQueue();
   uiConsole_addMessageFormat("%*s%s%s", htab, " ", player.name, ultimaStrings[1099]);
   uiConsole_addMessage(ultimaStrings[1100]);
   uiConsole_addMessageFormat("%*s%s", 9, " ", ultimaStrings[1101]);
@@ -447,16 +448,22 @@ static void sceneSpace_update(float deltaTime) {
   }
 
   if (isFirstPersonView) {
-    space3D_update(deltaTime);
-    space3D_render(camera_getViewProjectionMatrix(&camera));
-    uiConsole_update(deltaTime);
+    if (!darkDeath) {
+      space3D_update(deltaTime);
+      space3D_render(camera_getViewProjectionMatrix(&camera));
+
+      if (player.shield <= 0) {
+        sceneSpace_crashDeath();
+      }
+    }
   } else {
     sceneSpace_render();
-    if (darkDeath) {
-      uiConsole_renderConsoleOnly();
-    } else {
-      uiConsole_update(deltaTime);
-    }
+  }
+
+  if (darkDeath) {
+    uiConsole_renderConsoleOnly();
+  } else {
+    uiConsole_update(deltaTime);
   }
 }
 

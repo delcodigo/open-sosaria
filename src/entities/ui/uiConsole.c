@@ -207,6 +207,13 @@ static void uiConsole_updateTypewriter(float deltaTime) {
   }
 }
 
+void uiConsole_clearQueue() {
+  if (queuedMessagesCount > 0) {
+    queuedMessagesCount = 0;
+    memset(queuedMessages, 0, sizeof(queuedMessages));
+  }
+}
+
 void uiConsole_renderConsoleOnly() {
   int cx = camera_getX(&camera);
   int cy = camera_getY(&camera) + 160;

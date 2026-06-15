@@ -1,5 +1,6 @@
 #include <stdbool.h>
 #include <math.h>
+#include <stdlib.h>
 #include "space3D.h"
 #include "engine/geometry.h"
 #include "engine/texture.h"
@@ -8,6 +9,7 @@
 #include "entities/playerSpace.h"
 #include "entities/playerCommons.h"
 #include "entities/ui/uiConsole.h"
+#include "data/player.h"
 #include "scenes/sceneDiskLoader.h"
 #include "scenes/sceneSpace.h"
 #include "config.h"
@@ -23,6 +25,8 @@ static Vector2f starsPosition[14] = {0};
 static Vector2f enemyCraftPosition = {0};
 static int enemyCraftFacing = 0;
 static float enemyCraftTransformMatrix[16] = {0};
+static float enemyCraftInAttackPosition = 0;
+static float enemyCraftAttacked = 0;
 static const int starsCount = sizeof(starsPosition) / sizeof(Vector2f);
 static float starsSpreadRate = 1;
 static uint8_t colorPurple[3] = {146, 0, 255};
@@ -53,6 +57,22 @@ static void space3D_setPixel(int x, int y, uint8_t r, uint8_t g, uint8_t b) {
   screenData[index + 3] = 255;
 
   textureNeedsUpdate = true;
+}
+
+static void space3D_drawLine(int x0, int y0, int x1, int y1, int r, int g, int b) {
+  int dx = abs(x1 - x0);
+  int dy = abs(y1 - y0);
+  int stepX = x0 < x1 ? 1 : -1;
+  int stepY = y0 < y1 ? 1 : -1;
+  int err = dx - dy;
+
+  while (1) {
+    space3D_setPixel(x0, y0, r, g, b);
+    if (x0 == x1 && y0 == y1) break;
+    int e2 = 2 * err;
+    if (e2 > -dy) { err -= dy; x0 += stepX; } else
+    if (e2 < dx)  { err += dx; y0 += stepY; }
+  }
 }
 
 void space3D_init() {
@@ -87,6 +107,16 @@ void space3D_init() {
   geometry_setSprite(&screenGeometry, OS_SCREEN_WIDTH, OS_SCREEN_HEIGHT, 0, 0, 1, 1);
 
   matrix4_setIdentity(transformMatrix);
+}
+
+static void space3D_clearEnemyAttackLines(float deltaTime) {
+  enemyCraftAttacked -= deltaTime;
+
+  if (enemyCraftAttacked <= 0) {
+    enemyCraftAttacked = 0;
+    space3D_drawLine(enemyCraftPosition.x + 8, enemyCraftPosition.y, enemyCraftPosition.x, 127, 0, 0, 0);
+    space3D_drawLine(enemyCraftPosition.x, 127, enemyCraftPosition.x - 8, enemyCraftPosition.y + 8, 0, 0, 0);
+  }
 }
 
 void space3D_render(float *viewMatrix) {
@@ -162,7 +192,27 @@ static void space3D_updateEnemyCraft(float deltaTime) {
   } else {
     enemyCraftFacing = (enemyCraftFacing == 255) ? 255 : 192;
 
-    // TODO: Enemy attack
+    if (enemyCraftPosition.x >= 112 && enemyCraftPosition.x < 143 && enemyCraftPosition.y >= 48 && enemyCraftPosition.y < 79) {
+      enemyCraftInAttackPosition += deltaTime;
+      if (enemyCraftInAttackPosition >= 2) {
+        enemyCraftInAttackPosition = 0;
+        enemyCraftAttacked = 0.5f;
+
+        space3D_drawLine(enemyCraftPosition.x + 8, enemyCraftPosition.y, enemyCraftPosition.x, 127, 255, 86, 0);
+        space3D_drawLine(enemyCraftPosition.x, 127, enemyCraftPosition.x - 8, enemyCraftPosition.y + 8, 255, 86, 0);
+
+        uiConsole_queueMessage(ultimaStrings[1011]);
+        uiConsole_queueMessage(ultimaStrings[98]);
+
+        player.shield -= 321;
+        if (player.shield <= 0) { 
+          player.shield = 0; 
+        }
+
+        uiConsole_updateSpaceStats();
+      }
+    }
+
   }
 
   enemyCraftPosition.x = fmodf(enemyCraftPosition.x + 255.0f, 255.0f);
@@ -170,6 +220,11 @@ static void space3D_updateEnemyCraft(float deltaTime) {
 }
 
 void space3D_update(float deltaTime) {
+  if (enemyCraftAttacked > 0) {
+    space3D_clearEnemyAttackLines(deltaTime);
+    return;
+  }
+  
   space3D_updateHyperJump(deltaTime);
 
   for (int i=0;i<starsCount;i++) {
