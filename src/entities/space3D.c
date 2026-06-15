@@ -1,4 +1,5 @@
 #include <stdbool.h>
+#include <math.h>
 #include "space3D.h"
 #include "engine/geometry.h"
 #include "engine/texture.h"
@@ -13,11 +14,15 @@
 #include "utils.h"
 
 static Geometry screenGeometry;
+static Geometry enemyCraftGeometry;
 static unsigned char screenData[OS_SCREEN_WIDTH * OS_SCREEN_HEIGHT * 4] = {0};
 static GLuint screenTexture;
 static bool textureNeedsUpdate;
 static float transformMatrix[16];
 static Vector2f starsPosition[14] = {0};
+static Vector2f enemyCraftPosition = {0};
+static int enemyCraftFacing = 0;
+static float enemyCraftTransformMatrix[16] = {0};
 static const int starsCount = sizeof(starsPosition) / sizeof(Vector2f);
 static float starsSpreadRate = 1;
 static uint8_t colorPurple[3] = {146, 0, 255};
@@ -53,6 +58,12 @@ static void space3D_setPixel(int x, int y, uint8_t r, uint8_t g, uint8_t b) {
 void space3D_init() {
   space3D_initStars();
 
+  float tx1 = 0.0f;
+  float ty1 = 24.0f / (float)ultimaAssets.spaceSprites.height;
+  float tx2 = 24.0f / (float)ultimaAssets.spaceSprites.width;
+  float ty2 = 48.0f / (float)ultimaAssets.spaceSprites.height;
+  geometry_setSpriteOffset(&enemyCraftGeometry, 12, 12, 24, 24, tx1, ty1, tx2, ty2);
+
   for (int y=0;y<160;y++) {
     int column = 0;
     if (y < 129) { column = 257; }
@@ -85,6 +96,14 @@ void space3D_render(float *viewMatrix) {
   }
 
   geometry_render(&screenGeometry, screenTexture, transformMatrix, viewMatrix);
+
+  if (enemyCrafts > 0) {
+    if (enemyCraftFacing > 128) {
+      matrix4_setIdentity(enemyCraftTransformMatrix);
+      matrix4_setPosition(enemyCraftTransformMatrix, (int)enemyCraftPosition.x, (int)enemyCraftPosition.y, 2);
+      geometry_render(&enemyCraftGeometry, ultimaAssets.spaceSprites.textureId, enemyCraftTransformMatrix, viewMatrix);
+    }
+  }
 }
 
 static void space3D_updateHyperJump(float deltaTime) {
@@ -123,16 +142,43 @@ static void space3D_updateHyperJump(float deltaTime) {
   }
 }
 
+static void space3D_updateEnemyCraft(float deltaTime) {
+  if (enemyCrafts <= 0) { return; }
+
+  float step = (11.0f - starsSpeedModifier) * deltaTime;
+  
+  if (targetCentre.x == 176) { enemyCraftPosition.x -= step; } else
+  if (targetCentre.x == 80) { enemyCraftPosition.x += step; } else 
+  if (targetCentre.x < enemyCraftPosition.x) { enemyCraftPosition.x += step; } else 
+  if (targetCentre.x > enemyCraftPosition.x) { enemyCraftPosition.x -= step; }
+  
+  if (targetCentre.y == 88) { enemyCraftPosition.y -= step; } else
+  if (targetCentre.y == 40) { enemyCraftPosition.y += step; } else 
+  if (targetCentre.y < enemyCraftPosition.y) { enemyCraftPosition.y += step; } else 
+  if (targetCentre.y > enemyCraftPosition.y) { enemyCraftPosition.y -= step; }
+
+  if (enemyCraftPosition.x < 9 || enemyCraftPosition.x >= 245 || enemyCraftPosition.y < 9 || enemyCraftPosition.y >= 118) {
+    enemyCraftFacing = (enemyCraftFacing < 128) ? 96 : 0;
+  } else {
+    enemyCraftFacing = (enemyCraftFacing == 255) ? 255 : 192;
+
+    // TODO: Enemy attack
+  }
+
+  enemyCraftPosition.x = fmodf(enemyCraftPosition.x + 255.0f, 255.0f);
+  enemyCraftPosition.y = fmodf(enemyCraftPosition.y + 128.0f, 128.0f);
+}
+
 void space3D_update(float deltaTime) {
   space3D_updateHyperJump(deltaTime);
 
   for (int i=0;i<starsCount;i++) {
-    float newX = starsPosition[i].x + (starsPosition[i].x - targetCentre.x) * starsSpreadRate * deltaTime * starsSpeedModifier;
-    float newY = starsPosition[i].y + (starsPosition[i].y - targetCentre.y) * starsSpreadRate * deltaTime * starsSpeedModifier;
+    float newX = starsPosition[i].x + (starsPosition[i].x - (float)targetCentre.x) * starsSpreadRate * deltaTime * starsSpeedModifier;
+    float newY = starsPosition[i].y + (starsPosition[i].y - (float)targetCentre.y) * starsSpreadRate * deltaTime * starsSpeedModifier;
 
     if (newX < 1 || newY < 1 || newX > 255 || newY > 127) {
-      newX = targetCentre.x + rand01() * 32 - 16;
-      newY = targetCentre.y + rand01() * 16 - 8;
+      newX = (float)targetCentre.x + rand01() * 32 - 16;
+      newY = (float)targetCentre.y + rand01() * 16 - 8;
     }
 
     space3D_setPixel((int)starsPosition[i].x, (int)starsPosition[i].y, 0, 0, 0);
@@ -152,6 +198,8 @@ void space3D_update(float deltaTime) {
 
     space3D_setPixel((int)starsPosition[i].x, (int)starsPosition[i].y, r, g, b);
   }
+
+  space3D_updateEnemyCraft(deltaTime);
 }
 
 void space3D_free() {

@@ -32,7 +32,7 @@ int enemyCrafts = 0;
 Geometry playerShipGeometries[3];
 int spaceMap[11][11];
 
-static int sceneSpace_getBase4Digit(int position, int value) {
+int sceneSpace_getBase4Digit(int position, int value) {
   return ((int)(value / pow(4, position)) - 4 * (int)(value / pow(4, position + 1)));
 }
 

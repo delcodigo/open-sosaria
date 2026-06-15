@@ -4,7 +4,7 @@
 #include <stdbool.h>
 #include "maths/vector2.h"
 
-extern Vector2f targetCentre;
+extern Vector2 targetCentre;
 
 void playerSpace_init();
 void playerSpace_render(float *viewMatrix);

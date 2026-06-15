@@ -15,7 +15,7 @@ static Geometry thrustGeometry;
 static int thrustOffset[2] = {0};
 static float thrustVisible = 0;
 
-Vector2f targetCentre = {0};
+Vector2 targetCentre = {0};
 
 void playerSpace_init() {
   player.px = 5;
@@ -311,7 +311,9 @@ static bool playerSpace_updateViewChange() {
       isFirstPersonView = true;
       playerState = PLAYER_STATE_SPACE_FIRST_PERSON;
       int zz = (int)sqrtf(player.dx * player.dx + player.dy * player.dy);
+      int zx = spaceMap[player.px][player.py] + 32767;
       starsSpeedModifier = zz > 1 ? zz < 10 ? zz : 9 : 1;
+      enemyCrafts = sceneSpace_getBase4Digit(7, zx);
     } else {
       isFirstPersonView = false;
       playerState = PLAYER_STATE_IDLE;
@@ -403,6 +405,9 @@ void playerSpace_performHyperJump() {
   } else if (player.py > 9) {
     player.py = 1;
   }
+
+  int zx = spaceMap[player.px][player.py] + 32767;
+  enemyCrafts = sceneSpace_getBase4Digit(7, zx);
 }
 
 bool playerSpace_update(float deltaTime) {
