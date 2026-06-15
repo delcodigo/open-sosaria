@@ -12,6 +12,7 @@
 
 static float playerTransformMatrix[16];
 static Geometry thrustGeometry;
+static Geometry aimSightGeometry;
 static int thrustOffset[2] = {0};
 static float thrustVisible = 0;
 
@@ -43,6 +44,10 @@ void playerSpace_init() {
   float ty2 = ty1 + 24.0f / (float) ultimaAssets.spaceSprites.height;
 
   geometry_setSpriteOffset(&thrustGeometry, 12, 12, 24, 24, tx1, ty1, tx2, ty2);
+
+  tx1 = 7.0f * 24.0f / (float) ultimaAssets.spaceSprites.width;
+  tx2 = tx1 + 24.0f / (float) ultimaAssets.spaceSprites.width;
+  geometry_setSpriteOffset(&aimSightGeometry, 12, 12, 24, 24, tx1, ty1, tx2, ty2);
 }
 
 static bool playerSpace_updateTurning() {
@@ -410,6 +415,41 @@ void playerSpace_performHyperJump() {
   enemyCrafts = sceneSpace_getBase4Digit(7, zx);
 }
 
+static bool playerSpace_updateFire() {
+  if (input.f == 1) {
+    input.f = 2;
+
+    uiConsole_replaceLastMessageFormat("%s%s", ultimaStrings[98], ultimaStrings[1024]);
+
+    space3D_drawPlayerAttack();
+
+    player.fuel -= 10;
+    
+    if (!space3D_isEnemyInSights()) {
+      return true;
+    }
+
+    spaceMap[player.px][player.py] -= 16384;
+
+    int zx = spaceMap[player.px][player.py] + 32767;
+    enemyCrafts = (int)(((float) zx - 65536 * (int)((float) zx / 65536.0f)) / 16384.0f);
+    space3D_killEnemy();
+
+    player.experience += 2000;
+    player.spaceLevel += 1;
+
+    uiConsole_queueMessageFormat("%s%s", ultimaStrings[98], ultimaStrings[1026]);
+
+    if (player.spaceLevel > 19 && player.spaceLevel < 23) {
+      uiConsole_queueMessage(ultimaStrings[1027]);
+    }
+
+    return true;
+  }
+
+  return false;
+}
+
 bool playerSpace_update(float deltaTime) {
   bool acted = false;
   
@@ -436,6 +476,7 @@ bool playerSpace_update(float deltaTime) {
         if (playerSpace_updateInfo()) { acted = true; } else
         if (playerSpace_update3DSpeed()) { acted = true; } else
         if (playerSpace_updateHyperJump()) { acted = true; } else
+        if (playerSpace_updateFire()) { acted = true; } else
         if (playerSpace_updateViewChange()) { acted = true; } 
         break;
       
@@ -457,17 +498,24 @@ bool playerSpace_update(float deltaTime) {
 }
 
 void playerSpace_render(float *viewMatrix) {
-  int playerShip = 0;
-  if (player.vehicle == 7) { playerShip = 2; } else
-  if (player.vehicle == 8) { playerShip = 1; }
+  if (isFirstPersonView) {
+    if (enemyCrafts > 0) {
+      sceneSpace_transformShape(playerTransformMatrix, 128, 64, 2, 0);
+      geometry_render(&aimSightGeometry, ultimaAssets.spaceSprites.textureId, playerTransformMatrix, viewMatrix);
+    }
+  } else {
+    int playerShip = 0;
+    if (player.vehicle == 7) { playerShip = 2; } else
+    if (player.vehicle == 8) { playerShip = 1; }
 
-  if (thrustVisible > 0) {
-    sceneSpace_transformShape(playerTransformMatrix, (int) (player.sx + thrustOffset[0]), (int) (player.sy + thrustOffset[1]), player.rotation);
-    geometry_render(&thrustGeometry, ultimaAssets.spaceSprites.textureId, playerTransformMatrix, viewMatrix);
+    if (thrustVisible > 0) {
+      sceneSpace_transformShape(playerTransformMatrix, (int) (player.sx + thrustOffset[0]), (int) (player.sy + thrustOffset[1]), 0, player.rotation);
+      geometry_render(&thrustGeometry, ultimaAssets.spaceSprites.textureId, playerTransformMatrix, viewMatrix);
+    }
+
+    sceneSpace_transformShape(playerTransformMatrix, (int) player.sx, (int) player.sy, 0, player.rotation);
+    geometry_render(&playerShipGeometries[playerShip], ultimaAssets.spaceSprites.textureId, playerTransformMatrix, viewMatrix);
   }
-
-  sceneSpace_transformShape(playerTransformMatrix, (int) player.sx, (int) player.sy, player.rotation);
-  geometry_render(&playerShipGeometries[playerShip], ultimaAssets.spaceSprites.textureId, playerTransformMatrix, viewMatrix);
 }
 
 void playerSpace_free() {

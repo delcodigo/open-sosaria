@@ -27,6 +27,7 @@ static int enemyCraftFacing = 0;
 static float enemyCraftTransformMatrix[16] = {0};
 static float enemyCraftInAttackPosition = 0;
 static float enemyCraftAttacked = 0;
+static float playerAttacked = 0;
 static const int starsCount = sizeof(starsPosition) / sizeof(Vector2f);
 static float starsSpreadRate = 1;
 static uint8_t colorPurple[3] = {146, 0, 255};
@@ -119,6 +120,16 @@ static void space3D_clearEnemyAttackLines(float deltaTime) {
   }
 }
 
+static void space3D_clearPlayerAttackLines(float deltaTime) {
+  playerAttacked -= deltaTime;
+
+  if (playerAttacked <= 0) {
+    playerAttacked = 0;
+    space3D_drawLine(1, 127, 128, 64, 0, 0, 0);
+    space3D_drawLine(128, 64, 255, 127, 0, 0, 0);
+  }
+}
+
 void space3D_render(float *viewMatrix) {
   if (textureNeedsUpdate) {
     texture_update(screenTexture, OS_SCREEN_WIDTH, OS_SCREEN_HEIGHT, screenData);
@@ -194,7 +205,7 @@ static void space3D_updateEnemyCraft(float deltaTime) {
 
     if (enemyCraftPosition.x >= 112 && enemyCraftPosition.x < 143 && enemyCraftPosition.y >= 48 && enemyCraftPosition.y < 79) {
       enemyCraftInAttackPosition += deltaTime;
-      if (enemyCraftInAttackPosition >= 2) {
+      if (enemyCraftInAttackPosition >= 1.5f) {
         enemyCraftInAttackPosition = 0;
         enemyCraftAttacked = 0.5f;
 
@@ -219,9 +230,33 @@ static void space3D_updateEnemyCraft(float deltaTime) {
   enemyCraftPosition.y = fmodf(enemyCraftPosition.y + 128.0f, 128.0f);
 }
 
+bool space3D_isEnemyInSights() {
+  return (enemyCraftPosition.x >= 121 && enemyCraftPosition.x < 134 && enemyCraftPosition.y >= 57 && enemyCraftPosition.y < 66);
+}
+
+void space3D_killEnemy() {
+  enemyCraftAttacked = 0;
+  space3D_clearEnemyAttackLines(1);
+  enemyCraftPosition.x = 0;
+  enemyCraftPosition.y = 0;
+  enemyCraftInAttackPosition = 0;
+  enemyCraftFacing = 96;
+}
+
+void space3D_drawPlayerAttack() {
+  playerAttacked = 0.5f;
+  space3D_drawLine(1, 127, 128, 64, 255, 86, 0);
+  space3D_drawLine(128, 64, 255, 127, 255, 86, 0);
+}
+
 void space3D_update(float deltaTime) {
   if (enemyCraftAttacked > 0) {
     space3D_clearEnemyAttackLines(deltaTime);
+    return;
+  }
+
+  if (playerAttacked > 0) {
+    space3D_clearPlayerAttackLines(deltaTime);
     return;
   }
   

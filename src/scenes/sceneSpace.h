@@ -21,7 +21,7 @@ extern int enemyCrafts;
 int sceneSpace_getBase4Digit(int position, int value);
 void sceneSpace_initializeShapes();
 bool sceneSpace_tryBoardVessel(int shapeId, int rotation);
-void sceneSpace_transformShape(float *transformMatrix, float x, float y, float rotation);
+void sceneSpace_transformShape(float *transformMatrix, float x, float y, float z, float rotation);
 void sceneSpace_crunchCollision();
 void sceneSpace_checkCollisions();
 

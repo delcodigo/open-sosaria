@@ -221,9 +221,9 @@ static void sceneSpace_init() {
   uiConsole_queueMessage(ultimaStrings[98]);
 }
 
-void sceneSpace_transformShape(float *transformMatrix, float x, float y, float rotation) {
+void sceneSpace_transformShape(float *transformMatrix, float x, float y, float z, float rotation) {
   matrix4_setIdentity(transformMatrix);
-  matrix4_setPosition(transformMatrix, x, y, 0);
+  matrix4_setPosition(transformMatrix, x, y, z);
   matrix4_setRotationZ(transformMatrix, (rotation * 5.625f) * M_PI / 180.0f);
 }
 
@@ -424,7 +424,7 @@ static void sceneSpace_render() {
       continue;
     }
 
-    sceneSpace_transformShape(transformMatrix, shapes[i].x, shapes[i].y, shapes[i].rotation);
+    sceneSpace_transformShape(transformMatrix, shapes[i].x, shapes[i].y, 0, shapes[i].rotation);
     geometry_render(&shapes[i].geometry, ultimaAssets.spaceSprites.textureId, transformMatrix, viewMatrix);
   }
 
@@ -451,6 +451,9 @@ static void sceneSpace_update(float deltaTime) {
     if (!darkDeath) {
       space3D_update(deltaTime);
       space3D_render(camera_getViewProjectionMatrix(&camera));
+
+      float *viewMatrix = camera_getViewProjectionMatrix(&camera);
+      playerSpace_render(viewMatrix);
 
       if (player.shield <= 0) {
         sceneSpace_crashDeath();

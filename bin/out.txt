@@ -1,0 +1,1888 @@
+Allocated 65536 bytes at src/engine/engine.c:94, address: 02bf6fe8
+Freed memory at src/engine/engine.c:112, address: 02bf6fe8
+Allocated 143360 bytes at src/scenes/sceneDiskLoader.c:1299, address: 02bf6fe8
+Allocated 143360 bytes at src/scenes/sceneDiskLoader.c:1300, address: 02c19ff0
+Allocated 7200 bytes at src/scenes/sceneDiskLoader.c:188, address: 014dc648
+Allocated 512 bytes at src/scenes/sceneDiskLoader.c:88, address: 014dafe0
+Allocated 8 bytes at src/scenes/sceneDiskLoader.c:124, address: 014db1e8
+Freed memory at src/scenes/sceneDiskLoader.c:227, address: 014dafe0
+Freed memory at src/scenes/sceneDiskLoader.c:228, address: 014db1e8
+Allocated 1024 bytes at src/scenes/sceneDiskLoader.c:88, address: 014d9678
+Allocated 8 bytes at src/scenes/sceneDiskLoader.c:124, address: 014db600
+Freed memory at src/scenes/sceneDiskLoader.c:227, address: 014d9678
+Freed memory at src/scenes/sceneDiskLoader.c:228, address: 014db600
+Allocated 8448 bytes at src/scenes/sceneDiskLoader.c:88, address: 02c3cff8
+Allocated 8 bytes at src/scenes/sceneDiskLoader.c:124, address: 014db600
+Freed memory at src/scenes/sceneDiskLoader.c:227, address: 02c3cff8
+Freed memory at src/scenes/sceneDiskLoader.c:228, address: 014db600
+Allocated 4864 bytes at src/scenes/sceneDiskLoader.c:88, address: 02c3cff8
+Allocated 8 bytes at src/scenes/sceneDiskLoader.c:124, address: 014db600
+Freed memory at src/scenes/sceneDiskLoader.c:227, address: 02c3cff8
+Freed memory at src/scenes/sceneDiskLoader.c:228, address: 014db600
+Allocated 11264 bytes at src/scenes/sceneDiskLoader.c:88, address: 02c3cff8
+Allocated 8 bytes at src/scenes/sceneDiskLoader.c:124, address: 014db600
+Freed memory at src/scenes/sceneDiskLoader.c:227, address: 02c3cff8
+Freed memory at src/scenes/sceneDiskLoader.c:228, address: 014db600
+Allocated 14592 bytes at src/scenes/sceneDiskLoader.c:88, address: 02c3cff8
+Allocated 8 bytes at src/scenes/sceneDiskLoader.c:124, address: 014db600
+Freed memory at src/scenes/sceneDiskLoader.c:227, address: 02c3cff8
+Freed memory at src/scenes/sceneDiskLoader.c:228, address: 014db600
+Allocated 12288 bytes at src/scenes/sceneDiskLoader.c:88, address: 02c3cff8
+Allocated 8 bytes at src/scenes/sceneDiskLoader.c:124, address: 014db600
+Freed memory at src/scenes/sceneDiskLoader.c:227, address: 02c3cff8
+Freed memory at src/scenes/sceneDiskLoader.c:228, address: 014db600
+Allocated 11776 bytes at src/scenes/sceneDiskLoader.c:88, address: 02c3cff8
+Allocated 8 bytes at src/scenes/sceneDiskLoader.c:124, address: 014db600
+Freed memory at src/scenes/sceneDiskLoader.c:227, address: 02c3cff8
+Freed memory at src/scenes/sceneDiskLoader.c:228, address: 014db600
+Allocated 2816 bytes at src/scenes/sceneDiskLoader.c:88, address: 014de270
+Allocated 8 bytes at src/scenes/sceneDiskLoader.c:124, address: 014db600
+Freed memory at src/scenes/sceneDiskLoader.c:227, address: 014de270
+Freed memory at src/scenes/sceneDiskLoader.c:228, address: 014db600
+Allocated 2816 bytes at src/scenes/sceneDiskLoader.c:88, address: 014de270
+Allocated 8 bytes at src/scenes/sceneDiskLoader.c:124, address: 014db600
+Freed memory at src/scenes/sceneDiskLoader.c:227, address: 014de270
+Freed memory at src/scenes/sceneDiskLoader.c:228, address: 014db600
+Allocated 2816 bytes at src/scenes/sceneDiskLoader.c:88, address: 014de270
+Allocated 8 bytes at src/scenes/sceneDiskLoader.c:124, address: 014db600
+Freed memory at src/scenes/sceneDiskLoader.c:227, address: 014de270
+Freed memory at src/scenes/sceneDiskLoader.c:228, address: 014db600
+Allocated 2816 bytes at src/scenes/sceneDiskLoader.c:88, address: 014de270
+Allocated 8 bytes at src/scenes/sceneDiskLoader.c:124, address: 014db600
+Freed memory at src/scenes/sceneDiskLoader.c:227, address: 014de270
+Freed memory at src/scenes/sceneDiskLoader.c:228, address: 014db600
+Allocated 2560 bytes at src/scenes/sceneDiskLoader.c:88, address: 014de270
+Allocated 8 bytes at src/scenes/sceneDiskLoader.c:124, address: 014db600
+Freed memory at src/scenes/sceneDiskLoader.c:227, address: 014de270
+Freed memory at src/scenes/sceneDiskLoader.c:228, address: 014db600
+Allocated 8704 bytes at src/scenes/sceneDiskLoader.c:88, address: 02c3cff8
+Allocated 8 bytes at src/scenes/sceneDiskLoader.c:124, address: 014db600
+Freed memory at src/scenes/sceneDiskLoader.c:227, address: 02c3cff8
+Freed memory at src/scenes/sceneDiskLoader.c:228, address: 014db600
+Allocated 512 bytes at src/scenes/sceneDiskLoader.c:88, address: 014dafe0
+Allocated 8 bytes at src/scenes/sceneDiskLoader.c:124, address: 014db1e8
+Freed memory at src/scenes/sceneDiskLoader.c:227, address: 014dafe0
+Freed memory at src/scenes/sceneDiskLoader.c:228, address: 014db1e8
+Allocated 1024 bytes at src/scenes/sceneDiskLoader.c:88, address: 014d9678
+Allocated 8 bytes at src/scenes/sceneDiskLoader.c:124, address: 014db600
+Freed memory at src/scenes/sceneDiskLoader.c:227, address: 014d9678
+Freed memory at src/scenes/sceneDiskLoader.c:228, address: 014db600
+Allocated 1024 bytes at src/scenes/sceneDiskLoader.c:88, address: 014d9678
+Allocated 8 bytes at src/scenes/sceneDiskLoader.c:124, address: 014db600
+Freed memory at src/scenes/sceneDiskLoader.c:227, address: 014d9678
+Freed memory at src/scenes/sceneDiskLoader.c:228, address: 014db600
+Allocated 1024 bytes at src/scenes/sceneDiskLoader.c:88, address: 014d9678
+Allocated 8 bytes at src/scenes/sceneDiskLoader.c:124, address: 014db600
+Freed memory at src/scenes/sceneDiskLoader.c:227, address: 014d9678
+Freed memory at src/scenes/sceneDiskLoader.c:228, address: 014db600
+Allocated 768 bytes at src/scenes/sceneDiskLoader.c:88, address: 014d9678
+Allocated 8 bytes at src/scenes/sceneDiskLoader.c:124, address: 014db600
+Freed memory at src/scenes/sceneDiskLoader.c:227, address: 014d9678
+Freed memory at src/scenes/sceneDiskLoader.c:228, address: 014db600
+Allocated 1280 bytes at src/scenes/sceneDiskLoader.c:88, address: 014d9678
+Allocated 8 bytes at src/scenes/sceneDiskLoader.c:124, address: 014db600
+Freed memory at src/scenes/sceneDiskLoader.c:227, address: 014d9678
+Freed memory at src/scenes/sceneDiskLoader.c:228, address: 014db600
+Allocated 512 bytes at src/scenes/sceneDiskLoader.c:88, address: 014dafe0
+Allocated 8 bytes at src/scenes/sceneDiskLoader.c:124, address: 014db1e8
+Freed memory at src/scenes/sceneDiskLoader.c:227, address: 014dafe0
+Freed memory at src/scenes/sceneDiskLoader.c:228, address: 014db1e8
+Allocated 1536 bytes at src/scenes/sceneDiskLoader.c:88, address: 014de270
+Allocated 8 bytes at src/scenes/sceneDiskLoader.c:124, address: 014db600
+Freed memory at src/scenes/sceneDiskLoader.c:227, address: 014de270
+Freed memory at src/scenes/sceneDiskLoader.c:228, address: 014db600
+Allocated 768 bytes at src/scenes/sceneDiskLoader.c:88, address: 014d9678
+Allocated 8 bytes at src/scenes/sceneDiskLoader.c:124, address: 014db600
+Freed memory at src/scenes/sceneDiskLoader.c:227, address: 014d9678
+Freed memory at src/scenes/sceneDiskLoader.c:228, address: 014db600
+Allocated 512 bytes at src/scenes/sceneDiskLoader.c:88, address: 014dafe0
+Allocated 8 bytes at src/scenes/sceneDiskLoader.c:124, address: 014db1e8
+Freed memory at src/scenes/sceneDiskLoader.c:227, address: 014dafe0
+Freed memory at src/scenes/sceneDiskLoader.c:228, address: 014db1e8
+Allocated 1536 bytes at src/scenes/sceneDiskLoader.c:88, address: 014de270
+Allocated 8 bytes at src/scenes/sceneDiskLoader.c:124, address: 014db600
+Freed memory at src/scenes/sceneDiskLoader.c:227, address: 014de270
+Freed memory at src/scenes/sceneDiskLoader.c:228, address: 014db600
+Allocated 12800 bytes at src/scenes/sceneDiskLoader.c:88, address: 02c3cff8
+Allocated 8 bytes at src/scenes/sceneDiskLoader.c:124, address: 014db600
+Freed memory at src/scenes/sceneDiskLoader.c:227, address: 02c3cff8
+Freed memory at src/scenes/sceneDiskLoader.c:228, address: 014db600
+Allocated 7200 bytes at src/scenes/sceneDiskLoader.c:188, address: 02c3cff8
+Allocated 512 bytes at src/scenes/sceneDiskLoader.c:88, address: 014dafe0
+Allocated 8 bytes at src/scenes/sceneDiskLoader.c:124, address: 014db1e8
+Freed memory at src/scenes/sceneDiskLoader.c:227, address: 014dafe0
+Freed memory at src/scenes/sceneDiskLoader.c:228, address: 014db1e8
+Allocated 9216 bytes at src/scenes/sceneDiskLoader.c:88, address: 02c3ec20
+Allocated 8 bytes at src/scenes/sceneDiskLoader.c:124, address: 014db600
+Freed memory at src/scenes/sceneDiskLoader.c:227, address: 02c3ec20
+Freed memory at src/scenes/sceneDiskLoader.c:228, address: 014db600
+Allocated 768 bytes at src/scenes/sceneDiskLoader.c:88, address: 014d9678
+Allocated 8 bytes at src/scenes/sceneDiskLoader.c:124, address: 014db600
+Freed memory at src/scenes/sceneDiskLoader.c:227, address: 014d9678
+Freed memory at src/scenes/sceneDiskLoader.c:228, address: 014db600
+Allocated 512 bytes at src/scenes/sceneDiskLoader.c:88, address: 014dafe0
+Allocated 8 bytes at src/scenes/sceneDiskLoader.c:124, address: 014db1e8
+Freed memory at src/scenes/sceneDiskLoader.c:227, address: 014dafe0
+Freed memory at src/scenes/sceneDiskLoader.c:228, address: 014db1e8
+Allocated 1280 bytes at src/scenes/sceneDiskLoader.c:88, address: 014d9678
+Allocated 8 bytes at src/scenes/sceneDiskLoader.c:124, address: 014db600
+Freed memory at src/scenes/sceneDiskLoader.c:227, address: 014d9678
+Freed memory at src/scenes/sceneDiskLoader.c:228, address: 014db600
+Allocated 1280 bytes at src/scenes/sceneDiskLoader.c:88, address: 014d9678
+Allocated 8 bytes at src/scenes/sceneDiskLoader.c:124, address: 014db600
+Freed memory at src/scenes/sceneDiskLoader.c:227, address: 014d9678
+Freed memory at src/scenes/sceneDiskLoader.c:228, address: 014db600
+Allocated 8192 bytes at src/scenes/sceneDiskLoader.c:88, address: 02c3ec20
+Allocated 8 bytes at src/scenes/sceneDiskLoader.c:124, address: 014db600
+Freed memory at src/scenes/sceneDiskLoader.c:227, address: 02c3ec20
+Freed memory at src/scenes/sceneDiskLoader.c:228, address: 014db600
+Allocated 4608 bytes at src/scenes/sceneDiskLoader.c:88, address: 02c3ec20
+Allocated 8 bytes at src/scenes/sceneDiskLoader.c:124, address: 014db600
+Freed memory at src/scenes/sceneDiskLoader.c:227, address: 02c3ec20
+Freed memory at src/scenes/sceneDiskLoader.c:228, address: 014db600
+Allocated 4608 bytes at src/scenes/sceneDiskLoader.c:88, address: 02c3ec20
+Allocated 8 bytes at src/scenes/sceneDiskLoader.c:124, address: 014db600
+Freed memory at src/scenes/sceneDiskLoader.c:227, address: 02c3ec20
+Freed memory at src/scenes/sceneDiskLoader.c:228, address: 014db600
+Allocated 4608 bytes at src/scenes/sceneDiskLoader.c:88, address: 02c3ec20
+Allocated 8 bytes at src/scenes/sceneDiskLoader.c:124, address: 014db600
+Freed memory at src/scenes/sceneDiskLoader.c:227, address: 02c3ec20
+Freed memory at src/scenes/sceneDiskLoader.c:228, address: 014db600
+Allocated 4608 bytes at src/scenes/sceneDiskLoader.c:88, address: 02c3ec20
+Allocated 8 bytes at src/scenes/sceneDiskLoader.c:124, address: 014db600
+Freed memory at src/scenes/sceneDiskLoader.c:227, address: 02c3ec20
+Freed memory at src/scenes/sceneDiskLoader.c:228, address: 014db600
+Allocated 512 bytes at src/scenes/sceneDiskLoader.c:88, address: 014dafe0
+Allocated 8 bytes at src/scenes/sceneDiskLoader.c:124, address: 014db1e8
+Freed memory at src/scenes/sceneDiskLoader.c:227, address: 014dafe0
+Freed memory at src/scenes/sceneDiskLoader.c:228, address: 014db1e8
+Allocated 8448 bytes at src/scenes/sceneDiskLoader.c:88, address: 02c3ec20
+Allocated 8 bytes at src/scenes/sceneDiskLoader.c:124, address: 014db600
+Freed memory at src/scenes/sceneDiskLoader.c:227, address: 02c3ec20
+Freed memory at src/scenes/sceneDiskLoader.c:228, address: 014db600
+Allocated 8448 bytes at src/scenes/sceneDiskLoader.c:88, address: 02c3ec20
+Allocated 8 bytes at src/scenes/sceneDiskLoader.c:124, address: 014db600
+Freed memory at src/scenes/sceneDiskLoader.c:227, address: 02c3ec20
+Freed memory at src/scenes/sceneDiskLoader.c:228, address: 014db600
+Allocated 3072 bytes at src/scenes/sceneDiskLoader.c:88, address: 014de270
+Allocated 8 bytes at src/scenes/sceneDiskLoader.c:124, address: 014db600
+Freed memory at src/scenes/sceneDiskLoader.c:227, address: 014de270
+Freed memory at src/scenes/sceneDiskLoader.c:228, address: 014db600
+Allocated 8448 bytes at src/scenes/sceneDiskLoader.c:88, address: 02c3ec20
+Allocated 8 bytes at src/scenes/sceneDiskLoader.c:124, address: 014db600
+Freed memory at src/scenes/sceneDiskLoader.c:227, address: 02c3ec20
+Freed memory at src/scenes/sceneDiskLoader.c:228, address: 014db600
+Allocated 8448 bytes at src/scenes/sceneDiskLoader.c:88, address: 02c3ec20
+Allocated 8 bytes at src/scenes/sceneDiskLoader.c:124, address: 014db600
+Freed memory at src/scenes/sceneDiskLoader.c:227, address: 02c3ec20
+Freed memory at src/scenes/sceneDiskLoader.c:228, address: 014db600
+Allocated 8448 bytes at src/scenes/sceneDiskLoader.c:88, address: 02c3ec20
+Allocated 8 bytes at src/scenes/sceneDiskLoader.c:124, address: 014db600
+Freed memory at src/scenes/sceneDiskLoader.c:227, address: 02c3ec20
+Freed memory at src/scenes/sceneDiskLoader.c:228, address: 014db600
+Allocated 8448 bytes at src/scenes/sceneDiskLoader.c:88, address: 02c3ec20
+Allocated 8 bytes at src/scenes/sceneDiskLoader.c:124, address: 014db600
+Freed memory at src/scenes/sceneDiskLoader.c:227, address: 02c3ec20
+Freed memory at src/scenes/sceneDiskLoader.c:228, address: 014db600
+Allocated 8448 bytes at src/scenes/sceneDiskLoader.c:88, address: 02c3ec20
+Allocated 8 bytes at src/scenes/sceneDiskLoader.c:124, address: 014db600
+Freed memory at src/scenes/sceneDiskLoader.c:227, address: 02c3ec20
+Freed memory at src/scenes/sceneDiskLoader.c:228, address: 014db600
+Allocated 8448 bytes at src/scenes/sceneDiskLoader.c:88, address: 02c3ec20
+Allocated 8 bytes at src/scenes/sceneDiskLoader.c:124, address: 014db600
+Freed memory at src/scenes/sceneDiskLoader.c:227, address: 02c3ec20
+Freed memory at src/scenes/sceneDiskLoader.c:228, address: 014db600
+Allocated 256 bytes at src/scenes/sceneDiskLoader.c:88, address: 014d94e0
+Allocated 8 bytes at src/scenes/sceneDiskLoader.c:124, address: 014db600
+Freed memory at src/scenes/sceneDiskLoader.c:227, address: 014d94e0
+Freed memory at src/scenes/sceneDiskLoader.c:228, address: 014db600
+Allocated 1536 bytes at src/scenes/sceneDiskLoader.c:88, address: 014de270
+Allocated 8 bytes at src/scenes/sceneDiskLoader.c:124, address: 014db600
+Freed memory at src/scenes/sceneDiskLoader.c:227, address: 014de270
+Freed memory at src/scenes/sceneDiskLoader.c:228, address: 014db600
+Allocated 1024 bytes at src/scenes/sceneDiskLoader.c:88, address: 014d9678
+Allocated 8 bytes at src/scenes/sceneDiskLoader.c:124, address: 014db600
+Freed memory at src/scenes/sceneDiskLoader.c:227, address: 014d9678
+Freed memory at src/scenes/sceneDiskLoader.c:228, address: 014db600
+Allocated 2304 bytes at src/scenes/sceneDiskLoader.c:88, address: 014de270
+Allocated 8 bytes at src/scenes/sceneDiskLoader.c:124, address: 014db600
+Freed memory at src/scenes/sceneDiskLoader.c:227, address: 014de270
+Freed memory at src/scenes/sceneDiskLoader.c:228, address: 014db600
+Allocated 768 bytes at src/scenes/sceneDiskLoader.c:88, address: 014d9678
+Allocated 8 bytes at src/scenes/sceneDiskLoader.c:124, address: 014db600
+Freed memory at src/scenes/sceneDiskLoader.c:227, address: 014d9678
+Freed memory at src/scenes/sceneDiskLoader.c:228, address: 014db600
+Allocated 12800 bytes at src/scenes/sceneDiskLoader.c:88, address: 02c3ec20
+Allocated 8 bytes at src/scenes/sceneDiskLoader.c:124, address: 014db600
+Freed memory at src/scenes/sceneDiskLoader.c:227, address: 02c3ec20
+Freed memory at src/scenes/sceneDiskLoader.c:228, address: 014db600
+Allocated 1280 bytes at src/engine/text.c:132, address: 014d9678
+Allocated 384 bytes at src/engine/text.c:133, address: 014dafe0
+Freed memory at src/scenes/sceneDiskLoader.c:1413, address: 02bf6fe8
+Freed memory at src/scenes/sceneDiskLoader.c:1414, address: 02c19ff0
+Freed memory at src/scenes/sceneDiskLoader.c:1415, address: 014dc648
+Freed memory at src/scenes/sceneDiskLoader.c:1416, address: 02c3cff8
+Allocated 143360 bytes at src/scenes/sceneDiskLoader.c:1424, address: 02bf6fe8
+Allocated 143360 bytes at src/scenes/sceneDiskLoader.c:1425, address: 02c19ff0
+Allocated 8448 bytes at src/scenes/sceneDiskLoader.c:88, address: 014dc648
+Allocated 8 bytes at src/scenes/sceneDiskLoader.c:124, address: 014db600
+Allocated 215040 bytes at src/scenes/sceneDiskLoader.c:270, address: 02c3cff8
+Freed memory at src/scenes/sceneDiskLoader.c:286, address: 02c3cff8
+Freed memory at src/scenes/sceneDiskLoader.c:714, address: 014dc648
+Freed memory at src/scenes/sceneDiskLoader.c:715, address: 014db600
+Allocated 8448 bytes at src/scenes/sceneDiskLoader.c:88, address: 014dc648
+Allocated 8 bytes at src/scenes/sceneDiskLoader.c:124, address: 014db600
+Allocated 215040 bytes at src/scenes/sceneDiskLoader.c:270, address: 02c3cff8
+Freed memory at src/scenes/sceneDiskLoader.c:286, address: 02c3cff8
+Freed memory at src/scenes/sceneDiskLoader.c:714, address: 014dc648
+Freed memory at src/scenes/sceneDiskLoader.c:715, address: 014db600
+Allocated 8448 bytes at src/scenes/sceneDiskLoader.c:88, address: 014dc648
+Allocated 8 bytes at src/scenes/sceneDiskLoader.c:124, address: 014db600
+Allocated 215040 bytes at src/scenes/sceneDiskLoader.c:270, address: 02c3cff8
+Freed memory at src/scenes/sceneDiskLoader.c:286, address: 02c3cff8
+Freed memory at src/scenes/sceneDiskLoader.c:714, address: 014dc648
+Freed memory at src/scenes/sceneDiskLoader.c:715, address: 014db600
+Allocated 1024 bytes at src/scenes/sceneDiskLoader.c:88, address: 014dc648
+Allocated 8 bytes at src/scenes/sceneDiskLoader.c:124, address: 014db600
+Allocated 14336 bytes at src/scenes/sceneDiskLoader.c:270, address: 02c3cff8
+Freed memory at src/scenes/sceneDiskLoader.c:286, address: 02c3cff8
+Freed memory at src/scenes/sceneDiskLoader.c:1450, address: 014dc648
+Freed memory at src/scenes/sceneDiskLoader.c:1451, address: 014db600
+Allocated 1024 bytes at src/scenes/sceneDiskLoader.c:88, address: 014dc648
+Allocated 8 bytes at src/scenes/sceneDiskLoader.c:124, address: 014db600
+Allocated 14 bytes at src/scenes/sceneDiskLoader.c:790, address: 014d7f40
+Freed memory at src/scenes/sceneDiskLoader.c:890, address: 014d7f40
+Allocated 12 bytes at src/scenes/sceneDiskLoader.c:790, address: 014d8030
+Allocated 12 bytes at src/scenes/sceneDiskLoader.c:842, address: 014d7f70
+Allocated 8192 bytes at src/scenes/sceneDiskLoader.c:270, address: 014dca50
+Freed memory at src/scenes/sceneDiskLoader.c:286, address: 014dca50
+Freed memory at src/scenes/sceneDiskLoader.c:1066, address: 014d8030
+Freed memory at src/scenes/sceneDiskLoader.c:1067, address: 014d7f70
+Freed memory at src/scenes/sceneDiskLoader.c:1463, address: 014dc648
+Freed memory at src/scenes/sceneDiskLoader.c:1464, address: 014db600
+Allocated 768 bytes at src/scenes/sceneDiskLoader.c:88, address: 014dc648
+Allocated 8 bytes at src/scenes/sceneDiskLoader.c:124, address: 014db600
+Allocated 16 bytes at src/scenes/sceneDiskLoader.c:790, address: 014d8030
+Allocated 14 bytes at src/scenes/sceneDiskLoader.c:805, address: 014d8048
+Allocated 14 bytes at src/scenes/sceneDiskLoader.c:806, address: 014d7fb8
+Freed memory at src/scenes/sceneDiskLoader.c:837, address: 014d8030
+Allocated 1568 bytes at src/scenes/sceneDiskLoader.c:270, address: 014dc950
+Freed memory at src/scenes/sceneDiskLoader.c:286, address: 014dc950
+Freed memory at src/scenes/sceneDiskLoader.c:1066, address: 014d8048
+Freed memory at src/scenes/sceneDiskLoader.c:1067, address: 014d7fb8
+Freed memory at src/scenes/sceneDiskLoader.c:1476, address: 014dc648
+Freed memory at src/scenes/sceneDiskLoader.c:1477, address: 014db600
+Allocated 1280 bytes at src/scenes/sceneDiskLoader.c:88, address: 014dc648
+Allocated 8 bytes at src/scenes/sceneDiskLoader.c:124, address: 014db600
+Allocated 50 bytes at src/scenes/sceneDiskLoader.c:790, address: 014d9b80
+Allocated 48 bytes at src/scenes/sceneDiskLoader.c:805, address: 014d9460
+Allocated 48 bytes at src/scenes/sceneDiskLoader.c:806, address: 014db168
+Freed memory at src/scenes/sceneDiskLoader.c:837, address: 014d9b80
+Allocated 55296 bytes at src/scenes/sceneDiskLoader.c:270, address: 02c3cff8
+Freed memory at src/scenes/sceneDiskLoader.c:286, address: 02c3cff8
+Freed memory at src/scenes/sceneDiskLoader.c:1066, address: 014d9460
+Freed memory at src/scenes/sceneDiskLoader.c:1067, address: 014db168
+Freed memory at src/scenes/sceneDiskLoader.c:1490, address: 014dc648
+Freed memory at src/scenes/sceneDiskLoader.c:1491, address: 014db600
+Allocated 4608 bytes at src/scenes/sceneDiskLoader.c:88, address: 014dc648
+Allocated 8 bytes at src/scenes/sceneDiskLoader.c:124, address: 014db600
+Freed memory at src/scenes/sceneDiskLoader.c:1501, address: 014dc648
+Freed memory at src/scenes/sceneDiskLoader.c:1502, address: 014db600
+Allocated 4608 bytes at src/scenes/sceneDiskLoader.c:88, address: 014dc648
+Allocated 8 bytes at src/scenes/sceneDiskLoader.c:124, address: 014db600
+Freed memory at src/scenes/sceneDiskLoader.c:1501, address: 014dc648
+Freed memory at src/scenes/sceneDiskLoader.c:1502, address: 014db600
+Allocated 4608 bytes at src/scenes/sceneDiskLoader.c:88, address: 014dc648
+Allocated 8 bytes at src/scenes/sceneDiskLoader.c:124, address: 014db600
+Freed memory at src/scenes/sceneDiskLoader.c:1501, address: 014dc648
+Freed memory at src/scenes/sceneDiskLoader.c:1502, address: 014db600
+Allocated 4608 bytes at src/scenes/sceneDiskLoader.c:88, address: 014dc648
+Allocated 8 bytes at src/scenes/sceneDiskLoader.c:124, address: 014db600
+Freed memory at src/scenes/sceneDiskLoader.c:1501, address: 014dc648
+Freed memory at src/scenes/sceneDiskLoader.c:1502, address: 014db600
+Allocated 4864 bytes at src/scenes/sceneDiskLoader.c:88, address: 014dc648
+Allocated 8 bytes at src/scenes/sceneDiskLoader.c:124, address: 014db600
+Extracted string: [0] '----ULTIMA----'
+Extracted string: [1] ' FROM DARKEST '
+Extracted string: [2] ' DUNGEONS, TO '
+Extracted string: [3] 'DEEPEST SPACE!'
+Extracted string: [4] '        (C)-1981 BY LORD BRITISH,'
+Extracted string: [5] '       CALIFORNIA PACIFIC COMPUTER'
+Extracted string: [6] '         0-# OF DISK DRIVES = '
+Extracted string: [7] '         1-GENERATE NEW CHARACTER'
+Extracted string: [8] '         2-CONTINUE PREVIOUS GAME'
+Extracted string: [9] 'CHOICE '
+Extracted string: [10] '5/22/81'
+Extracted string: [11] 'INSERT A NEW PLAYER DISK DRIVE '
+Extracted string: [12] 'BLOAD BEVERY,D'
+Extracted string: [13] 'NOT A 'NEW' PLAYER DISK'
+Appended to string: [14] 'HIDDEN ARCHER'
+Appended to string: [15] 'NESS CREATURE'
+Appended to string: [16] 'GIANT SQUID'
+Appended to string: [17] 'HOOD'
+Appended to string: [18] 'EVIL RANGER'
+Appended to string: [19] 'WANDERING WARLOCK'
+Appended to string: [20] 'MAGIC MISSILE'
+Appended to string: [21] 'GELATINOUS CUBE'
+Appended to string: [22] 'LIZARD MAN'
+Appended to string: [23] 'WRAITH'
+Appended to string: [24] 'INVISIBLE SEEKER'
+Appended to string: [25] 'MIMIC'
+Appended to string: [26] 'THE SOUTHERN SIGN POST'
+Extracted string: [27] 'CHARACTER GENERATION'
+Extracted string: [28] 'POINTS LEFT TO DISTRIBUTE '
+Extracted string: [29] 'NAME'
+Extracted string: [30] 'SATISFACTORY (Y/N)'
+Extracted string: [31] 'RACES:    TYPES:'
+Extracted string: [32] '-'
+Extracted string: [33] '-'
+Extracted string: [35] 'A'
+Extracted string: [36] 'Y'
+Extracted string: [37] 'N'
+Extracted string: [38] 'N'
+Extracted string: [39] 'DO NOT INTERRUPT'
+Extracted string: [40] '       NOW WRITING DATA TO DISK      '
+Extracted string: [41] 'RENAME NAME=,NAME='
+Extracted string: [42] ',D'
+Extracted string: [43] 'OPEN INFO'
+Extracted string: [44] 'WRITE INFO'
+Extracted string: [45] ' DISK '
+Extracted string: [46] 'CLOSE INFO'
+Extracted string: [47] 'BSAVE BEVERY,A30720,L7680'
+Extracted string: [48] 'INSERT PROGRAM DISK'
+Extracted string: [49] 'DO NOT INTERRUPT'
+Extracted string: [50] 'OPEN INFO'
+Extracted string: [51] 'READ INFO'
+Extracted string: [52] 'CLOSE INFO'
+Extracted string: [53] 'PROGRAM DISK'
+Extracted string: [54] 'INCORRECT DISK'
+Extracted string: [55] 'PROTECT'
+Extracted string: [56] 'I/O'
+Extracted string: [57] 'TYPE '
+Extracted string: [58] ' ERROR IN LINE '
+Extracted string: [59] 'PLEASE HIT ESC '
+Extracted string: [60] 'BLOAD BEVERY,D'
+Extracted string: [61] 'BLOAD BTERRA'
+Extracted string: [62] 'BLOAD CUR.PIC'
+Extracted string: [63] 'BLOAD B.CUR,A$B00'
+Extracted string: [64] 'BLOAD CUR.PIC'
+Extracted string: [65] 'BLOAD B.CUR,A$B00'
+Extracted string: [66] 'BLOAD ULTSHAPES,A$800,D1'
+Extracted string: [67] 'BLOAD DRAW 64.OBJ'
+Extracted string: [68] 'BLOAD TWN.CAS.SHAPES,A3700'
+Extracted string: [69] 'RUN OUT MOVE,D1'
+Extracted string: [70] 'INSERT PROGRAM DISK'
+Extracted string: [71] 'DO NOT INTERRUPT'
+Extracted string: [72] 'OPEN INFO,D1'
+Extracted string: [73] 'READ INFO'
+Extracted string: [74] 'CLOSE INFO'
+Extracted string: [75] 'PROGRAM DISK'
+Extracted string: [76] 'INCORRECT DISK'
+Extracted string: [77] 'INSERT PLAYER DISK'
+Extracted string: [78] 'DO NOT INTERRUPT'
+Extracted string: [79] 'OPEN INFO,D'
+Extracted string: [80] 'READ INFO'
+Extracted string: [81] 'CLOSE INFO'
+Appended to string: [82] 'DISK INCORRECT DISK'
+Extracted string: [83] ' '
+Extracted string: [84] 'Z'
+Extracted string: [85] ' '
+Freed memory at src/scenes/sceneDiskLoader.c:745, address: 014dc648
+Freed memory at src/scenes/sceneDiskLoader.c:746, address: 014db600
+Allocated 11264 bytes at src/scenes/sceneDiskLoader.c:88, address: 02c3cff8
+Allocated 8 bytes at src/scenes/sceneDiskLoader.c:124, address: 014db600
+Extracted string: [86] 'BLOAD OUT.SHAPES,A$B00'
+Extracted string: [87] 'RUN TWN MOVE,D1'
+Extracted string: [88] 'RUN CAS MOVE,D1'
+Extracted string: [89] 'RUN DNG MOVE 1,D1'
+Extracted string: [90] 'H.P.='
+Extracted string: [91] '*****'
+Extracted string: [92] 'FOOD='
+Extracted string: [93] '*****'
+Extracted string: [94] 'EXP.='
+Extracted string: [95] '*****'
+Extracted string: [96] 'GOLD='
+Extracted string: [97] '*****'
+Extracted string: [98] 'COMMAND: '
+Extracted string: [99] 'PASS'
+Extracted string: [100] 'INSERT PLAYER DISK'
+Extracted string: [101] 'OPEN INFO,D'
+Extracted string: [102] 'READ INFO'
+Extracted string: [103] 'CLOSE INFO'
+Extracted string: [104] ' DISK 0'
+Extracted string: [105] 'BSAVE BTERRA'
+Extracted string: [106] ',A$1000,L$1000,D'
+Extracted string: [107] 'BLOAD BTERRA'
+Extracted string: [108] 'INSERT PROGRAM DISK'
+Extracted string: [109] 'OPEN INFO,D'
+Extracted string: [110] 'READ INFO'
+Extracted string: [111] 'CLOSE INFO'
+Extracted string: [112] 'PROGRAM DISK'
+Extracted string: [113] 'PASS'
+Extracted string: [114] 'HUH?'
+Extracted string: [115] 'VEHICLE NOT CAPABLE'
+Extracted string: [116] 'OF LAND TRAVEL!'
+Extracted string: [117] 'NORTH'
+Extracted string: [118] 'SOUTH'
+Extracted string: [119] 'EAST'
+Extracted string: [120] 'WEST'
+Extracted string: [121] 'PATH BLOCKED BY'
+Extracted string: [122] 'YOU CAN'T WALK ON WATER!'
+Extracted string: [123] 'MOUNTAINS ARE IMPASSABLE!'
+Extracted string: [124] 'AIR CARS CAN'T PASS WOODS!'
+Extracted string: [125] 'S LIKE WATER!'
+Extracted string: [126] 'ATTACK'
+Extracted string: [127] 'NOTHING'
+Extracted string: [128] 'OUT OF WEAPON RANGE'
+Extracted string: [129] 'WITH '
+Extracted string: [130] 'MISS'
+Extracted string: [131] 'HIT '
+Extracted string: [132] 'DAM.= '
+Extracted string: [134] 'KILLED, GOLD!!!+'
+Extracted string: [135] ' ATTACKS ARE NOT APPLICABLE!'
+Extracted string: [136] 'BOARD'
+Extracted string: [137] 'MUST X-IT CRAFT FIRST!'
+Extracted string: [138] 'NOTHING TO BOARD!'
+Extracted string: [139] 'MOUNT HORSE'
+Extracted string: [140] 'MOUNT CART'
+Extracted string: [141] 'BOARD TIME MACHINE'
+Extracted string: [142] 'BOARD SPACE SHUTTLE'
+Extracted string: [143] 'RUN SPA MOVE,D1'
+Extracted string: [144] 'BOARD '
+Extracted string: [145] 'CAST '
+Extracted string: [146] 'YOU DON'T HAVE A'
+Extracted string: [147] ' SPELL'
+Extracted string: [148] 'POTENTIS-LAUDIS!'
+Extracted string: [149] 'MONSTER REMOVED!'
+Extracted string: [150] 'SHAZAM!!!!'
+Extracted string: [151] 'SHAZAM!!!!'
+Extracted string: [152] 'HMMM?...NO EFFECT??'
+Extracted string: [153] 'NO TARGET!'
+Extracted string: [154] 'DELCIO-ERE-UI!'
+Extracted string: [155] 'HIT '
+Extracted string: [156] 'DAM.= '
+Extracted string: [158] 'NO TARGET!'
+Extracted string: [159] 'INTERFICIO-NUNC!'
+Extracted string: [160] 'FAILED,'
+Extracted string: [161] 'DUNGEON SPELL ONLY!'
+Extracted string: [162] 'NO NEED TO DROP!'
+Extracted string: [163] 'ENTERING '
+Extracted string: [164] 'IS NOT APPLICABLE!'
+Extracted string: [165] 'THE CITY OF '
+Extracted string: [166] 'FIRE CANNONS'
+Extracted string: [167] 'FIRE LASERS'
+Extracted string: [168] 'NOTHING TO FIRE!'
+Extracted string: [169] 'NO TARGET!'
+Extracted string: [170] 'AT '
+Extracted string: [171] 'MISSED!'
+Extracted string: [172] 'HIT! DAM.='
+Extracted string: [173] 'GET IS NOT'
+Extracted string: [174] 'APPLICABLE!'
+Extracted string: [175] 'H'
+Extracted string: [176] 'INFORM AND SEARCH'
+Extracted string: [177] 'YOU ARE AT SEA'
+Extracted string: [178] 'YOU ARE ON LAND'
+Extracted string: [179] 'YOU ARE IN THE WOODS'
+Extracted string: [180] 'THE CITY OF '
+Extracted string: [181] 'THAT IS ALL!'
+Extracted string: [182] 'J'
+Extracted string: [183] 'K'
+Extracted string: [184] 'LAG TIME (0-9)-'
+Extracted string: [185] 'M'
+Extracted string: [186] 'N'
+Extracted string: [187] 'OPEN IS NOT'
+Extracted string: [188] 'APPLICABLE!'
+Extracted string: [189] 'P'
+Extracted string: [190] 'QUIT...SAVE GAME'
+Extracted string: [191] 'ONE MOMENT FOR'
+Extracted string: [192] 'HOUSE CLEANING'
+Extracted string: [193] 'NOW SAVING GAME'
+Extracted string: [194] 'BSAVE BEVERY,A30720,L7681,D'
+Extracted string: [195] 'BSAVE BTERRA'
+Extracted string: [196] ',A$1000,L$1000'
+Extracted string: [197] 'DONE!'
+Extracted string: [198] 'READY'
+Extracted string: [199] 'W)EAPON A)RMOUR S)PELL - '
+Extracted string: [200] 'S'
+Extracted string: [201] 'W'
+Extracted string: [202] 'A'
+Extracted string: [203] 'NONE'
+Extracted string: [204] 'W'
+Extracted string: [205] 'WE)APON-'
+Extracted string: [206] ' NOT FOUND'
+Extracted string: [207] 'YOU DON'T OWN A '
+Extracted string: [208] 'READY WEAPON - '
+Extracted string: [209] 'A'
+Extracted string: [210] 'ARMOUR TYPE '
+Extracted string: [211] ' NOT FOUND'
+Extracted string: [212] 'YOU DON'T OWN ANY '
+Extracted string: [213] 'ARMOUR TYPE - '
+Extracted string: [214] 'S)PELL NAME '
+Extracted string: [215] 'L'
+Extracted string: [216] 'UP OR DN - '
+Extracted string: [217] 'LA'
+Extracted string: [218] 'U'
+Extracted string: [219] 'D'
+Extracted string: [220] 'NONE'
+Extracted string: [221] 'LA'
+Extracted string: [222] 'U'
+Extracted string: [223] 'LA'
+Extracted string: [224] ' NOT FOUND'
+Extracted string: [225] 'YOU DON'T HAVE A '
+Extracted string: [226] 'READY SPELL - '
+Extracted string: [227] 'PASS'
+Extracted string: [228] 'NOTHING TO STEAL!'
+Extracted string: [229] 'TRANSACT- N/A'
+Extracted string: [230] 'NOTHING TO UNLOCK!'
+Extracted string: [231] 'V'
+Extracted string: [232] 'W'
+Extracted string: [233] 'X-IT WHAT?'
+Extracted string: [234] 'YOU CAN'T'
+Extracted string: [235] 'LEAVE IT HERE!'
+Extracted string: [236] 'YOU CAN'T'
+Extracted string: [237] 'LEAVE IT HERE!'
+Extracted string: [238] 'X-IT WHAT ?!?'
+Extracted string: [239] 'DISMOUNT'
+Extracted string: [240] 'X-IT CRAFT'
+Extracted string: [241] 'Y'
+Extracted string: [242] 'INVENTORY-'
+Extracted string: [243] 'PLAYER - '
+Extracted string: [244] 'A LEVEL '
+Extracted string: [245] ' '
+Extracted string: [246] ' '
+Extracted string: [247] 'RED GEM........'
+Extracted string: [248] 'GREEN GEM......'
+Extracted string: [249] 'BLUE GEM.......'
+Extracted string: [250] 'WHITE GEM......'
+Extracted string: [251] 'CONTINUE--'
+Extracted string: [252] 'YOU ARE BEING ATTACKED'
+Extracted string: [253] 'BY '
+Extracted string: [254] ' '
+Extracted string: [255] 'S'
+Extracted string: [256] 'HITS '
+Extracted string: [257] ' MISSES '
+Extracted string: [259] ', YOU ARE DEAD.'
+Extracted string: [260] 'ATTEMPTING RESURRECTION!'
+Extracted string: [261] 'YOU ENTER THE CRAFT'
+Extracted string: [262] 'AND YOU FIND FOUR'
+Extracted string: [263] 'HOLES MARKED R, G, B AND W'
+Extracted string: [264] 'YOU CAN NOT DETERMINE'
+Extracted string: [265] 'HOW TO OPERATE THE'
+Extracted string: [266] 'CRAFT AT THIS TIME!'
+Extracted string: [267] 'YOU DO NOT HAVE'
+Extracted string: [268] 'ALL THE GEMS NEEDED TO'
+Extracted string: [269] 'OPERATE THE CRAFT!'
+Extracted string: [270] 'RUN TIME MACHINE,D'
+Extracted string: [271] 'A QUEST IS COMPLETED!'
+Extracted string: [272] 'YOU HEAR SOMEONE SAY'
+Extracted string: [273] 'TURRIS-SCIENTIA-MAGNOPERE'
+Extracted string: [274] 'YOU FEEL A STRONG'
+Extracted string: [275] 'MAGIC SURROUNDING YOU!'
+Extracted string: [276] 'ON A PEDESTAL'
+Extracted string: [277] '   THESE WORDS APPEAR:'
+Extracted string: [278] ''MY NAME IS OZYMANDIAS,'
+Extracted string: [279] '   KING OF KINGS:'
+Extracted string: [280] 'LOOK ON MY WORKS,'
+Extracted string: [281] '   YE MIGHTY, AND DESPAIR!''
+Extracted string: [282] 'NOTHING BESIDE REMAINS.'
+Extracted string: [283] 'YOU FEEL A STRANGE FORCE'
+Extracted string: [284] 'A SIGN READS:'
+Extracted string: [285] '   FORTES FORTUNA ADIUVAT!'
+Extracted string: [286] 'HMMM? NO EFFECT?'
+Extracted string: [287] 'HMMM? NO EFFECT?'
+Extracted string: [288] 'YOU FIND A'
+Extracted string: [289] 'AT YOUR FEET!'
+Extracted string: [290] 'THE SIGN READS:'
+Extracted string: [291] '   ULTIMA THULE!'
+Extracted string: [292] 'THE SKY GROWS DARK,'
+Extracted string: [293] 'AND A STRONG MAGIC'
+Extracted string: [294] 'ENGULFS YOU!'
+Extracted string: [295] 'THE SIGN READS:'
+Extracted string: [296] '   OMNIA MUTANTUR!'
+Extracted string: [297] 'YOU FEEL STRANGE!'
+Extracted string: [298] 'THE GRAVE IS MARKED:'
+Extracted string: [299] '   VAE VICTIS'
+Extracted string: [300] 'THE SIGN READS:'
+Extracted string: [301] 'GO EAST TO GO EAST!'
+Extracted string: [302] 'STRANGE ... NO EFFECT??'
+Extracted string: [303] '+'
+Extracted string: [304] 'PROTECT'
+Extracted string: [305] 'I/O'
+Extracted string: [306] 'TYPE '
+Extracted string: [307] ' ERROR IN LINE '
+Extracted string: [308] 'PLEASE HIT ESC '
+Extracted string: [309] 'INSERT PROGRAM DISK'
+Extracted string: [310] 'DO NOT INTERRUPT'
+Extracted string: [311] 'OPEN INFO'
+Extracted string: [312] 'READ INFO'
+Extracted string: [313] 'CLOSE INFO'
+Extracted string: [314] 'PROGRAM DISK'
+Extracted string: [315] 'INCORRECT DISK'
+Extracted string: [316] 'INSERT PLAYER DISK'
+Extracted string: [317] 'DO NOT INTERRUPT'
+Extracted string: [318] 'OPEN INFO'
+Extracted string: [319] 'READ INFO'
+Extracted string: [320] 'CLOSE INFO'
+Appended to string: [321] ' DISK INCORRECT DISK'
+Freed memory at src/scenes/sceneDiskLoader.c:745, address: 02c3cff8
+Freed memory at src/scenes/sceneDiskLoader.c:746, address: 014db600
+Allocated 14592 bytes at src/scenes/sceneDiskLoader.c:88, address: 02c3cff8
+Allocated 8 bytes at src/scenes/sceneDiskLoader.c:124, address: 014db600
+Extracted string: [322] 'BLOAD TWN.PIC,D'
+Extracted string: [323] 'BLOAD BTWN,A$B00'
+Extracted string: [324] 'H.P.='
+Extracted string: [325] '*****'
+Extracted string: [326] 'FOOD='
+Extracted string: [327] '*****'
+Extracted string: [328] 'EXP.='
+Extracted string: [329] '*****'
+Extracted string: [330] 'GOLD='
+Extracted string: [331] '*****'
+Extracted string: [332] 'COMMAND: '
+Extracted string: [333] 'PASS'
+Extracted string: [334] 'PASS'
+Extracted string: [335] 'HUH?'
+Extracted string: [336] 'NORTH'
+Extracted string: [337] 'SOUTH'
+Extracted string: [338] 'EAST'
+Extracted string: [339] 'WEST'
+Extracted string: [340] 'RUN OUT MOVE,D1'
+Extracted string: [341] 'INVALID MOVE!'
+Extracted string: [342] 'ATTACK DIRECT -'
+Extracted string: [343] 'NOTHING '
+Extracted string: [344] 'MISSED! '
+Extracted string: [345] 'MISSED! '
+Extracted string: [346] 'KING    '
+Extracted string: [347] 'GUARD   '
+Extracted string: [348] 'BARD    '
+Extracted string: [349] 'THIEF   '
+Extracted string: [350] 'MERCHANT'
+Extracted string: [351] 'WENCH   '
+Extracted string: [352] 'MISSED'
+Extracted string: [353] 'HIT...DAMAGE='
+Extracted string: [354] 'KILLED!'
+Extracted string: [355] 'KILLED!'
+Extracted string: [356] 'KILLED!'
+Extracted string: [357] 'KILLED!'
+Extracted string: [358] 'KILLED'
+Extracted string: [359] 'CAST SPELL'
+Extracted string: [360] 'THERE IS AN ANTI-MAGIC SHELL'
+Extracted string: [361] 'AROUND THE TOWN!'
+Extracted string: [362] 'DROP'
+Extracted string: [363] 'GOLD,WEAP.,ARM.--'
+Extracted string: [364] 'G'
+Extracted string: [365] 'W'
+Extracted string: [366] 'A'
+Extracted string: [367] 'NONE!'
+Extracted string: [368] 'G'
+Extracted string: [369] 'HOW MUCH--'
+Extracted string: [370] ' TOO MUCH'
+Extracted string: [371] 'YOU DON'T HAVE '
+Extracted string: [372] 'POOF!!!'
+Extracted string: [373] 'OK!'
+Extracted string: [374] 'W'
+Extracted string: [375] 'DROP WEAPON--'
+Extracted string: [376] ' NOT FOUND!'
+Extracted string: [377] 'YOU DON'T OWN A'
+Extracted string: [378] 'OK!'
+Extracted string: [379] 'DROP ARMOUR-'
+Extracted string: [380] ' NOT FOUND!'
+Extracted string: [381] 'YOU DON'T OWN ANY'
+Extracted string: [382] 'OK!'
+Extracted string: [383] 'GET WHAT?'
+Extracted string: [384] 'INFORM'
+Extracted string: [385] 'YOU ARE IN'
+Extracted string: [386] 'THE CITY OF '
+Extracted string: [387] 'THAT IS ALL!'
+Extracted string: [388] 'LAG TIME (0-9)-'
+Extracted string: [389] 'SAVING GAME'
+Extracted string: [390] 'NOT ALLOWED!'
+Extracted string: [391] 'READY'
+Extracted string: [392] 'W)EAPON A)RMOUR'
+Extracted string: [393] 'WHICH '
+Extracted string: [394] 'W'
+Extracted string: [395] 'A'
+Extracted string: [396] 'NONE'
+Extracted string: [397] 'W'
+Extracted string: [398] 'WE)APON-'
+Extracted string: [399] ' NOT FOUND'
+Extracted string: [400] 'YOU DON'T OWN A '
+Extracted string: [401] 'READY WEAPON - '
+Extracted string: [402] 'A'
+Extracted string: [403] 'ARMOUR TYPE '
+Extracted string: [404] ' NOT FOUND'
+Extracted string: [405] 'YOU DON'T OWN ANY '
+Extracted string: [406] 'ARMOUR TYPE- '
+Extracted string: [407] 'PASS'
+Extracted string: [408] 'STEAL '
+Extracted string: [409] 'NOTHING HERE ?!?'
+Extracted string: [410] 'OH! NO!, YOU WERE CAUGHT!'
+Extracted string: [411] 'YOU GOT '
+Extracted string: [412] 'YOU GOT '
+Extracted string: [413] 'YOU GOT '
+Extracted string: [414] ' FOODS!'
+Extracted string: [415] 'NOTHING!'
+Extracted string: [416] 'TRANSACT'
+Extracted string: [417] 'NOT NEXT TO A COUNTER!'
+Extracted string: [418] 'NO ONE WILL'
+Extracted string: [419] 'TRANSACT WITH YOU!'
+Extracted string: [420] 'TRANSACT'
+Extracted string: [421] 'B)UY, S)ELL--'
+Extracted string: [422] 'B'
+Extracted string: [423] 'S'
+Extracted string: [424] 'NONE!'
+Extracted string: [425] 'SUPER DUPER NEW AND'
+Extracted string: [426] 'USED TRANSPORT, INC.'
+Extracted string: [427] 'CHAD THE MAD'S'
+Extracted string: [428] 'MAGIC SHOPPE.'
+Extracted string: [429] 'YE LOCAL PUB'
+Extracted string: [430] 'THE ARMOUR SHOP OF'
+Extracted string: [431] 'LORD ELDRIC D'CHARBONNEUX.'
+Extracted string: [432] 'NAUGHTY NOMAAN'S'
+Extracted string: [433] 'WEAPONS UNLIMITED.'
+Extracted string: [434] 'LITTLE KARELIA'S'
+Extracted string: [435] 'FINNISH GROCERY.'
+Extracted string: [436] 'NO SHOP!'
+Extracted string: [437] 'INVENTORY-PLAYER-'
+Extracted string: [438] 'A LEVEL '
+Extracted string: [439] ' '
+Extracted string: [440] ' '
+Extracted string: [441] 'RED GEM........'
+Extracted string: [442] 'GREEN GEM......'
+Extracted string: [443] 'BLUE GEM.......'
+Extracted string: [444] 'WHITE GEM......'
+Extracted string: [445] 'CONTINUE-'
+Extracted string: [446] 'S'
+Extracted string: [447] 'DAGGER-'
+Extracted string: [448] ' AXE-'
+Extracted string: [449] ' SWORD-'
+Extracted string: [450] 'MACE-'
+Extracted string: [451] ' ROPE & SPIKES-'
+Extracted string: [452] 'BOW AND ARROWS-'
+Extracted string: [453] ' WAND-'
+Extracted string: [454] 'GR.S.-'
+Extracted string: [455] ' AMULET-'
+Extracted string: [456] ' STAFF-'
+Extracted string: [457] 'TRI-'
+Extracted string: [458] ' LIG.-'
+Extracted string: [459] ' BLASTER-'
+Extracted string: [460] 'PISTOL-'
+Extracted string: [461] ' PHAZOR-'
+Extracted string: [462] 'WHICH '
+Extracted string: [463] ', WHATS THAT?'
+Extracted string: [464] ' WHATS THAT?'
+Extracted string: [465] 'WE DON'T HAVE A'
+Extracted string: [466] 'WE DON'T HAVE A'
+Extracted string: [467] 'YOU CANT AFFORD THAT!'
+Extracted string: [468] 'YOU CAN'T CARRY ALL THAT!'
+Extracted string: [469] '-- SOLD!'
+Extracted string: [470] 'WHAT'CHA GOT PAL? '
+Extracted string: [471] ' WHAT'S THAT?'
+Extracted string: [472] 'FOR A '
+Extracted string: [473] 'I'LL GIVE YOU, '
+Extracted string: [474] '-            - OK ? '
+Extracted string: [475] 'Y'
+Extracted string: [476] 'BYE THEN!'
+Extracted string: [477] 'HEY PAL, YOU AIN'T GOT A'
+Extracted string: [478] ' GOOD BYE!!'
+Extracted string: [479] 'S'
+Extracted string: [480] 'WE DON'T BUY! SPELLS!'
+Extracted string: [481] 'OPEN-'
+Extracted string: [482] ' UNLOCK-'
+Extracted string: [483] ' M.M.-'
+Extracted string: [484] 'STEAL-'
+Extracted string: [485] ' L.DOWN-'
+Extracted string: [486] ' L.UP-'
+Extracted string: [487] 'BLINK-'
+Extracted string: [488] ' CREATE-'
+Extracted string: [489] ' DEST.-'
+Extracted string: [490] 'KILL-'
+Extracted string: [491] ' WHICH--'
+Extracted string: [492] 'L'
+Extracted string: [493] 'UP OR DN--'
+Extracted string: [494] 'WHAT IS A '
+Extracted string: [495] 'YOU CAN'T AFFORD IT!'
+Extracted string: [496] 'THOSE ARE FOR WIZARDS ONLY!'
+Extracted string: [497] '--SOLD!'
+Extracted string: [498] 'D'
+Extracted string: [499] 'U'
+Extracted string: [500] 'WHAT IS A '
+Extracted string: [501] 'S'
+Extracted string: [502] 'WE DON'T BUY BOOZE!'
+Extracted string: [503] 'HEY, BUB, YOU'RE BROKE!'
+Extracted string: [504] 'VARG, THE TAVERN KEEP, SAY'S'
+Extracted string: [505] 'HERE BUB HAVE A STRONG ONE!'
+Extracted string: [506] 'BUB, YOU BEST KNOW'
+Extracted string: [507] 'ABOUT SPACE TRAVEL!'
+Extracted string: [508] 'AND THAT YOU MUST'
+Extracted string: [509] 'DESTROY AT LEAST 20'
+Extracted string: [510] 'ENEMY VESSELS TO BECOME'
+Extracted string: [511] 'AN ACE!'
+Extracted string: [512] 'TO WATCH THE WENCH?'
+Extracted string: [513] 'THE PRINCESS WILL GIVE'
+Extracted string: [514] 'GREAT REWARD TO THE ONE'
+Extracted string: [515] 'WHO SAVES HER, AND AN EXTRA'
+Extracted string: [516] 'GIFT IF THE PLAYER'
+Extracted string: [517] 'IS 8TH LEVEL OR GREATER!'
+Extracted string: [518] 'YOU SHOULD GO BACK IN TIME!'
+Extracted string: [519] 'YOU SHOULD DESTROY'
+Extracted string: [520] 'THE EVIL GEM!'
+Extracted string: [521] 'THAT MANY, IF NOT MOST'
+Extracted string: [522] 'LAKES AND PONDS HAVE'
+Extracted string: [523] 'STRONG MAGICAL POWERS!'
+Extracted string: [524] 'THIS IS A GREAT GAME!'
+Extracted string: [525] 'THAT OVER 1000 YEARS AGO'
+Extracted string: [526] 'MONDAIN THE WIZARD CREATED'
+Extracted string: [527] 'AN EVIL GEM. WITH THIS GEM,'
+Extracted string: [528] 'HE IS IMMORTAL AND CANNOT'
+Extracted string: [529] 'BE DEFEATED.     '
+Extracted string: [530] '    THE QUEST OF --ULTIMA--'
+Extracted string: [531] 'IS TO TRAVERSE THE LANDS IN'
+Extracted string: [532] 'SEARCH OF A TIME MACHINE.'
+Extracted string: [533] 'UPON FINDING SUCH A DEVICE,'
+Extracted string: [534] 'YOU SHOULD GO BACK IN TIME'
+Extracted string: [535] 'TO THE DAYS BEFORE MONDAIN'
+Extracted string: [536] 'CREATED THE EVIL GEM AND'
+Extracted string: [537] 'DESTROY HIM BEFORE IT'S'
+Extracted string: [538] 'CREATION.     '
+Extracted string: [539] '    IF YOU DO THIS, YOU WILL'
+Extracted string: [540] 'SAVE THE UNIVERSE, AND WIN'
+Extracted string: [541] 'THE GAME!!!         '
+Extracted string: [543] 'YOU HAVE BEEN SEDUCED!'
+Extracted string: [544] 'AND AFTER A LONG NIGHT,'
+Extracted string: [545] 'YOU ARE BACK!'
+Extracted string: [546] 'S'
+Extracted string: [547] 'LEATHER-'
+Extracted string: [548] ' CHAIN-'
+Extracted string: [549] 'PLATE-'
+Extracted string: [550] 'VACUUM-'
+Extracted string: [551] ' REFLECT-'
+Extracted string: [552] 'WHICH '
+Extracted string: [553] ', WHATS THAT?'
+Extracted string: [554] ' WHATS THAT?'
+Extracted string: [555] 'YOU CAN'T AFFORD THAT!'
+Extracted string: [556] 'YOU CAN'T CARRY ALL THAT!'
+Extracted string: [557] '-- SOLD!'
+Extracted string: [558] 'WHAT DO YOU HAVE ? '
+Extracted string: [559] ' WHAT'S THAT?'
+Extracted string: [560] 'FOR A '
+Extracted string: [561] 'I'LL GIVE YOU, '
+Extracted string: [562] ' - OK ? '
+Extracted string: [563] 'Y'
+Extracted string: [564] 'BYE THEN!'
+Extracted string: [565] 'HEY, YOU AIN'T GOT A'
+Extracted string: [566] ' GOOD BYE!!'
+Extracted string: [567] 'S'
+Extracted string: [568] 'SORRY, WE DON'T'
+Extracted string: [569] 'DEAL IN USED STUFF.'
+Extracted string: [570] '1-HORSE:'
+Extracted string: [571] ' 2-CART:'
+Extracted string: [572] '3-RAFT:'
+Extracted string: [573] ' 4-FRIGATE:'
+Extracted string: [574] '5-AIR CAR:'
+Extracted string: [575] ' 6-SHTL.:'
+Extracted string: [576] 'WHICH--'
+Extracted string: [577] 'WE DON'T HAVE THAT!'
+Extracted string: [578] '- WHAT'S THAT?'
+Extracted string: [579] 'YOU CAN'T AFFORD IT!'
+Extracted string: [580] 'NOT FOR SALE!'
+Extracted string: [581] '--SOLD!'
+Extracted string: [582] 'S'
+Extracted string: [583] 'USED FOOD? HA!'
+Extracted string: [584] 'HOW MANY PACKS OF FOOD,'
+Extracted string: [585] '(10 DAYS EACH), THEY COST '
+Extracted string: [586] 'HOW MANY? '
+Extracted string: [587] 'OK, BUT NO FREE SAMPLES'
+Extracted string: [588] 'SORRY MISTER, YOU DON'T'
+Extracted string: [589] 'HAVE THE CASH!'
+Extracted string: [590] ', YOU ARE DEAD.'
+Extracted string: [591] 'ATTEMPTING  RESURRECTION!'
+Extracted string: [592] 'RUN OUT MOVE,D1'
+Extracted string: [593] 'ATTACKED BY GUARD!'
+Extracted string: [594] 'MISSED!'
+Extracted string: [595] 'DAMAGE='
+Extracted string: [596] 'IOLO THE BARD SINGS:'
+Extracted string: [597] 'HO EYOH HE HUM!'
+Extracted string: [598] 'IOLO STOLE SOMETHING!'
+Extracted string: [599] 'PROTECT'
+Extracted string: [600] 'I/O'
+Extracted string: [601] 'TYPE '
+Extracted string: [602] ' ERROR IN LINE '
+Extracted string: [603] 'PLEASE HIT ESC '
+Extracted string: [604] 'INSERT PROGRAM DISK'
+Extracted string: [605] 'DO NOT INTERRUPT'
+Extracted string: [606] 'OPEN INFO'
+Extracted string: [607] 'READ INFO'
+Extracted string: [608] 'CLOSE INFO'
+Extracted string: [609] 'PROGRAM DISK'
+Extracted string: [610] 'INCORRECT DISK'
+Extracted string: [611] 'INSERT PLAYER DISK'
+Extracted string: [612] 'DO NOT INTERRUPT'
+Extracted string: [613] 'OPEN INFO'
+Extracted string: [614] 'READ INFO'
+Extracted string: [615] 'CLOSE INFO'
+Appended to string: [616] ' DISK INCORRECT DISK'
+Freed memory at src/scenes/sceneDiskLoader.c:745, address: 02c3cff8
+Freed memory at src/scenes/sceneDiskLoader.c:746, address: 014db600
+Allocated 12288 bytes at src/scenes/sceneDiskLoader.c:88, address: 02c3cff8
+Allocated 8 bytes at src/scenes/sceneDiskLoader.c:124, address: 014db600
+Extracted string: [617] 'BLOAD CAS.PIC,D'
+Extracted string: [618] 'BLOAD BCAS,A$B00'
+Extracted string: [619] 'BLOAD TWN.CAS.SHAPES,A3700,D1'
+Extracted string: [620] 'H.P.='
+Extracted string: [621] '*****'
+Extracted string: [622] 'FOOD='
+Extracted string: [623] '*****'
+Extracted string: [624] 'EXP.='
+Extracted string: [625] '*****'
+Extracted string: [626] 'GOLD='
+Extracted string: [627] '*****'
+Extracted string: [628] 'COMMAND: '
+Extracted string: [629] 'PASS'
+Extracted string: [630] 'PASS'
+Extracted string: [631] 'HUH?'
+Extracted string: [632] 'NORTH'
+Extracted string: [633] 'SOUTH'
+Extracted string: [634] 'EAST'
+Extracted string: [635] 'WEST'
+Extracted string: [636] 'YOU SAVED THE PRINCESS,'
+Extracted string: [637] 'CASANDRA. SHE GIVES YOU'
+Extracted string: [638] '3000 H.P.,G.P.,EXP.'
+Extracted string: [639] 'SHE ALSO TELLS YOU'
+Extracted string: [640] 'THAT YOU ARE NOW READY'
+Extracted string: [641] 'FOR TIME TRAVEL, AND'
+Extracted string: [642] 'THAT THERE IS A TIME'
+Extracted string: [643] 'MACHINE FAR TO THE NORTH'
+Extracted string: [644] 'WEST OF HERE!'
+Extracted string: [645] 'RUN OUT MOVE,D1'
+Extracted string: [646] 'INVALID MOVE!'
+Extracted string: [647] 'ATTACK DIRECT -'
+Extracted string: [648] 'NOTHING '
+Extracted string: [649] 'MISSED!'
+Extracted string: [650] 'MISSED! '
+Extracted string: [651] 'KING    '
+Extracted string: [652] 'GUARD   '
+Extracted string: [653] 'JESTER  '
+Extracted string: [654] 'KING     '
+Extracted string: [655] 'MERCHANT'
+Extracted string: [656] 'PRINCESS'
+Extracted string: [657] 'MISSED!'
+Extracted string: [658] 'HIT...DAMAGE='
+Extracted string: [659] 'KILLED!'
+Extracted string: [660] 'YOU FOUND A KEY!'
+Extracted string: [661] 'KILLED!'
+Extracted string: [662] 'KILLED!'
+Extracted string: [663] 'KILLED!'
+Extracted string: [664] 'KILLED'
+Extracted string: [665] 'BOARDING'
+Extracted string: [666] 'IS NOT APPLICABLE!'
+Extracted string: [667] 'CAST SPELL'
+Extracted string: [668] 'THERE IS AN ANTI-MAGIC SHELL'
+Extracted string: [669] 'AROUND THE CASTLE!'
+Extracted string: [670] 'DROP'
+Extracted string: [671] 'GOLD,WEAP.,ARM.--'
+Extracted string: [672] 'G'
+Extracted string: [673] 'W'
+Extracted string: [674] 'A'
+Extracted string: [675] 'NONE!'
+Extracted string: [676] 'G'
+Extracted string: [677] 'HOW MUCH--'
+Extracted string: [678] ' TOO MUCH'
+Extracted string: [679] 'YOU DON'T HAVE THAT MUCH!'
+Extracted string: [680] 'OK!'
+Extracted string: [681] 'SHAZAM!'
+Extracted string: [682] 'SHAZAM!'
+Extracted string: [683] 'SHAZAM!'
+Extracted string: [684] 'W'
+Extracted string: [685] 'DROP WEAPON--'
+Extracted string: [686] ' NOT FOUND!'
+Extracted string: [687] 'YOU DON'T OWN A'
+Extracted string: [688] 'OK!'
+Extracted string: [689] 'DROP ARMOUR--'
+Extracted string: [690] ' NOT FOUND!'
+Extracted string: [691] 'YOU DON'T OWN ANY'
+Extracted string: [692] 'OK!'
+Extracted string: [693] 'ENTERING'
+Extracted string: [694] 'IS NOT APPLICABLE!'
+Extracted string: [695] 'FIRING'
+Extracted string: [696] 'IS NOT APPLICABLE!'
+Extracted string: [697] 'GET '
+Extracted string: [698] 'NOTHING HERE ??'
+Extracted string: [699] 'YOU'RE NOT'
+Extracted string: [700] 'ALLOWED TO TAKE ANYTHING!'
+Extracted string: [701] 'YOU FIND'
+Extracted string: [702] 'YOU FIND'
+Extracted string: [703] 'YOU FIND'
+Extracted string: [704] ' FOODS!'
+Extracted string: [705] 'NOTHING!'
+Extracted string: [706] 'H'
+Extracted string: [707] 'INFORM AND SEARCH'
+Extracted string: [708] 'YOU ARE IN'
+Extracted string: [709] 'THAT IS ALL!'
+Extracted string: [710] 'J'
+Extracted string: [711] 'K'
+Extracted string: [712] 'LAG TIME (0-9)-'
+Extracted string: [713] 'M'
+Extracted string: [714] 'N'
+Extracted string: [715] 'NOTHING TO OPEN!'
+Extracted string: [716] 'P'
+Extracted string: [717] 'SAVING GAME'
+Extracted string: [718] 'NOT ALLOWED!'
+Extracted string: [719] 'READY'
+Extracted string: [720] 'W)EAPON A)RMOUR'
+Extracted string: [721] 'WHICH '
+Extracted string: [722] 'W'
+Extracted string: [723] 'A'
+Extracted string: [724] 'NONE'
+Extracted string: [725] 'W'
+Extracted string: [726] 'WE)APON-'
+Extracted string: [727] ' NOT FOUND'
+Extracted string: [728] 'YOU DON'T OWN A '
+Extracted string: [729] 'READY WEAPON - '
+Extracted string: [730] 'A'
+Extracted string: [731] 'ARMOUR TYPE '
+Extracted string: [732] ' NOT FOUND'
+Extracted string: [733] 'YOU DON'T OWN ANY '
+Extracted string: [734] 'ARMOUR TYPE - '
+Extracted string: [735] 'PASS'
+Extracted string: [736] 'STEAL '
+Extracted string: [737] 'NOTHING HERE ?!?'
+Extracted string: [738] 'OH! NO! YOU WERE CAUGHT!'
+Extracted string: [739] 'YOU FIND'
+Extracted string: [740] 'YOU FIND'
+Extracted string: [741] 'YOU FIND'
+Extracted string: [742] 'BAGS OF FOOD!'
+Extracted string: [743] 'NOTHING!'
+Extracted string: [744] 'TRANSACT WITH KING!'
+Extracted string: [745] 'HE REJECTS YOUR OFFER!'
+Extracted string: [746] 'HE IS NOT HERE!'
+Extracted string: [747] 'DO YOU OFFER GOLD,'
+Extracted string: [748] 'OR SERVICE? '
+Extracted string: [749] 'G'
+Extracted string: [750] 'S'
+Extracted string: [751] 'NEITHER, THEN BEGONE!'
+Extracted string: [752] 'G'
+Extracted string: [753] 'YOU ARE ON A QUEST'
+Extracted string: [754] 'FOR ME ALREADY FOOL!'
+Extracted string: [755] 'GOOD, GO AND FIND'
+Extracted string: [756] 'DO NOT RETURN UNTIL'
+Extracted string: [757] 'THY QUEST IS DONE!'
+Extracted string: [758] 'GOOD, GO NOW AND KILL A'
+Extracted string: [759] 'DO NOT RETURN UNTIL'
+Extracted string: [760] 'THY QUEST IS DONE!'
+Extracted string: [761] 'THAT IT REQUIRES ALL 4'
+Extracted string: [762] 'GEMS TO LAUNCH'
+Extracted string: [763] 'A TIME MACHINE!'
+Extracted string: [764] 'THE KING GIVES YOU'
+Extracted string: [765] 'A RED GEM!'
+Extracted string: [766] 'THAT THE TIME MACHINE MUST'
+Extracted string: [767] 'BE USED IN ORDER TO WIN!'
+Extracted string: [768] 'THE KING GIVES YOU'
+Extracted string: [769] 'A GREEN GEM!'
+Extracted string: [770] 'THE PRINCESS WILL HELP A'
+Extracted string: [771] 'SPACE ACE THROUGH TIME!'
+Extracted string: [772] 'HE GIVES YOU A BLUE GEM!'
+Extracted string: [773] 'TO TAKE 9 ITEMS FROM MY'
+Extracted string: [774] 'HOLDS, BUT ONLY 9 !!'
+Extracted string: [775] 'THE KING ALSO GIVES YOU'
+Extracted string: [776] 'A WHITE GEM!'
+Extracted string: [777] 'AH! '
+Extracted string: [778] ' YOU'RE BACK!'
+Extracted string: [779] 'FOR THIS I WILL TELL YOU'
+Extracted string: [780] 'AH! '
+Extracted string: [781] ' YOU'RE BACK!'
+Extracted string: [782] 'FOR THIS I WILL GIVE YOU'
+Extracted string: [783] 'STRENGTH+'
+Extracted string: [784] 'HOW MUCH DO YOU'
+Extracted string: [785] 'OFFER (AMOUNT/10)-'
+Extracted string: [786] 'BEGONE, FOOL!!'
+Extracted string: [787] 'YOU DON'T HAVE THAT!'
+Extracted string: [788] 'IN RETURN I GIVE UNTO'
+Extracted string: [789] 'THEE '
+Extracted string: [790] ' HIT POINTS!'
+Extracted string: [791] 'UNLOCK-'
+Extracted string: [792] 'WHAT?'
+Extracted string: [793] 'YOU DON'T'
+Extracted string: [794] 'HAVE THE CORRECT KEY!'
+Extracted string: [795] 'DONE!'
+Extracted string: [796] ' YOU DON'T'
+Extracted string: [797] 'HAVE THE CORRECT KEY!'
+Extracted string: [798] 'DONE!'
+Extracted string: [799] 'V'
+Extracted string: [800] 'W'
+Extracted string: [801] 'X-IT CRAFT'
+Extracted string: [802] 'IS NOT APPLICABLE!'
+Extracted string: [803] 'Y'
+Extracted string: [804] 'INVENTORY-'
+Extracted string: [805] 'PLAYER-'
+Extracted string: [806] 'A LEVEL '
+Extracted string: [807] ' '
+Extracted string: [808] ' '
+Extracted string: [809] 'RED GEM........'
+Extracted string: [810] 'GREEN GEM......'
+Extracted string: [811] 'BLUE GEM.......'
+Extracted string: [812] 'WHITE GEM......'
+Extracted string: [813] 'KEY TO CELL #  '
+Extracted string: [814] 'CONTINUE-'
+Extracted string: [815] ', YOU ARE DEAD.'
+Extracted string: [816] 'ATTEMPTING RESURRECTION!'
+Extracted string: [817] 'RUN OUT MOVE'
+Extracted string: [818] 'ATTACKED BY GUARD!'
+Extracted string: [819] 'MISSED!'
+Extracted string: [820] 'HIT, DAMAGE='
+Extracted string: [821] 'GWINO THE JESTER SINGS:'
+Extracted string: [822] 'I'VE GOT THE KEY!!!'
+Extracted string: [823] 'THE JESTER STOLE SOMETHING!'
+Extracted string: [824] 'PROTECT'
+Extracted string: [825] 'I/O'
+Extracted string: [826] 'TYPE '
+Extracted string: [827] ' ERROR IN LINE '
+Extracted string: [828] 'PLEASE HIT ESC '
+Extracted string: [829] 'INSERT PROGRAM DISK'
+Extracted string: [830] 'DO NOT INTERRUPT'
+Extracted string: [831] 'OPEN INFO'
+Extracted string: [832] 'READ INFO'
+Extracted string: [833] 'CLOSE INFO'
+Extracted string: [834] 'PROGRAM DISK'
+Extracted string: [835] 'INCORRECT DISK'
+Extracted string: [836] 'INSERT PLAYER DISK'
+Extracted string: [837] 'DO NOT INTERRUPT'
+Extracted string: [838] 'OPEN INFO'
+Extracted string: [839] 'READ INFO'
+Extracted string: [840] 'CLOSE INFO'
+Appended to string: [841] ' DISK INCORRECT DISK'
+Freed memory at src/scenes/sceneDiskLoader.c:745, address: 02c3cff8
+Freed memory at src/scenes/sceneDiskLoader.c:746, address: 014db600
+Allocated 11776 bytes at src/scenes/sceneDiskLoader.c:88, address: 02c3cff8
+Allocated 8 bytes at src/scenes/sceneDiskLoader.c:124, address: 014db600
+Extracted string: [842] 'BLOAD SET'
+Extracted string: [843] 'COFFIN'
+Extracted string: [844] 'CHEST!'
+Extracted string: [845] 'CHEST!'
+Extracted string: [846] 'PLEASE WAIT'
+Extracted string: [847] 'H.P.='
+Extracted string: [848] '*****'
+Extracted string: [849] 'FOOD='
+Extracted string: [850] '*****'
+Extracted string: [851] 'EXP.='
+Extracted string: [852] '*****'
+Extracted string: [853] 'GOLD='
+Extracted string: [854] '*****'
+Extracted string: [855] 'COMMAND: '
+Extracted string: [856] 'PASS'
+Extracted string: [857] 'PASS'
+Extracted string: [858] 'HUH?'
+Extracted string: [859] 'FORWARD'
+Extracted string: [860] 'PATH BLOCKED'
+Extracted string: [861] 'FORWARD'
+Extracted string: [862] 'SAVED FROM TRAP'
+Extracted string: [863] 'BY ROPE AND SPIKES!'
+Extracted string: [864] 'AARRGGHH!! A TRAP!'
+Extracted string: [865] 'TURN AROUND'
+Extracted string: [866] 'TURN LEFT'
+Extracted string: [867] 'TURN RIGHT'
+Extracted string: [868] 'ATTACK'
+Extracted string: [869] 'WITH '
+Extracted string: [870] 'NOT APPLICABLE'
+Extracted string: [871] 'NOTHING'
+Extracted string: [872] 'NOTHING'
+Extracted string: [873] 'WITH '
+Extracted string: [874] 'MISSED'
+Extracted string: [875] 'HIT! DAMAGE='
+Extracted string: [876] ' KILLED!'
+Extracted string: [877] 'BOARD?'
+Extracted string: [878] 'CAST SPELL'
+Extracted string: [879] 'NO MORE '
+Extracted string: [880] ' SPELLS'
+Extracted string: [881] ' '
+Extracted string: [882] 'FAILED'
+Extracted string: [883] 'FAILED'
+Extracted string: [884] 'APERTUS!'
+Extracted string: [885] 'COFFIN OPENED'
+Extracted string: [886] 'APERTUS!'
+Extracted string: [887] 'FAILED'
+Extracted string: [888] 'PECUNIA!'
+Extracted string: [889] 'CHEST OPENED!'
+Extracted string: [890] 'PECUNIA!'
+Extracted string: [891] 'FAILED'
+Extracted string: [892] 'VASTO!'
+Extracted string: [893] 'FAILED'
+Extracted string: [894] 'FAILED'
+Extracted string: [895] 'NUDO!'
+Extracted string: [896] 'HMMM? NO EFFECT?'
+Extracted string: [897] 'INFERUS'
+Extracted string: [898] 'FAILED'
+Extracted string: [899] 'LADDER CREATED!'
+Extracted string: [900] 'ASCENDO'
+Extracted string: [901] 'LADDER CREATED!'
+Extracted string: [902] 'DUCIS-EDUCO!'
+Extracted string: [903] 'TELEPORTED!'
+Extracted string: [904] 'STRUXI!'
+Extracted string: [905] 'FAILED!'
+Extracted string: [906] 'FIELD CREATED'
+Extracted string: [907] 'DELIO!'
+Extracted string: [908] 'FAILED!'
+Extracted string: [909] 'FIELD DESTROYED'
+Extracted string: [910] 'INTERFICIO!'
+Extracted string: [911] 'FAILED!'
+Extracted string: [912] ' DESTROYED!'
+Extracted string: [913] 'YOU GET '
+Extracted string: [914] ' EXP.'
+Extracted string: [915] 'A QUEST IS COMPLETED!'
+Extracted string: [916] 'YOU FIND '
+Extracted string: [917] ' GOLD!'
+Extracted string: [918] 'NO NEED TO DROP!'
+Extracted string: [919] 'ENTER?'
+Extracted string: [920] 'FIRE?'
+Extracted string: [921] 'GET-NO LOOSE ITEMS!'
+Extracted string: [922] 'H'
+Extracted string: [923] 'INFORM AND SEARCH'
+Extracted string: [924] 'J'
+Extracted string: [925] 'K-LIMB'
+Extracted string: [926] 'NO LADDER!'
+Extracted string: [927] 'MUST FACE LADDER!'
+Extracted string: [928] 'GOING UP TO LEVEL '
+Extracted string: [929] 'YOU GAIN '
+Extracted string: [930] ' H.P.'
+Extracted string: [931] 'RUN OUT MOVE,D1'
+Extracted string: [932] 'BLOAD SET'
+Extracted string: [933] ',D1'
+Extracted string: [934] 'GOING DOWN TO LEVEL '
+Extracted string: [935] 'BLOAD SET'
+Extracted string: [936] ',D1'
+Extracted string: [937] 'LAG TIME (0-9)-'
+Extracted string: [938] 'M'
+Extracted string: [939] 'N'
+Extracted string: [940] 'OPEN COFFIN'
+Extracted string: [941] 'NONE HERE!'
+Extracted string: [942] 'WATCH OUT!'
+Extracted string: [943] 'P'
+Extracted string: [944] 'QUIT...SAVE GAME'
+Extracted string: [945] 'NOT ALLOWED'
+Extracted string: [946] 'IN DUNGEON!'
+Extracted string: [947] 'READY'
+Extracted string: [948] 'W)EAPON S)PELL - '
+Extracted string: [949] 'S'
+Extracted string: [950] 'W'
+Extracted string: [951] 'NONE'
+Extracted string: [952] 'W'
+Extracted string: [953] 'WE)APON-'
+Extracted string: [954] ' NOT FOUND'
+Extracted string: [955] 'YOU DON'T OWN A '
+Extracted string: [956] 'READY WEAPON - '
+Extracted string: [957] 'S)PELL NAME '
+Extracted string: [958] 'L'
+Extracted string: [959] 'UP OR DN - '
+Extracted string: [960] 'LA'
+Extracted string: [961] 'U'
+Extracted string: [962] 'D'
+Extracted string: [963] 'NONE'
+Extracted string: [964] 'LA'
+Extracted string: [965] 'U'
+Extracted string: [966] 'LA'
+Extracted string: [967] ' NOT FOUND'
+Extracted string: [968] 'YOU DON'T HAVE A '
+Extracted string: [969] 'READY SPELL - '
+Extracted string: [970] 'PASS'
+Extracted string: [971] 'STEAL- N/A'
+Extracted string: [972] 'TRANSACT?'
+Extracted string: [973] 'UNLOCK CHEST!'
+Extracted string: [974] 'NONE HERE!'
+Extracted string: [975] 'TRAPPED!'
+Extracted string: [976] 'V'
+Extracted string: [977] 'W'
+Extracted string: [978] 'X-IT?'
+Extracted string: [979] 'Y'
+Extracted string: [980] 'INVENTORY-PLAYER-'
+Extracted string: [981] 'A LEVEL '
+Extracted string: [982] ' '
+Extracted string: [983] ' '
+Extracted string: [984] 'RED GEM........'
+Extracted string: [985] 'GREEN GEM......'
+Extracted string: [986] 'BLUE GEM.......'
+Extracted string: [987] 'WHITE GEM......'
+Extracted string: [988] 'CONTINUE-'
+Extracted string: [989] ', YOU ARE DEAD.'
+Extracted string: [990] 'ATTEMPTING RESURRECTION!'
+Extracted string: [991] 'ATTACKED BY '
+Extracted string: [992] 'MISSED!'
+Extracted string: [993] 'HIT! DAMAGE='
+Extracted string: [994] 'PROTECT'
+Extracted string: [995] 'I/O'
+Extracted string: [996] 'TYPE '
+Extracted string: [997] ' ERROR IN LINE '
+Extracted string: [998] 'PLEASE HIT ESC '
+Freed memory at src/scenes/sceneDiskLoader.c:745, address: 02c3cff8
+Freed memory at src/scenes/sceneDiskLoader.c:746, address: 014db600
+Allocated 2816 bytes at src/scenes/sceneDiskLoader.c:88, address: 014dc648
+Allocated 8 bytes at src/scenes/sceneDiskLoader.c:124, address: 014db600
+Extracted string: [999] 'THIEF STOLE A '
+Freed memory at src/scenes/sceneDiskLoader.c:772, address: 014dc648
+Freed memory at src/scenes/sceneDiskLoader.c:773, address: 014db600
+Allocated 2816 bytes at src/scenes/sceneDiskLoader.c:88, address: 014dc648
+Allocated 8 bytes at src/scenes/sceneDiskLoader.c:124, address: 014db600
+Extracted string: [1000] 'ARMOUR DESTROYED!'
+Freed memory at src/scenes/sceneDiskLoader.c:772, address: 014dc648
+Freed memory at src/scenes/sceneDiskLoader.c:773, address: 014db600
+Allocated 2816 bytes at src/scenes/sceneDiskLoader.c:88, address: 014dc648
+Allocated 8 bytes at src/scenes/sceneDiskLoader.c:124, address: 014db600
+Extracted string: [1001] 'A GREMLIN STOLE SOME FOOD!'
+Freed memory at src/scenes/sceneDiskLoader.c:772, address: 014dc648
+Freed memory at src/scenes/sceneDiskLoader.c:773, address: 014db600
+Allocated 2560 bytes at src/scenes/sceneDiskLoader.c:88, address: 014dc648
+Allocated 8 bytes at src/scenes/sceneDiskLoader.c:124, address: 014db600
+Extracted string: [1002] 'MENTAL ATTACK!'
+Freed memory at src/scenes/sceneDiskLoader.c:772, address: 014dc648
+Freed memory at src/scenes/sceneDiskLoader.c:773, address: 014db600
+Allocated 8704 bytes at src/scenes/sceneDiskLoader.c:88, address: 014dc648
+Allocated 8 bytes at src/scenes/sceneDiskLoader.c:124, address: 014db600
+Extracted string: [1003] 'BLOAD SPA.SHAPES,A$800'
+Extracted string: [1004] 'BLOAD FIRE'
+Extracted string: [1005] 'BLOAD NEAR.OBJ'
+Extracted string: [1006] 'BLOAD STAR.OBJ'
+Extracted string: [1007] 'BLOAD FGT3'
+Extracted string: [1008] 'PLEASE WAIT'
+Extracted string: [1009] '-'
+Extracted string: [1010] 'LIFTOFF!'
+Extracted string: [1011] 'YOU'VE BEEN HIT!'
+Extracted string: [1012] 'COMMAND: '
+Extracted string: [1013] 'OUT OF FUEL!'
+Extracted string: [1014] 'DRIFT ONLY!'
+Extracted string: [1015] 'COMMAND: '
+Extracted string: [1016] 'F'
+Extracted string: [1017] 'H'
+Extracted string: [1018] 'I'
+Extracted string: [1019] 'V'
+Extracted string: [1020] 'VIEW CHANGE!'
+Extracted string: [1021] 'VIEW CHANGE'
+Extracted string: [1022] 'PLEASE WAIT'
+Extracted string: [1023] 'COMMAND: '
+Extracted string: [1024] 'FIRE'
+Extracted string: [1025] 'COMMAND: '
+Extracted string: [1026] 'HIT!!!'
+Extracted string: [1027] 'YOU ARE NOW A SPACE ACE!!!'
+Extracted string: [1028] 'COMMAND: '
+Extracted string: [1029] 'HYPER JUMP'
+Extracted string: [1030] 'COMMAND: '
+Extracted string: [1031] 'INFORM- SECTOR SCAN'
+Extracted string: [1032] 'PLEASE WAIT'
+Extracted string: [1033] '^'
+Extracted string: [1034] 'B'
+Extracted string: [1035] 'O'
+Extracted string: [1036] '*'
+Extracted string: [1037] '-'
+Extracted string: [1038] 'COMMAND: '
+Extracted string: [1039] 'MUST ELIMINATE ALL'
+Extracted string: [1040] 'ENEMY CRAFT FIRST!'
+Extracted string: [1041] 'COMMAND: '
+Extracted string: [1042] 'PLEASE WAIT'
+Extracted string: [1043] 'DOCKED!'
+Extracted string: [1044] 'CRUNCH!'
+Extracted string: [1045] 'COMMAND: '
+Extracted string: [1046] 'NO FUEL!'
+Extracted string: [1047] 'DRIFT FOREVER?!?'
+Extracted string: [1048] 'COMMAND: '
+Extracted string: [1049] 'VIEW CHANGE'
+Extracted string: [1050] 'NON-FUNCTIONAL'
+Extracted string: [1051] 'WHILE DOCKED!'
+Extracted string: [1052] 'BOARD '
+Extracted string: [1053] 'HYPER JUMP MUST BE'
+Extracted string: [1054] 'USED IN FRONT VIEW MODE!'
+Extracted string: [1055] 'COMMAND: '
+Extracted string: [1056] 'LEFT'
+Extracted string: [1057] 'COMMAND: '
+Extracted string: [1058] 'THRUST'
+Extracted string: [1059] 'COMMAND: '
+Extracted string: [1060] 'THRUST'
+Extracted string: [1061] 'COMMAND: '
+Extracted string: [1062] 'RIGHT'
+Extracted string: [1063] 'COMMAND: '
+Extracted string: [1064] 'RETRO'
+Extracted string: [1065] 'COMMAND: '
+Extracted string: [1066] 'H.P.='
+Extracted string: [1067] '*****'
+Extracted string: [1068] 'FOOD='
+Extracted string: [1069] '*****'
+Extracted string: [1070] 'SHLD='
+Extracted string: [1071] '*****'
+Extracted string: [1072] 'FUEL='
+Extracted string: [1073] '*****'
+Extracted string: [1074] 'BLOAD ULTSHAPES,A$800,D1'
+Extracted string: [1075] 'BLOAD DRAW 64.OBJ,A$A00'
+Extracted string: [1076] 'BLOAD TWN.CAS.SHAPES,A3700'
+Extracted string: [1077] 'RUN OUT MOVE'
+Extracted string: [1078] 'WELCOME TO BASE'
+Extracted string: [1079] 'I'M SORRY BUT YOU'
+Extracted string: [1080] 'CAN NOT REFUEL HERE. YOU'
+Extracted string: [1081] 'DO NOT HAVE THE 500 G.P.'
+Extracted string: [1082] 'DOCK FEE.'
+Extracted string: [1083] 'COMMAND: '
+Extracted string: [1084] 'UPON DOCKING THE'
+Extracted string: [1085] 'PORTALS ARE OPENED'
+Extracted string: [1086] 'AND YOU ARE EXPOSED'
+Extracted string: [1087] 'TO A COMPLETE'
+Extracted string: [1088] 'VACUUM!!!!'
+Extracted string: [1089] 'BASE COMMAND: '
+Extracted string: [1090] 'TAKE LOWER VESSEL'
+Extracted string: [1091] 'TAKE LEFT VESSEL'
+Extracted string: [1092] 'TAKE TOP VESSEL'
+Extracted string: [1093] 'TAKE RIGHT VESSEL'
+Extracted string: [1094] 'INVALID'
+Extracted string: [1095] 'COMMAND'
+Extracted string: [1096] 'PORT '
+Extracted string: [1097] 'NOT AVAILABLE!'
+Extracted string: [1098] 'HI-LO'
+Extracted string: [1099] ', YOU HAVE DIED!'
+Extracted string: [1100] '     YOUR BODY HAS DISINTEGRATED!'
+Extracted string: [1101] 'ALL IS DARK NOW.....'
+Extracted string: [1102] 'COMMAND: '
+Extracted string: [1103] 'PROTECT'
+Extracted string: [1104] 'I/O'
+Extracted string: [1105] 'TYPE '
+Extracted string: [1106] ' ERROR IN LINE '
+Extracted string: [1107] 'PLEASE HIT ESC '
+Freed memory at src/scenes/sceneDiskLoader.c:745, address: 014dc648
+Freed memory at src/scenes/sceneDiskLoader.c:746, address: 014db600
+Allocated 1280 bytes at src/scenes/sceneDiskLoader.c:88, address: 014dc648
+Allocated 8 bytes at src/scenes/sceneDiskLoader.c:124, address: 014db600
+Freed memory at src/scenes/sceneDiskLoader.c:1095, address: 014dc648
+Freed memory at src/scenes/sceneDiskLoader.c:1096, address: 014db600
+Allocated 1280 bytes at src/scenes/sceneDiskLoader.c:88, address: 014dc648
+Allocated 8 bytes at src/scenes/sceneDiskLoader.c:124, address: 014db600
+Freed memory at src/scenes/sceneDiskLoader.c:1095, address: 014dc648
+Freed memory at src/scenes/sceneDiskLoader.c:1096, address: 014db600
+Allocated 8192 bytes at src/scenes/sceneDiskLoader.c:88, address: 014dc648
+Allocated 8 bytes at src/scenes/sceneDiskLoader.c:124, address: 014db600
+Allocated 4 zero initialized bytes at src/scenes/sceneDiskLoader.c:647, address: 014db250
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014d80d8
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014d8030
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014d8048
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014d8090
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014d7f70
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014d7fb8
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014d80c0
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014d7f88
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014db610
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014db620
+Allocated 4 zero initialized bytes at src/scenes/sceneDiskLoader.c:647, address: 014d8f58
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014d9b80
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014d9b90
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014d9ba0
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014d9bb0
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014d9bc0
+Allocated 4 zero initialized bytes at src/scenes/sceneDiskLoader.c:647, address: 014d8fb8
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014de838
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014de7b8
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014de7a8
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014de768
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014de848
+Allocated 4 zero initialized bytes at src/scenes/sceneDiskLoader.c:647, address: 014d8f18
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014de778
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014d80a8
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014d7f28
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014d7f40
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014d9e28
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014d9d68
+Allocated 4 zero initialized bytes at src/scenes/sceneDiskLoader.c:647, address: 014d9460
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014de788
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014de708
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014de6c8
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014de748
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014de808
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014de828
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014de728
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014de6e8
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014d9eb8
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014d9c00
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014d9e10
+Allocated 4 zero initialized bytes at src/scenes/sceneDiskLoader.c:647, address: 014db168
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014de678
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014de688
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014de758
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014de798
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014d9e88
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014de818
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014d9c30
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014d9d38
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014de6f8
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014de7e8
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014de698
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014d9c60
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014de7c8
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014d9e40
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014de738
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014de718
+Allocated 4 zero initialized bytes at src/scenes/sceneDiskLoader.c:647, address: 014db1b0
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014de7d8
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014de6a8
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014de6b8
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014d9ed0
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014de7f8
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014d9ee8
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014d9c48
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014de6d8
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014dec48
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014debd8
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014debe8
+Allocated 4 zero initialized bytes at src/scenes/sceneDiskLoader.c:647, address: 014dec60
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014dea88
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014dbc30
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014dbd48
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014d8fd8
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014dbca8
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014d8eb8
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014d8cd8
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014d9038
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014d8e18
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014d9d50
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014d8f38
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014d9058
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014d8d78
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014deaa8
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014deb58
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014debf8
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014deb68
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014dec08
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014dea98
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014dec18
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014dec28
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014d8ed8
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014d8cb8
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014dbd20
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014dbcf8
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014d9c90
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014d8ff8
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014dbd70
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014d9c18
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014d9e58
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014d8ef8
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014d8f78
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014dbc58
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014deb08
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014deb88
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014dec38
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014deab8
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014deb78
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014deb38
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014deac8
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014d9c78
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014d8f98
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014dbde8
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014d9ca8
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014d8e78
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014d9018
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014d9ea0
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014d9e70
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014d8d38
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014d9cc0
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014d8d18
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014d9dc8
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014d9cd8
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014deb98
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014d9cf0
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014dead8
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014d9d08
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014d9d80
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014debb8
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014deb48
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014deae8
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014dbd98
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014d8cf8
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014dbc80
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014d8d98
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014d9d20
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014d9d98
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014d8db8
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014d8dd8
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014d8e38
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014d9db0
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014dc2b0
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014d9de0
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014deb18
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014deaf8
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014deb28
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014deba8
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014d9df8
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014d9fc0
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014d9f90
+Allocated 1 zero initialized bytes at src/scenes/sceneDiskLoader.c:655, address: 014d9f00
+Allocated 28 zero initialized bytes at src/scenes/sceneDiskLoader.c:611, address: 02c3cff8
+Allocated 2816 bytes at src/scenes/sceneDiskLoader.c:88, address: 02c3d508
+Allocated 8 bytes at src/scenes/sceneDiskLoader.c:124, address: 014debc8
+Freed memory at src/scenes/sceneDiskLoader.c:1281, address: 02c3d508
+Freed memory at src/scenes/sceneDiskLoader.c:1282, address: 014debc8
+Allocated 2816 bytes at src/scenes/sceneDiskLoader.c:88, address: 02c3d508
+Allocated 8 bytes at src/scenes/sceneDiskLoader.c:124, address: 014debc8
+Freed memory at src/scenes/sceneDiskLoader.c:1281, address: 02c3d508
+Freed memory at src/scenes/sceneDiskLoader.c:1282, address: 014debc8
+Allocated 2816 bytes at src/scenes/sceneDiskLoader.c:88, address: 02c3d508
+Allocated 8 bytes at src/scenes/sceneDiskLoader.c:124, address: 014debc8
+Freed memory at src/scenes/sceneDiskLoader.c:1281, address: 02c3d508
+Freed memory at src/scenes/sceneDiskLoader.c:1282, address: 014debc8
+Allocated 2816 bytes at src/scenes/sceneDiskLoader.c:88, address: 02c3d508
+Allocated 8 bytes at src/scenes/sceneDiskLoader.c:124, address: 014debc8
+Freed memory at src/scenes/sceneDiskLoader.c:1281, address: 02c3d508
+Freed memory at src/scenes/sceneDiskLoader.c:1282, address: 014debc8
+Allocated 2560 bytes at src/scenes/sceneDiskLoader.c:88, address: 02c3d508
+Allocated 8 bytes at src/scenes/sceneDiskLoader.c:124, address: 014debc8
+Freed memory at src/scenes/sceneDiskLoader.c:1281, address: 02c3d508
+Freed memory at src/scenes/sceneDiskLoader.c:1282, address: 014debc8
+Freed memory at src/scenes/sceneDiskLoader.c:1594, address: 014dc648
+Freed memory at src/scenes/sceneDiskLoader.c:1595, address: 014db600
+Freed memory at src/scenes/sceneDiskLoader.c:1598, address: 02bf6fe8
+Freed memory at src/scenes/sceneDiskLoader.c:1599, address: 02c19ff0
+Allocated 4 bytes at src/scenes/sceneDiskLoader.c:270, address: 014debc8
+Freed memory at src/scenes/sceneDiskLoader.c:1603, address: 014debc8
+Allocated 400 bytes at src/engine/text.c:132, address: 014dedb0
+Allocated 120 bytes at src/engine/text.c:133, address: 014def48
+Allocated 400 bytes at src/engine/text.c:132, address: 014dc648
+Allocated 120 bytes at src/engine/text.c:133, address: 014d94e0
+Allocated 400 bytes at src/engine/text.c:132, address: 014dc7e0
+Allocated 120 bytes at src/engine/text.c:133, address: 014d9560
+Allocated 400 bytes at src/engine/text.c:132, address: 014dc978
+Allocated 120 bytes at src/engine/text.c:133, address: 014dcb10
+Allocated 400 bytes at src/engine/text.c:132, address: 014dcb90
+Allocated 120 bytes at src/engine/text.c:133, address: 014dcd28
+Allocated 400 bytes at src/engine/text.c:132, address: 014dcda8
+Allocated 120 bytes at src/engine/text.c:133, address: 014dcf40
+Allocated 400 bytes at src/engine/text.c:132, address: 014dcfc0
+Allocated 120 bytes at src/engine/text.c:133, address: 014dd158
+Allocated 400 bytes at src/engine/text.c:132, address: 014dd1d8
+Allocated 120 bytes at src/engine/text.c:133, address: 014dd370
+Allocated 3120 bytes at src/engine/text.c:132, address: 014dd3f0
+Allocated 936 bytes at src/engine/text.c:133, address: 014de028
+Allocated 3120 bytes at src/engine/text.c:132, address: 02bf6fe8
+Allocated 936 bytes at src/engine/text.c:133, address: 02bf7c20
+Allocated 3120 bytes at src/engine/text.c:132, address: 02bf7fd0
+Allocated 936 bytes at src/engine/text.c:133, address: 02bf8c08
+Allocated 3120 bytes at src/engine/text.c:132, address: 02bf8fb8
+Allocated 936 bytes at src/engine/text.c:133, address: 02bf9bf0
+Freed memory at src/engine/text.c:177, address: 014d9678
+Freed memory at src/engine/text.c:178, address: 014dafe0
+Allocated 1120 bytes at src/engine/text.c:132, address: 014d9678
+Allocated 336 bytes at src/engine/text.c:133, address: 014dafe0
+Allocated 1120 bytes at src/engine/text.c:132, address: 02bf9fa0
+Allocated 336 bytes at src/engine/text.c:133, address: 014de410
+Allocated 1120 bytes at src/engine/text.c:132, address: 02bfa408
+Allocated 336 bytes at src/engine/text.c:133, address: 02bfa870
+Allocated 1120 bytes at src/engine/text.c:132, address: 02bfa9c8
+Allocated 336 bytes at src/engine/text.c:133, address: 02bfae30
+Allocated 2640 bytes at src/engine/text.c:132, address: 02bfaf88
+Allocated 792 bytes at src/engine/text.c:133, address: 02bfb9e0
+Allocated 2720 bytes at src/engine/text.c:132, address: 02bfbd00
+Allocated 816 bytes at src/engine/text.c:133, address: 02bfc7a8
+Allocated 2640 bytes at src/engine/text.c:132, address: 02bfcae0
+Allocated 792 bytes at src/engine/text.c:133, address: 02bfd538
+Allocated 2640 bytes at src/engine/text.c:132, address: 02bfd858
+Allocated 792 bytes at src/engine/text.c:133, address: 02bfe2b0
+Allocated 560 bytes at src/engine/text.c:132, address: 02bfe5d0
+Allocated 168 bytes at src/engine/text.c:133, address: 014de568
+Allocated 1520 bytes at src/engine/text.c:132, address: 02bfe808
+Allocated 456 bytes at src/engine/text.c:133, address: 02bfee00
+Allocated 80 bytes at src/engine/text.c:132, address: 014d9ae0
+Allocated 24 bytes at src/engine/text.c:133, address: 014dc530
+Freed memory at src/engine/text.c:177, address: 014d9678
+Freed memory at src/engine/text.c:178, address: 014dafe0
+Freed memory at src/engine/text.c:177, address: 02bf9fa0
+Freed memory at src/engine/text.c:178, address: 014de410
+Freed memory at src/engine/text.c:177, address: 02bfa408
+Freed memory at src/engine/text.c:178, address: 02bfa870
+Freed memory at src/engine/text.c:177, address: 02bfa9c8
+Freed memory at src/engine/text.c:178, address: 02bfae30
+Freed memory at src/engine/text.c:177, address: 02bfaf88
+Freed memory at src/engine/text.c:178, address: 02bfb9e0
+Freed memory at src/engine/text.c:177, address: 02bfbd00
+Freed memory at src/engine/text.c:178, address: 02bfc7a8
+Freed memory at src/engine/text.c:177, address: 02bfcae0
+Freed memory at src/engine/text.c:178, address: 02bfd538
+Freed memory at src/engine/text.c:177, address: 02bfd858
+Freed memory at src/engine/text.c:178, address: 02bfe2b0
+Freed memory at src/engine/text.c:177, address: 02bfe5d0
+Freed memory at src/engine/text.c:178, address: 014de568
+Freed memory at src/engine/text.c:177, address: 02bfe808
+Freed memory at src/engine/text.c:178, address: 02bfee00
+Freed memory at src/engine/text.c:177, address: 014d9ae0
+Freed memory at src/engine/text.c:178, address: 014dc530
+Allocated 36 bytes at src/entities/vmExecuter.c:71, address: 014db220
+Freed memory at src/entities/vmExecuter.c:52, address: 014db220
+Allocated 72 bytes at src/entities/vmExecuter.c:62, address: 014dafe0
+Freed memory at src/entities/vmExecuter.c:52, address: 014dafe0
+Freed memory at src/engine/text.c:177, address: 014dedb0
+Freed memory at src/engine/text.c:178, address: 014def48
+Freed memory at src/engine/text.c:177, address: 014dcb90
+Freed memory at src/engine/text.c:178, address: 014dcd28
+Freed memory at src/engine/text.c:177, address: 014dd3f0
+Freed memory at src/engine/text.c:178, address: 014de028
+Freed memory at src/engine/text.c:177, address: 014dc648
+Freed memory at src/engine/text.c:178, address: 014d94e0
+Freed memory at src/engine/text.c:177, address: 014dcda8
+Freed memory at src/engine/text.c:178, address: 014dcf40
+Freed memory at src/engine/text.c:177, address: 02bf6fe8
+Freed memory at src/engine/text.c:178, address: 02bf7c20
+Freed memory at src/engine/text.c:177, address: 014dc7e0
+Freed memory at src/engine/text.c:178, address: 014d9560
+Freed memory at src/engine/text.c:177, address: 014dcfc0
+Freed memory at src/engine/text.c:178, address: 014dd158
+Freed memory at src/engine/text.c:177, address: 02bf7fd0
+Freed memory at src/engine/text.c:178, address: 02bf8c08
+Freed memory at src/engine/text.c:177, address: 014dc978
+Freed memory at src/engine/text.c:178, address: 014dcb10
+Freed memory at src/engine/text.c:177, address: 014dd1d8
+Freed memory at src/engine/text.c:178, address: 014dd370
+Freed memory at src/engine/text.c:177, address: 02bf8fb8
+Freed memory at src/engine/text.c:178, address: 02bf9bf0
+Freed memory at src/data/enemy.c:22, address: 02c3cff8
+Freed memory at src/data/bevery.c:38, address: 014d80d8
+Freed memory at src/data/bevery.c:38, address: 014d8030
+Freed memory at src/data/bevery.c:38, address: 014d8048
+Freed memory at src/data/bevery.c:38, address: 014d8090
+Freed memory at src/data/bevery.c:38, address: 014d7f70
+Freed memory at src/data/bevery.c:38, address: 014d7fb8
+Freed memory at src/data/bevery.c:38, address: 014d80c0
+Freed memory at src/data/bevery.c:38, address: 014d7f88
+Freed memory at src/data/bevery.c:38, address: 014db610
+Freed memory at src/data/bevery.c:38, address: 014db620
+Freed memory at src/data/bevery.c:40, address: 014db250
+Freed memory at src/data/bevery.c:43, address: 014de778
+Freed memory at src/data/bevery.c:43, address: 014d80a8
+Freed memory at src/data/bevery.c:43, address: 014d7f28
+Freed memory at src/data/bevery.c:43, address: 014d7f40
+Freed memory at src/data/bevery.c:43, address: 014d9e28
+Freed memory at src/data/bevery.c:43, address: 014d9d68
+Freed memory at src/data/bevery.c:45, address: 014d8f18
+Freed memory at src/data/bevery.c:48, address: 014de788
+Freed memory at src/data/bevery.c:48, address: 014de708
+Freed memory at src/data/bevery.c:48, address: 014de6c8
+Freed memory at src/data/bevery.c:48, address: 014de748
+Freed memory at src/data/bevery.c:48, address: 014de808
+Freed memory at src/data/bevery.c:48, address: 014de828
+Freed memory at src/data/bevery.c:48, address: 014de728
+Freed memory at src/data/bevery.c:48, address: 014de6e8
+Freed memory at src/data/bevery.c:48, address: 014d9eb8
+Freed memory at src/data/bevery.c:48, address: 014d9c00
+Freed memory at src/data/bevery.c:48, address: 014d9e10
+Freed memory at src/data/bevery.c:50, address: 014d9460
+Freed memory at src/data/bevery.c:53, address: 014de678
+Freed memory at src/data/bevery.c:53, address: 014de688
+Freed memory at src/data/bevery.c:53, address: 014de758
+Freed memory at src/data/bevery.c:53, address: 014de798
+Freed memory at src/data/bevery.c:53, address: 014d9e88
+Freed memory at src/data/bevery.c:53, address: 014de818
+Freed memory at src/data/bevery.c:53, address: 014d9c30
+Freed memory at src/data/bevery.c:53, address: 014d9d38
+Freed memory at src/data/bevery.c:53, address: 014de6f8
+Freed memory at src/data/bevery.c:53, address: 014de7e8
+Freed memory at src/data/bevery.c:53, address: 014de698
+Freed memory at src/data/bevery.c:53, address: 014d9c60
+Freed memory at src/data/bevery.c:53, address: 014de7c8
+Freed memory at src/data/bevery.c:53, address: 014d9e40
+Freed memory at src/data/bevery.c:53, address: 014de738
+Freed memory at src/data/bevery.c:53, address: 014de718
+Freed memory at src/data/bevery.c:55, address: 014db168
+Freed memory at src/data/bevery.c:58, address: 014de7d8
+Freed memory at src/data/bevery.c:58, address: 014de6a8
+Freed memory at src/data/bevery.c:58, address: 014de6b8
+Freed memory at src/data/bevery.c:58, address: 014d9ed0
+Freed memory at src/data/bevery.c:58, address: 014de7f8
+Freed memory at src/data/bevery.c:58, address: 014d9ee8
+Freed memory at src/data/bevery.c:58, address: 014d9c48
+Freed memory at src/data/bevery.c:58, address: 014de6d8
+Freed memory at src/data/bevery.c:58, address: 014dec48
+Freed memory at src/data/bevery.c:58, address: 014debd8
+Freed memory at src/data/bevery.c:58, address: 014debe8
+Freed memory at src/data/bevery.c:60, address: 014db1b0
+Freed memory at src/data/bevery.c:63, address: 014d9b80
+Freed memory at src/data/bevery.c:63, address: 014d9b90
+Freed memory at src/data/bevery.c:63, address: 014d9ba0
+Freed memory at src/data/bevery.c:63, address: 014d9bb0
+Freed memory at src/data/bevery.c:63, address: 014d9bc0
+Freed memory at src/data/bevery.c:65, address: 014d8f58
+Freed memory at src/data/bevery.c:68, address: 014de838
+Freed memory at src/data/bevery.c:68, address: 014de7b8
+Freed memory at src/data/bevery.c:68, address: 014de7a8
+Freed memory at src/data/bevery.c:68, address: 014de768
+Freed memory at src/data/bevery.c:68, address: 014de848
+Freed memory at src/data/bevery.c:70, address: 014d8fb8
+Freed memory at src/data/bevery.c:73, address: 014dea88
+Freed memory at src/data/bevery.c:73, address: 014dbc30
+Freed memory at src/data/bevery.c:73, address: 014dbd48
+Freed memory at src/data/bevery.c:73, address: 014d8fd8
+Freed memory at src/data/bevery.c:73, address: 014dbca8
+Freed memory at src/data/bevery.c:73, address: 014d8eb8
+Freed memory at src/data/bevery.c:73, address: 014d8cd8
+Freed memory at src/data/bevery.c:73, address: 014d9038
+Freed memory at src/data/bevery.c:73, address: 014d8e18
+Freed memory at src/data/bevery.c:73, address: 014d9d50
+Freed memory at src/data/bevery.c:73, address: 014d8f38
+Freed memory at src/data/bevery.c:73, address: 014d9058
+Freed memory at src/data/bevery.c:73, address: 014d8d78
+Freed memory at src/data/bevery.c:73, address: 014deaa8
+Freed memory at src/data/bevery.c:73, address: 014deb58
+Freed memory at src/data/bevery.c:73, address: 014debf8
+Freed memory at src/data/bevery.c:73, address: 014deb68
+Freed memory at src/data/bevery.c:73, address: 014dec08
+Freed memory at src/data/bevery.c:73, address: 014dea98
+Freed memory at src/data/bevery.c:73, address: 014dec18
+Freed memory at src/data/bevery.c:73, address: 014dec28
+Freed memory at src/data/bevery.c:73, address: 014d8ed8
+Freed memory at src/data/bevery.c:73, address: 014d8cb8
+Freed memory at src/data/bevery.c:73, address: 014dbd20
+Freed memory at src/data/bevery.c:73, address: 014dbcf8
+Freed memory at src/data/bevery.c:73, address: 014d9c90
+Freed memory at src/data/bevery.c:73, address: 014d8ff8
+Freed memory at src/data/bevery.c:73, address: 014dbd70
+Freed memory at src/data/bevery.c:73, address: 014d9c18
+Freed memory at src/data/bevery.c:73, address: 014d9e58
+Freed memory at src/data/bevery.c:73, address: 014d8ef8
+Freed memory at src/data/bevery.c:73, address: 014d8f78
+Freed memory at src/data/bevery.c:73, address: 014dbc58
+Freed memory at src/data/bevery.c:73, address: 014deb08
+Freed memory at src/data/bevery.c:73, address: 014deb88
+Freed memory at src/data/bevery.c:73, address: 014dec38
+Freed memory at src/data/bevery.c:73, address: 014deab8
+Freed memory at src/data/bevery.c:73, address: 014deb78
+Freed memory at src/data/bevery.c:73, address: 014deb38
+Freed memory at src/data/bevery.c:73, address: 014deac8
+Freed memory at src/data/bevery.c:73, address: 014d9c78
+Freed memory at src/data/bevery.c:73, address: 014d8f98
+Freed memory at src/data/bevery.c:73, address: 014dbde8
+Freed memory at src/data/bevery.c:73, address: 014d9ca8
+Freed memory at src/data/bevery.c:73, address: 014d8e78
+Freed memory at src/data/bevery.c:73, address: 014d9018
+Freed memory at src/data/bevery.c:73, address: 014d9ea0
+Freed memory at src/data/bevery.c:73, address: 014d9e70
+Freed memory at src/data/bevery.c:73, address: 014d8d38
+Freed memory at src/data/bevery.c:73, address: 014d9cc0
+Freed memory at src/data/bevery.c:73, address: 014d8d18
+Freed memory at src/data/bevery.c:73, address: 014d9dc8
+Freed memory at src/data/bevery.c:73, address: 014d9cd8
+Freed memory at src/data/bevery.c:73, address: 014deb98
+Freed memory at src/data/bevery.c:73, address: 014d9cf0
+Freed memory at src/data/bevery.c:73, address: 014dead8
+Freed memory at src/data/bevery.c:73, address: 014d9d08
+Freed memory at src/data/bevery.c:73, address: 014d9d80
+Freed memory at src/data/bevery.c:73, address: 014debb8
+Freed memory at src/data/bevery.c:73, address: 014deb48
+Freed memory at src/data/bevery.c:73, address: 014deae8
+Freed memory at src/data/bevery.c:73, address: 014dbd98
+Freed memory at src/data/bevery.c:73, address: 014d8cf8
+Freed memory at src/data/bevery.c:73, address: 014dbc80
+Freed memory at src/data/bevery.c:73, address: 014d8d98
+Freed memory at src/data/bevery.c:73, address: 014d9d20
+Freed memory at src/data/bevery.c:73, address: 014d9d98
+Freed memory at src/data/bevery.c:73, address: 014d8db8
+Freed memory at src/data/bevery.c:73, address: 014d8dd8
+Freed memory at src/data/bevery.c:73, address: 014d8e38
+Freed memory at src/data/bevery.c:73, address: 014d9db0
+Freed memory at src/data/bevery.c:73, address: 014dc2b0
+Freed memory at src/data/bevery.c:73, address: 014d9de0
+Freed memory at src/data/bevery.c:73, address: 014deb18
+Freed memory at src/data/bevery.c:73, address: 014deaf8
+Freed memory at src/data/bevery.c:73, address: 014deb28
+Freed memory at src/data/bevery.c:73, address: 014deba8
+Freed memory at src/data/bevery.c:73, address: 014d9df8
+Freed memory at src/data/bevery.c:73, address: 014d9fc0
+Freed memory at src/data/bevery.c:73, address: 014d9f90
+Freed memory at src/data/bevery.c:73, address: 014d9f00
+Freed memory at src/data/bevery.c:75, address: 014dec60
+Remaining pointers: 0
