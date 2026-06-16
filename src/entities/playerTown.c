@@ -47,7 +47,7 @@ static bool playerTown_checkExit(int moveX, int moveY) {
       uiConsole_updateStats();
     }
 
-    if (princessPosition.x < 5 && princessPosition.y > 0 && player.time > 7000 && player.spaceLevel > 20) {
+    if (princessPosition.x < 5 && princessPosition.y > 0 && player.time > 7000 && player.spaceLevel >= 20) {
       uiConsole_queueMessageFormat("^T1%s", ultimaStrings[639]);
       uiConsole_queueMessageFormat("^T1%s", ultimaStrings[640]);
       uiConsole_queueMessageFormat("^T1%s", ultimaStrings[641]);
