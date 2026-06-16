@@ -301,6 +301,24 @@ $$
 - The overworld map is divided into **4 chunks**: `bterra0`, `bterra1`, `bterra2`, `bterra3`.
 - Although each realm's playable area is a **64x64** chunk, the underlying data for each chunk is actually **86x86** tiles. The additional outer area is filled with water tiles, effectively increasing the separation and travel distance between the different realms.
 
+## Space
+
+- Space runs in its own scene with an **11x11** `spaceMap` and a space station surrounded by docked vessels.
+- Players may launch into space from the overworld, approach the station, and board or switch vessels using direction inputs at the dock.
+- Spacecraft have per-action resource costs:
+  - turning costs **2 fuel**,
+  - thrust costs **5 fuel**,
+  - retro thrust costs **5 fuel**,
+  - hyper jump costs **100 fuel**.
+- Some vessels grant special bonuses: one ship starts with extra fuel, another starts with extra shield.
+- Player movement is handled as inertia-based velocity in the 2D space plane, with screen wrapping at the edges.
+- First-person view can be toggled while in space to target enemy crafts and fire in a 3D-style combat view.
+- Enemy craft counts are encoded in each sector's space data and are revealed when the player enters first-person view.
+- Firing consumes fuel and, when an enemy craft is in sight, removes the craft, grants **2000 experience**, and increases `player.spaceLevel`.
+- Reaching a `spaceLevel` milestone near **20** produces a special space ace progress message.
+- Collisions with space shapes damage the player's shield. If shield drops to zero or below, the player crashes and dies in space.
+- Hyper jumps move the player to a neighboring sector based on current velocity and wrap the sector coordinates between 1 and 9.
+
 ## Overworld Combat Flow
 
 - After each player action, overworld combat resolution runs on the next update cycle.

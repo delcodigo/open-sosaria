@@ -472,7 +472,7 @@ static bool playerOverworld_updateBoard() {
       vmExecuter_createWait(1);
       playerState = PLAYER_STATE_SHUTTLE_COUNTDOWN;
       memset(liftoffCountdownString, 0, sizeof(liftoffCountdownString));
-      liftoffCountdown = 1;
+      liftoffCountdown = 11;
     }
 
     vehiclesMap[player.ty][player.tx] = 0;
