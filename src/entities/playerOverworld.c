@@ -464,8 +464,27 @@ static bool playerOverworld_updateBoard() {
       player.vehicle = vehicleTile;
       uiConsole_addMessageFormat("%.15s%.15s", ultimaStrings[144], vehicleNames[vehicleTile]);
     } else if (vehicleTile == 7) {
-      player.vehicle = 7;
       uiConsole_addMessage(ultimaStrings[141]);
+      uiConsole_queueMessageFormat("^T1%s", ultimaStrings[261]);
+      uiConsole_queueMessageFormat("^T1%s", ultimaStrings[262]);
+      uiConsole_queueMessageFormat("^T1%s", ultimaStrings[263]);
+      
+      if (player.gems[0] == 0 && player.gems[1] == 0 && player.gems[2] == 0 && player.gems[3] == 0) {
+        uiConsole_queueMessageFormat("^T1%s", ultimaStrings[264]);
+        uiConsole_queueMessageFormat("^T1%s", ultimaStrings[265]);
+        uiConsole_queueMessageFormat("^T1%s", ultimaStrings[266]);
+        return true;
+      }
+      
+      if (player.gems[0] == 0 || player.gems[1] == 0 || player.gems[2] == 0 || player.gems[3] == 0) {
+        uiConsole_queueMessageFormat("^T1%s", ultimaStrings[267]);
+        uiConsole_queueMessageFormat("^T1%s", ultimaStrings[268]);
+        uiConsole_queueMessageFormat("^T1%s", ultimaStrings[269]);
+        return true;
+      }
+      
+      player.vehicle = 7;
+      playerState = PLAYER_STATE_TIME_MACHINE;
     } else if (vehicleTile == 6) {
       player.vehicle = 6;
       uiConsole_addMessage(ultimaStrings[142]);
