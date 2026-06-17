@@ -1491,6 +1491,20 @@ void sceneDiskLoader_extractUltimaAssets() {
     free(spaceShapesBuffer);
   }
 
+  // Extract Mondain sprites
+  Buffer *mondainShapesBuffer = sceneDiskLoader_readDos33FileByName(disk2, "MONDAIN");
+  if (mondainShapesBuffer &&  mondainShapesBuffer->data) {
+    ShapeTable table = {0};
+    if (sceneDiskLoader_parseShapeTable(mondainShapesBuffer->data, mondainShapesBuffer->size, &table)) {
+      sceneDiskLoader_addTransparency(&ultimaAssets.mondainSprites);
+      sceneDiskLoader_renderShapeTable(&table, &ultimaAssets.mondainSprites, 16, 16, 8, 8, false);
+      sceneDiskLoader_freeShapeTable(&table);
+    }
+
+    free(mondainShapesBuffer->data);
+    free(mondainShapesBuffer);
+  }
+
   // Extract Bterra maps
   for (int i=0;i<OS_BTERRA_COUNT;i++) {
     char name[16];
@@ -1643,6 +1657,10 @@ void sceneDiskLoader_freeTextures() {
     ultimaAssets.enemySprites.textureId = 0;
     texture_free(ultimaAssets.townCastleSprites.textureId);
     ultimaAssets.townCastleSprites.textureId = 0;
+    texture_free(ultimaAssets.spaceSprites.textureId);
+    ultimaAssets.spaceSprites.textureId = 0;
+    texture_free(ultimaAssets.mondainSprites.textureId);
+    ultimaAssets.mondainSprites.textureId = 0;
     texture_free(ultimaAssets.blackSprite.textureId);
     ultimaAssets.blackSprite.textureId = 0;
   }

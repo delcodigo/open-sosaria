@@ -19,6 +19,7 @@
 #include "scenes/sceneCastle.h"
 #include "scenes/sceneDungeon.h"
 #include "scenes/sceneSpace.h"
+#include "scenes/sceneMondain.h"
 #include "maths/matrix4.h"
 #include "vehicleOverworld.h"
 #include "config.h"
@@ -485,6 +486,8 @@ static bool playerOverworld_updateBoard() {
       
       player.vehicle = 7;
       playerState = PLAYER_STATE_TIME_MACHINE;
+
+      vmExecuter_createSceneTransition(1.0f, &sceneMondain);
     } else if (vehicleTile == 6) {
       player.vehicle = 6;
       uiConsole_addMessage(ultimaStrings[142]);
