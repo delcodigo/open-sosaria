@@ -7,7 +7,7 @@ typedef struct {
     size_t size;
 } Allocation;
 
-#define MAX_ALLOCATIONS 1024
+#define MAX_ALLOCATIONS 1500
 static Allocation allocations[MAX_ALLOCATIONS];
 static size_t allocationCount = 0;
 

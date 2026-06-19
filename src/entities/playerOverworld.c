@@ -466,11 +466,11 @@ static bool playerOverworld_updateBoard() {
       uiConsole_addMessageFormat("%.15s%.15s", ultimaStrings[144], vehicleNames[vehicleTile]);
     } else if (vehicleTile == 7) {
       uiConsole_addMessage(ultimaStrings[141]);
-      uiConsole_queueMessageFormat("^T1%s", ultimaStrings[261]);
-      uiConsole_queueMessageFormat("^T1%s", ultimaStrings[262]);
-      uiConsole_queueMessageFormat("^T1%s", ultimaStrings[263]);
       
       if (player.gems[0] == 0 && player.gems[1] == 0 && player.gems[2] == 0 && player.gems[3] == 0) {
+        uiConsole_queueMessageFormat("^T1%s", ultimaStrings[261]);
+        uiConsole_queueMessageFormat("^T1%s", ultimaStrings[262]);
+        uiConsole_queueMessageFormat("^T1%s", ultimaStrings[263]);
         uiConsole_queueMessageFormat("^T1%s", ultimaStrings[264]);
         uiConsole_queueMessageFormat("^T1%s", ultimaStrings[265]);
         uiConsole_queueMessageFormat("^T1%s", ultimaStrings[266]);
@@ -478,11 +478,29 @@ static bool playerOverworld_updateBoard() {
       }
       
       if (player.gems[0] == 0 || player.gems[1] == 0 || player.gems[2] == 0 || player.gems[3] == 0) {
+        uiConsole_queueMessageFormat("^T1%s", ultimaStrings[261]);
+        uiConsole_queueMessageFormat("^T1%s", ultimaStrings[262]);
+        uiConsole_queueMessageFormat("^T1%s", ultimaStrings[263]);
         uiConsole_queueMessageFormat("^T1%s", ultimaStrings[267]);
         uiConsole_queueMessageFormat("^T1%s", ultimaStrings[268]);
         uiConsole_queueMessageFormat("^T1%s", ultimaStrings[269]);
         return true;
       }
+
+      uiConsole_queueMessageFormat("^T1%s", ultimaStrings[1242]);
+      uiConsole_queueMessageFormat("^T1%s", ultimaStrings[1243]);
+      uiConsole_queueMessageFormat("^T1%s", ultimaStrings[1244]);
+      uiConsole_queueMessageFormat("^T1%s", ultimaStrings[1245]);
+      uiConsole_queueMessageFormat("^T1%s", ultimaStrings[1246]);
+      uiConsole_queueMessageFormat("^T1%s", ultimaStrings[1247]);
+      uiConsole_queueMessageFormat("^T1%s", ultimaStrings[1248]);
+      uiConsole_queueMessageFormat("^T1%s", ultimaStrings[1249]);
+      uiConsole_queueMessageFormat("^T1%s", ultimaStrings[1250]);
+      uiConsole_queueMessageFormat("^T1%s", "    ");
+      uiConsole_queueMessageFormat("^T1%s", ultimaStrings[1251]);
+      uiConsole_queueMessageFormat("^T1%s", ultimaStrings[1252]);
+      uiConsole_queueMessageFormat("^T1%s", ultimaStrings[1253]);
+      uiConsole_queueMessageFormat("^T1%s", ultimaStrings[1254]);
       
       player.vehicle = 7;
       playerState = PLAYER_STATE_TIME_MACHINE;

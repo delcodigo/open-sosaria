@@ -1342,6 +1342,7 @@ static int sceneDiskLoader_verifyUltimaDisks() {
     {"TWN MOVE", 14336, 1},
     {"CAS MOVE", 12032, 1},
     {"DNG MOVE 1", 11520, 1},
+    {"SPA MOVE", 8448, 1},
     {"SET1", 2560, 1},
     {"SET2", 2560, 1},
     {"SET3", 2560, 1},
@@ -1359,6 +1360,8 @@ static int sceneDiskLoader_verifyUltimaDisks() {
     {"BTERRA3", 4352, 2},
     {"BTWN", 1024, 2},
     {"BCAS", 1024, 2},
+    {"TIME MACHINE", 8960, 2},
+    {"MONDAIN", 512, 2},
     {NULL, 0, 0}
   };
 
@@ -1531,6 +1534,7 @@ void sceneDiskLoader_extractUltimaAssets() {
   sceneDiskLoader_extractBinaryStrings(disk1, "SET4");
   sceneDiskLoader_extractBinaryStrings(disk1, "SET5");
   sceneDiskLoader_extractBasicStrings(disk1, "SPA MOVE");
+  sceneDiskLoader_extractBasicStrings(disk2, "TIME MACHINE");
 
   // Load town collisions map
   sceneDiskLoader_loadCollisionsMap(disk2, "BTWN", ultimaAssets.townCollisionMap);
