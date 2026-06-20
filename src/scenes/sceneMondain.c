@@ -1,3 +1,4 @@
+#include <stdbool.h>
 #include "sceneMondain.h"
 #include "entities/ui/uiConsole.h"
 #include "entities/playerMondain.h"
@@ -53,6 +54,22 @@ static void sceneMondain_initBackground() {
 
   geometry_setSprite(&screenGeometry, OS_SCREEN_WIDTH, OS_SCREEN_HEIGHT, 0, 0, 1, 1);
   screenTexture = texture_load(OS_SCREEN_WIDTH, OS_SCREEN_HEIGHT, screenData);
+}
+
+bool sceneMondain_isValidPosition(int x, int y) {
+  if (mondainMap[x][y] != 0) {
+    return false;
+  }
+
+  if (mondainPosition.x == x && mondainPosition.y == y) {
+    return false;
+  }
+
+  if (gemPosition.x == x && gemPosition.y == y) {
+    return false;
+  }
+
+  return true;
 }
 
 static void sceneMondain_init() {

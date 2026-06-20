@@ -24,7 +24,7 @@ void playerMondain_render(float *viewMatrix) {
   geometry_render(&playerGeometry, ultimaAssets.mondainSprites.textureId, transformMatrix, viewMatrix);
 }
 
-static bool playerMondain_updateMovement() {
+static bool playerMondain_updateMovement(float deltaTime) {
   int directionMessageIndex = 0;
   int dx = 0;
   int dy = 0;
@@ -46,7 +46,7 @@ static bool playerMondain_updateMovement() {
   if (dx != 0 || dy != 0) {
     uiConsole_replaceLastMessageFormat("%s%s", ultimaStrings[98], ultimaStrings[directionMessageIndex]);
 
-    if (mondainMap[player.px + dx][player.py + dy] != 0) {
+    if (!sceneMondain_isValidPosition(player.px + dx, player.py + dy)) {
       uiConsole_queueMessage(ultimaStrings[1126]);
       int damage = (int)((float)player.health / 10.0f);
       player.health -= damage;
@@ -62,6 +62,14 @@ static bool playerMondain_updateMovement() {
     keyRepeatDelay = 0.1f;
     player_consumeTownFood();
     return true;
+  } else {
+    waitingTime += deltaTime;
+    if (waitingTime >= 5.0f) {
+      waitingTime = 0.0f;
+      uiConsole_replaceLastMessageFormat("%s%s", ultimaStrings[98], ultimaStrings[99]);
+      player_waitPenalty();
+      return true;
+    }
   }
 
   return false;
@@ -71,7 +79,7 @@ bool playerMondain_update(float deltaTime) {
   bool acted = false;
 
   if (keyRepeatDelay <= 0.0f) {
-    if (playerMondain_updateMovement()) { acted = true; }
+    if (playerMondain_updateMovement(deltaTime)) { acted = true; }
   } else {
     keyRepeatDelay -= deltaTime;
     if (keyRepeatDelay < 0) {
