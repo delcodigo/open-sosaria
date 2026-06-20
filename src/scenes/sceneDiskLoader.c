@@ -1500,7 +1500,7 @@ void sceneDiskLoader_extractUltimaAssets() {
     ShapeTable table = {0};
     if (sceneDiskLoader_parseShapeTable(mondainShapesBuffer->data, mondainShapesBuffer->size, &table)) {
       sceneDiskLoader_addTransparency(&ultimaAssets.mondainSprites);
-      sceneDiskLoader_renderShapeTable(&table, &ultimaAssets.mondainSprites, 16, 16, 8, 8, false);
+      sceneDiskLoader_renderShapeTable(&table, &ultimaAssets.mondainSprites, 16, 16, 8, 8, true);
       sceneDiskLoader_freeShapeTable(&table);
     }
 

@@ -1,6 +1,7 @@
 #include "sceneMondain.h"
 #include "entities/ui/uiConsole.h"
 #include "entities/playerMondain.h"
+#include "entities/vmExecuter.h"
 #include "sceneDiskLoader.h"
 #include "data/player.h"
 #include "maths/vector2.h"
@@ -13,10 +14,11 @@ static Vector2 mondainPosition = {0};
 static Geometry gemGeometry;
 static Vector2 gemPosition = {0};
 static Geometry screenGeometry;
-static int mondainMap[19][11];
 static unsigned char screenData[OS_SCREEN_WIDTH * OS_SCREEN_HEIGHT * 4] = {0};
 static GLuint screenTexture;
 static float transformMatrix[16];
+
+int mondainMap[19][11] = {0};
 
 static void sceneMondain_initBackground() {
   for (int i=0;i<=6;i++) {
@@ -59,6 +61,7 @@ static void sceneMondain_init() {
   uiConsole_queueMessageFormat("^T1%s", ultimaStrings[1257]);
   uiConsole_queueMessageFormat("^T1%s", "    ");
   uiConsole_queueMessageFormat("^T1%s", ultimaStrings[1258]);
+  uiConsole_queueMessage(ultimaStrings[98]);
 
   player.px = 5;
   player.py = 5;
@@ -73,12 +76,12 @@ static void sceneMondain_init() {
 
   for (int i=0;i<=18;i++) {
     mondainMap[i][0] = 1;
-    mondainMap[i][10] = 1;
+    mondainMap[i][9] = 1;
   }
 
   for (int i=0;i<=10;i++) {
     mondainMap[0][i] = 1;
-    mondainMap[18][i] = 1;
+    mondainMap[17][i] = 1;
   }
 
   matrix4_setIdentity(transformMatrix);
@@ -93,11 +96,29 @@ static void sceneMondain_init() {
   geometry_setSprite(&gemGeometry, 16, 16, tx1, 0, tx2, 1);
 
   playerMondain_init();
+  playerActed = false;
 }
 
 static void sceneMondain_update(float deltaTime) {
-  float *viewMatrix = camera_getViewProjectionMatrix(&camera);
+  if (lagTime > 0) {
+    lagTime -= deltaTime;
+    if (lagTime < 0) { lagTime = 0; }
+  }
+  
+  if (!queuedMessagesCount && lagTime <= 0 && !vmExecuter_update(deltaTime)) {
+    if (playerActed) {
+      playerActed = false;
+      if (player_isAlive()) {
+        uiConsole_addMessage(ultimaStrings[98]);
+      }
+    }
 
+    if (player_isAlive() && playerMondain_update(deltaTime)) {
+      playerActed = true;
+    }
+  }
+  
+  float *viewMatrix = camera_getViewProjectionMatrix(&camera);
   matrix4_setIdentity(transformMatrix);
   geometry_render(&screenGeometry, screenTexture, transformMatrix, viewMatrix);
 

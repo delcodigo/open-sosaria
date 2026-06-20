@@ -4,5 +4,6 @@
 #include "engine/scene.h"
 
 extern Scene sceneMondain;
+extern int mondainMap[19][11];
 
 #endif
