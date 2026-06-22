@@ -3,6 +3,7 @@
 #include "entities/ui/uiConsole.h"
 #include "entities/playerMondain.h"
 #include "entities/vmExecuter.h"
+#include "entities/ui/uiztats.h"
 #include "sceneDiskLoader.h"
 #include "data/player.h"
 #include "maths/vector2.h"
@@ -123,6 +124,11 @@ static void sceneMondain_update(float deltaTime) {
   }
   
   if (!queuedMessagesCount && lagTime <= 0 && !vmExecuter_update(deltaTime)) {
+    if (ztatsActive){
+      uiZtats_update(deltaTime);
+      return;
+    }
+
     if (playerActed) {
       playerActed = false;
       if (player_isAlive()) {
