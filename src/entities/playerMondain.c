@@ -62,6 +62,8 @@ static bool playerMondain_updateMovement(float deltaTime) {
     player.px += dx;
     player.py += dy;
 
+    sceneMondain_checkForGemTransform();
+
     keyRepeatDelay = 0.1f;
     player_consumeTownFood();
     return true;

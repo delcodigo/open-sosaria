@@ -1,4 +1,5 @@
 #include <stdbool.h>
+#include <math.h>
 #include "sceneMondain.h"
 #include "entities/ui/uiConsole.h"
 #include "entities/playerMondain.h"
@@ -19,6 +20,7 @@ static Geometry screenGeometry;
 static unsigned char screenData[OS_SCREEN_WIDTH * OS_SCREEN_HEIGHT * 4] = {0};
 static GLuint screenTexture;
 static float transformMatrix[16];
+static bool isMondainActive = false;
 
 int mondainMap[19][11] = {0};
 
@@ -73,6 +75,24 @@ bool sceneMondain_isValidPosition(int x, int y) {
   return true;
 }
 
+void sceneMondain_checkForGemTransform() {
+  if (isMondainActive) { 
+    return; 
+  }
+
+  int dx = player.px - gemPosition.x;
+  int dy = player.py - gemPosition.y;
+  float distance = sqrtf(dx * dx + dy * dy);
+
+  if (distance < 1.5f) {
+    geometry_free(&gemGeometry);
+    float tx1 = 80.0f / (float) ultimaAssets.mondainSprites.width;
+    float tx2 = 96.0f / (float) ultimaAssets.mondainSprites.width;
+    geometry_setSprite(&gemGeometry, 16, 16, tx1, 0, tx2, 1);
+    isMondainActive = true;
+  }
+}
+
 static void sceneMondain_init() {
   uiConsole_queueMessageFormat("^T1%s", ultimaStrings[1255]);
   uiConsole_queueMessageFormat("^T1%s", ultimaStrings[1256]);
@@ -115,6 +135,7 @@ static void sceneMondain_init() {
 
   playerMondain_init();
   playerActed = false;
+  isMondainActive = false;
 }
 
 static void sceneMondain_update(float deltaTime) {

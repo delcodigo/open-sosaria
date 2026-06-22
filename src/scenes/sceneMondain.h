@@ -7,5 +7,6 @@ extern Scene sceneMondain;
 extern int mondainMap[19][11];
 
 bool sceneMondain_isValidPosition(int x, int y);
+void sceneMondain_checkForGemTransform();
 
 #endif
