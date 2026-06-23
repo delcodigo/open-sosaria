@@ -223,6 +223,35 @@ static bool playerMondain_updateXit() {
   return false;
 }
 
+static bool playerMondain_updateGet() {
+  if (input.g == 1) {
+    input.g = 2;
+
+    uiConsole_replaceLastMessageFormat("%s%s", ultimaStrings[98], ultimaStrings[1166]);
+
+    if (!isMondainActive) {
+      isMondainActive = true;
+    }
+
+    if (sceneMondain_getDistanceToGem() >= 1.5f || !sceneMondain_isGemActive()) {
+      uiConsole_queueMessage(ultimaStrings[1167]);
+      return true;
+    }
+
+    sceneMondain_destroyGem();
+    int damage = (int)((float) player.health * 0.75f);
+    player.health -= damage;
+
+    uiConsole_queueMessageFormat("%s%d", ultimaStrings[1168], damage);
+    uiConsole_queueMessage(ultimaStrings[1169]);
+    uiConsole_updateStats();
+
+    return true;
+  }
+
+  return false;
+}
+
 bool playerMondain_update(float deltaTime) {
   bool acted = false;
 
@@ -241,6 +270,7 @@ bool playerMondain_update(float deltaTime) {
         if (playerMondain_updateTalking()) { acted = true; } else
         if (playerMondain_updateUnlocking()) { acted = true; } else
         if (playerMondain_updateXit()) { acted = true; } else
+        if (playerMondain_updateGet()) { acted = true; } else
         if (playerCommons_updateZtats()) { acted = true; } else
         if (playerCommons_updateWait()) { acted = true; } else
         if (playerMondain_updateMovement(deltaTime)) { acted = true; }

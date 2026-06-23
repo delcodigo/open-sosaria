@@ -20,8 +20,8 @@ static Geometry screenGeometry;
 static unsigned char screenData[OS_SCREEN_WIDTH * OS_SCREEN_HEIGHT * 4] = {0};
 static GLuint screenTexture;
 static float transformMatrix[16];
-static bool isMondainActive = false;
 
+bool isMondainActive = false;
 int mondainMap[19][11] = {0};
 
 static void sceneMondain_initBackground() {
@@ -75,22 +75,28 @@ bool sceneMondain_isValidPosition(int x, int y) {
   return true;
 }
 
-void sceneMondain_checkForGemTransform() {
-  if (isMondainActive) { 
-    return; 
-  }
-
+float sceneMondain_getDistanceToGem() {
   int dx = player.px - gemPosition.x;
   int dy = player.py - gemPosition.y;
-  float distance = sqrtf(dx * dx + dy * dy);
+  return sqrtf(dx * dx + dy * dy);
+}
 
-  if (distance < 1.5f) {
+void sceneMondain_checkForGemTransform() {
+  if (sceneMondain_getDistanceToGem() < 1.5f && sceneMondain_isGemActive()) {
     geometry_free(&gemGeometry);
     float tx1 = 80.0f / (float) ultimaAssets.mondainSprites.width;
     float tx2 = 96.0f / (float) ultimaAssets.mondainSprites.width;
     geometry_setSprite(&gemGeometry, 16, 16, tx1, 0, tx2, 1);
     isMondainActive = true;
   }
+}
+
+bool sceneMondain_isGemActive() {
+  return gemPosition.x >= 0;
+}
+
+void sceneMondain_destroyGem() {
+  gemPosition.x = -15;
 }
 
 static void sceneMondain_init() {
