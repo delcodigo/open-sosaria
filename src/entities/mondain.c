@@ -1,5 +1,6 @@
 #include "mondain.h"
 #include "entities/ui/uiConsole.h"
+#include "entities/lightningBoltEffect.h"
 #include "scenes/sceneDiskLoader.h"
 #include "maths/matrix4.h"
 #include "utils.h"
@@ -48,6 +49,8 @@ void mondain_update() {
   if (mondain.state == MONDAIN_STATE_DEFEATED) {
     return;
   }
+
+  lightningBoltEffect_cast();
 }
 
 void mondain_render(float *viewMatrix) {
