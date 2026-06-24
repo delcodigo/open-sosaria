@@ -47,6 +47,6 @@ void sceneDiskLoader_freeTextures();
 
 extern Scene sceneDiskLoader;
 extern UltimaAssets ultimaAssets;
-extern char ultimaStrings[1200][41];
+extern char ultimaStrings[1500][41];
 
 #endif

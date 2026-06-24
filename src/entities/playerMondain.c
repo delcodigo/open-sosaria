@@ -8,6 +8,7 @@
 #include "engine/input.h"
 #include "entities/ui/uiConsole.h"
 #include "playerCommons.h"
+#include "mondain.h"
 
 static Geometry playerGeometry;
 static float transformMatrix[16];
@@ -229,8 +230,8 @@ static bool playerMondain_updateGet() {
 
     uiConsole_replaceLastMessageFormat("%s%s", ultimaStrings[98], ultimaStrings[1166]);
 
-    if (!isMondainActive) {
-      isMondainActive = true;
+    if (mondain.state == MONDAIN_STATE_IDLE) {
+      mondain.state = MONDAIN_STATE_ACTIVE;
     }
 
     if (sceneMondain_getDistanceToGem() >= 1.5f || !sceneMondain_isGemActive()) {

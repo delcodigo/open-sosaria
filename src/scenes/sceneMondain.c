@@ -5,15 +5,15 @@
 #include "entities/playerMondain.h"
 #include "entities/vmExecuter.h"
 #include "entities/ui/uiztats.h"
+#include "entities/mondain.h"
 #include "sceneDiskLoader.h"
 #include "data/player.h"
 #include "maths/vector2.h"
 #include "maths/matrix4.h"
 #include "engine/geometry.h"
 #include "engine/texture.h"
+#include "utils.h"
 
-static Geometry mondainGeometry;
-static Vector2 mondainPosition = {0};
 static Geometry gemGeometry;
 static Vector2 gemPosition = {0};
 static Geometry screenGeometry;
@@ -21,7 +21,6 @@ static unsigned char screenData[OS_SCREEN_WIDTH * OS_SCREEN_HEIGHT * 4] = {0};
 static GLuint screenTexture;
 static float transformMatrix[16];
 
-bool isMondainActive = false;
 int mondainMap[19][11] = {0};
 
 static void sceneMondain_initBackground() {
@@ -64,7 +63,7 @@ bool sceneMondain_isValidPosition(int x, int y) {
     return false;
   }
 
-  if (mondainPosition.x == x && mondainPosition.y == y) {
+  if (mondain.position.x == x && mondain.position.y == y) {
     return false;
   }
 
@@ -87,7 +86,7 @@ void sceneMondain_checkForGemTransform() {
     float tx1 = 80.0f / (float) ultimaAssets.mondainSprites.width;
     float tx2 = 96.0f / (float) ultimaAssets.mondainSprites.width;
     geometry_setSprite(&gemGeometry, 16, 16, tx1, 0, tx2, 1);
-    isMondainActive = true;
+    mondain.state = MONDAIN_STATE_ACTIVE;
   }
 }
 
@@ -110,9 +109,6 @@ static void sceneMondain_init() {
   player.px = 5;
   player.py = 5;
 
-  mondainPosition.x = 15;
-  mondainPosition.y = 6;
-
   gemPosition.x = 14;
   gemPosition.y = 6;
 
@@ -131,17 +127,13 @@ static void sceneMondain_init() {
   matrix4_setIdentity(transformMatrix);
   camera_setPosition3f(&camera, 0.0f, 0.0f, 10.0f);
 
-  float tx1 = 16.0f / (float) ultimaAssets.mondainSprites.width;
-  float tx2 = 32.0f / (float) ultimaAssets.mondainSprites.width;
-  geometry_setSprite(&mondainGeometry, 16, 16, tx1, 0, tx2, 1);
-
-  tx1 = 32.0f / (float) ultimaAssets.mondainSprites.width;
-  tx2 = 48.0f / (float) ultimaAssets.mondainSprites.width;
+  float tx1 = 32.0f / (float) ultimaAssets.mondainSprites.width;
+  float tx2 = 48.0f / (float) ultimaAssets.mondainSprites.width;
   geometry_setSprite(&gemGeometry, 16, 16, tx1, 0, tx2, 1);
 
+  mondain_init();
   playerMondain_init();
   playerActed = false;
-  isMondainActive = false;
 }
 
 static void sceneMondain_update(float deltaTime) {
@@ -158,6 +150,7 @@ static void sceneMondain_update(float deltaTime) {
 
     if (playerActed) {
       playerActed = false;
+      mondain_update();
       if (player_isAlive()) {
         uiConsole_addMessage(ultimaStrings[98]);
       }
@@ -172,8 +165,7 @@ static void sceneMondain_update(float deltaTime) {
   matrix4_setIdentity(transformMatrix);
   geometry_render(&screenGeometry, screenTexture, transformMatrix, viewMatrix);
 
-  matrix4_setPosition(transformMatrix, mondainPosition.x * 15.0f, mondainPosition.y * 15.0f, 1);
-  geometry_render(&mondainGeometry, ultimaAssets.mondainSprites.textureId, transformMatrix, viewMatrix);
+  mondain_render(viewMatrix);
 
   matrix4_setPosition(transformMatrix, gemPosition.x * 15.0f, gemPosition.y * 15.0f, 1);
   geometry_render(&gemGeometry, ultimaAssets.mondainSprites.textureId, transformMatrix, viewMatrix);
@@ -185,8 +177,8 @@ static void sceneMondain_update(float deltaTime) {
 
 static void sceneMondain_free() {
   texture_free(screenTexture);
-  geometry_free(&mondainGeometry);
   geometry_free(&gemGeometry);
+  mondain_free();
   playerMondain_free();
 }
 

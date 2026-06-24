@@ -23,7 +23,7 @@
 
 static Text diskMsg;
 static char diskMsgText[41] = {0};
-char ultimaStrings[1200][41];
+char ultimaStrings[1500][41];
 static int ultimaStringCount = 0;
 UltimaAssets ultimaAssets = {0};
 float loaderTime = 0.0f;
