@@ -17,6 +17,7 @@ typedef struct {
   int hp;
   MONDAIN_STATE state;
   float transformMatrix[16];
+  int geometryIndex;
 } Mondain;
 
 extern Mondain mondain;

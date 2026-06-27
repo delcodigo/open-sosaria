@@ -487,7 +487,7 @@ static bool playerOverworld_updateBoard() {
         return true;
       }
 
-      uiConsole_queueMessageFormat("^T1%s", ultimaStrings[1242]);
+      /*uiConsole_queueMessageFormat("^T1%s", ultimaStrings[1242]);
       uiConsole_queueMessageFormat("^T1%s", ultimaStrings[1243]);
       uiConsole_queueMessageFormat("^T1%s", ultimaStrings[1244]);
       uiConsole_queueMessageFormat("^T1%s", ultimaStrings[1245]);
@@ -500,7 +500,7 @@ static bool playerOverworld_updateBoard() {
       uiConsole_queueMessageFormat("^T1%s", ultimaStrings[1251]);
       uiConsole_queueMessageFormat("^T1%s", ultimaStrings[1252]);
       uiConsole_queueMessageFormat("^T1%s", ultimaStrings[1253]);
-      uiConsole_queueMessageFormat("^T1%s", ultimaStrings[1254]);
+      uiConsole_queueMessageFormat("^T1%s", ultimaStrings[1254]);*/
       
       player.vehicle = 7;
       playerState = PLAYER_STATE_TIME_MACHINE;

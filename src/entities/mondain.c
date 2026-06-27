@@ -1,27 +1,122 @@
+#include <math.h>
 #include "mondain.h"
 #include "entities/ui/uiConsole.h"
 #include "entities/lightningBoltEffect.h"
+#include "data/player.h"
 #include "scenes/sceneDiskLoader.h"
+#include "scenes/sceneMondain.h"
 #include "maths/matrix4.h"
 #include "utils.h"
 
 Mondain mondain;
 
 static void mondain_updateSprite(int spriteIndex) {
+  if (mondain.geometryIndex == spriteIndex) { 
+    return; 
+  }
+
   float tx1 = (16.0f * spriteIndex) / (float) ultimaAssets.mondainSprites.width;
   float tx2 = (16.0f * spriteIndex + 16.0f) / (float) ultimaAssets.mondainSprites.width;
   geometry_setSprite(&mondain.geometry, 16, 16, tx1, 0, tx2, 1);
+  mondain.geometryIndex = spriteIndex;
 }
 
 void mondain_init() {
   mondain.position.x = 15;
   mondain.position.y = 6;
   mondain.state = MONDAIN_STATE_IDLE;
+  mondain.geometryIndex = 0;
   mondain.hp = 1000;
 
   matrix4_setIdentity(mondain.transformMatrix);
 
   mondain_updateSprite(1);
+}
+
+static void mondain_updateFlee() {
+  int dx = (player.px - mondain.position.x > 0) ? -1 : (player.px - mondain.position.x < 0) ? 1 : 0;
+  int dy = (player.py - mondain.position.y > 0) ? -1 : (player.py - mondain.position.y < 0) ? 1 : 0;
+
+  if (sceneMondain_isValidPosition(mondain.position.x, mondain.position.y+dy) && dy != 0) {
+    dx = 0;
+  } else if (sceneMondain_isValidPosition(mondain.position.x+dx, mondain.position.y)) {
+    dy = 0;
+  }
+
+  if (dx != 0 || dy != 0) {
+    mondain.position.x += dx;
+    mondain.position.y += dy;
+    mondain_updateSprite(6);
+  } else {
+    mondain.hp += 10;
+    if (mondain.hp > 500) {
+      mondain.state = MONDAIN_STATE_ACTIVE;
+      mondain_updateSprite(1);
+    }
+  }
+}
+
+static void mondain_attack() {
+  int dx = player.px - mondain.position.x;
+  int dy = player.py - mondain.position.y;
+  float distance = sqrtf(dx*dx + dy*dy);
+  int attackType = 0;
+
+  if (distance < 1.5f) {
+    uiConsole_queueMessage(ultimaStrings[1225]);
+    attackType = 1;
+  } else if (distance < 7 && rand01() > 0.5f) {
+    uiConsole_queueMessage(ultimaStrings[1226]);
+    attackType = 2;
+  } else {
+    dx = (player.px - mondain.position.x > 0) ? 1 : (player.px - mondain.position.x < 0) ? -1 : 0;
+    dy = (player.py - mondain.position.y > 0) ? 1 : (player.py - mondain.position.y < 0) ? -1 : 0;
+
+    if (sceneMondain_isValidPosition(mondain.position.x, mondain.position.y+dy) && dy != 0) {
+      dx = 0;
+    } else if (sceneMondain_isValidPosition(mondain.position.x+dx, mondain.position.y)) {
+      dy = 0;
+    }
+
+    if (dx != 0 || dy != 0) {
+      mondain.position.x += dx;
+      mondain.position.y += dy;
+      mondain_updateSprite(1);
+    }
+  }
+
+  if (attackType == 1) {
+    float accuracy = rand01() * 300.0f;
+    float defense = (float)(player.strength + player.agility + player.stamina) / 3.0f + player.armor * 2.0f;
+    if (accuracy < defense) {
+      uiConsole_queueMessage(ultimaStrings[1227]);
+      return;
+    }
+
+    int damage = (int)((float)player.health / 25.0f + rand01() * 20.0f);
+    player.health -= damage;
+    
+    uiConsole_queueMessageFormat("%s%d", ultimaStrings[1228], damage);
+    uiConsole_updateStats();
+  } else if (attackType == 2) {
+    int magicType = (int)(rand01() * 3 + 1);
+    switch (magicType) {
+      case 1:
+        uiConsole_queueMessage(ultimaStrings[1229]);
+        if (rand01() * 100 > player.agility && rand01() * 100 > player.intelligence) {
+          int damage = (int)((float)player.health / 500.0f + rand01() * 100.0f);
+          player.health -= damage;
+          uiConsole_queueMessageFormat("%s%d", ultimaStrings[1229], damage);
+        } else {
+          uiConsole_queueMessage(ultimaStrings[1230]);
+        }
+        break;
+      case 2:
+        break;
+      case 3:
+        break;
+    }
+  }
 }
 
 void mondain_update() {
@@ -51,6 +146,11 @@ void mondain_update() {
   }
 
   lightningBoltEffect_cast();
+  if (mondain.state == MONDAIN_STATE_TRANSFORMED) {
+    mondain_updateFlee();
+  }
+
+  mondain_attack();
 }
 
 void mondain_render(float *viewMatrix) {
