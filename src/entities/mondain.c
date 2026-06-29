@@ -107,6 +107,7 @@ static void mondain_attack() {
           int damage = (int)((float)player.health / 500.0f + rand01() * 100.0f);
           player.health -= damage;
           uiConsole_queueMessageFormat("%s%d", ultimaStrings[1230], damage);
+          uiConsole_updateStats();
         } else {
           uiConsole_queueMessage(ultimaStrings[1231]);
         }

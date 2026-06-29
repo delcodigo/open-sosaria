@@ -103,6 +103,13 @@ static void sceneMondain_init() {
   playerActed = false;
 }
 
+static void sceneMondain_handlePlayerDeath() {
+  uiConsole_queueMessageFormat("^T1%s%s", player.name, ultimaStrings[1238]);
+  uiConsole_queueMessageFormat("^T1%s", ultimaStrings[1239]);
+  uiConsole_queueMessageFormat("^T1%s", ultimaStrings[1240]);
+  uiConsole_queueMessageFormat("^T1%s", ultimaStrings[1241]);
+}
+
 static void sceneMondain_update(float deltaTime) {
   if (lagTime > 0) {
     lagTime -= deltaTime;
@@ -120,6 +127,8 @@ static void sceneMondain_update(float deltaTime) {
       mondain_update();
       if (player_isAlive()) {
         uiConsole_addMessage(ultimaStrings[98]);
+      } else {
+        sceneMondain_handlePlayerDeath();
       }
     }
 
