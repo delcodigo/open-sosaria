@@ -106,14 +106,32 @@ static void mondain_attack() {
         if (rand01() * 100 > player.agility && rand01() * 100 > player.intelligence) {
           int damage = (int)((float)player.health / 500.0f + rand01() * 100.0f);
           player.health -= damage;
-          uiConsole_queueMessageFormat("%s%d", ultimaStrings[1229], damage);
+          uiConsole_queueMessageFormat("%s%d", ultimaStrings[1230], damage);
         } else {
-          uiConsole_queueMessage(ultimaStrings[1230]);
+          uiConsole_queueMessage(ultimaStrings[1231]);
         }
         break;
       case 2:
+        uiConsole_queueMessage(ultimaStrings[1232]);
+        if (rand01() > 0.7f) {
+          uiConsole_queueMessage(ultimaStrings[1233]);
+          for (int i=1;i<=6;i++) {
+            *((&player.health)+i) = (int)(*((&player.health)+i) * 0.9f);
+          }
+        } else {
+          uiConsole_queueMessage(ultimaStrings[1234]);
+        }
         break;
       case 3:
+        uiConsole_queueMessage(ultimaStrings[1235]);
+        if (rand01() >= 0.7) {
+          int damage = (int)(rand01() * ((float) player.health / 20.0f));
+          player.health -= damage;
+          uiConsole_queueMessageFormat("%s%d", ultimaStrings[1237], damage);
+          uiConsole_updateStats();
+        } else {
+          uiConsole_queueMessage(ultimaStrings[1236]);
+        }
         break;
     }
   }

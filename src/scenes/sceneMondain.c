@@ -66,11 +66,11 @@ void sceneMondain_destroyGem() {
 }
 
 static void sceneMondain_init() {
-  /*uiConsole_queueMessageFormat("^T1%s", ultimaStrings[1255]);
+  uiConsole_queueMessageFormat("^T1%s", ultimaStrings[1255]);
   uiConsole_queueMessageFormat("^T1%s", ultimaStrings[1256]);
   uiConsole_queueMessageFormat("^T1%s", ultimaStrings[1257]);
   uiConsole_queueMessageFormat("^T1%s", "    ");
-  uiConsole_queueMessageFormat("^T1%s", ultimaStrings[1258]);*/
+  uiConsole_queueMessageFormat("^T1%s", ultimaStrings[1258]);
   uiConsole_queueMessage(ultimaStrings[98]);
 
   player.px = 5;
