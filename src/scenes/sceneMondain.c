@@ -68,11 +68,11 @@ void sceneMondain_destroyGem() {
 }
 
 static void sceneMondain_init() {
-  /*uiConsole_queueMessageFormat("^T1%s", ultimaStrings[1255]);
+  uiConsole_queueMessageFormat("^T1%s", ultimaStrings[1255]);
   uiConsole_queueMessageFormat("^T1%s", ultimaStrings[1256]);
   uiConsole_queueMessageFormat("^T1%s", ultimaStrings[1257]);
   uiConsole_queueMessageFormat("^T1%s", "    ");
-  uiConsole_queueMessageFormat("^T1%s", ultimaStrings[1258]);*/
+  uiConsole_queueMessageFormat("^T1%s", ultimaStrings[1258]);
   uiConsole_queueMessage(ultimaStrings[98]);
 
   player.px = 5;
@@ -118,7 +118,7 @@ static void sceneMondain_update(float deltaTime) {
     if (lagTime < 0) { lagTime = 0; }
   }
   
-  if (!queuedMessagesCount && lagTime <= 0 && !vmExecuter_update(deltaTime) && !lightningBoltEffect_isBusy()) {
+  if (!queuedMessagesCount && lagTime <= 0 && !vmExecuter_update(deltaTime)) {
     if (ztatsActive){
       uiZtats_update(deltaTime);
       return;

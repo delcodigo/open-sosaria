@@ -62,6 +62,8 @@ void lightningBoltEffect_init() {
 }
 
 void lightningBoltEffect_cast() {
+	if (lightningBoltEffect_isBusy()) { return; }
+	
 	do {
 		lightningBoltPosition.x = (int)(rand01() * 10 + 4);
 		lightningBoltPosition.y = (int)(rand01() * 6 + 2);

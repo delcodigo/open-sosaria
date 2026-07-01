@@ -270,6 +270,7 @@ bool playerMondain_updateAttack() {
 
     if (player.weapon == 4 || player.weapon == 8 || player.weapon == 9 || player.weapon == 10) {
       uiConsole_queueMessage(ultimaStrings[1130]);
+      lagTime = 0.75f;
       return true;
     }
 
@@ -280,10 +281,10 @@ bool playerMondain_updateAttack() {
 
     int attackRoll = (int)((float)(player.strength + player.agility) / 2.0f * rand01() + player.weapon * 3.0f);
     int defenseRoll = 50 + rand01() * 100.0f;
-    attackRoll = defenseRoll + 100;
 
     if (defenseRoll > attackRoll && attackRoll < 70) {
       uiConsole_queueMessage(ultimaStrings[1131]);
+      lagTime = 0.75f;
       return true;
     }
 
@@ -291,15 +292,15 @@ bool playerMondain_updateAttack() {
     int dy = player.py - mondain.py;
     if (sqrt(dx*dx + dy*dy) > range) {
       uiConsole_queueMessage(ultimaStrings[1132]);
+      lagTime = 0.75f;
       return true;
     }
 
     int damage = (int)(rand01() * ((float)player.strength / 5.0f + player.weapon * 3.0f) + (float) player.strength / 5.0f);
-    damage = 200;
     mondain.hp -= damage;
 
     uiConsole_queueMessageFormat("%s%d", ultimaStrings[1133], damage);
-    lagTime = 1.5f;
+    lagTime = 0.75f;
 
     if (mondain.hp > 500 || mondain.state == MONDAIN_STATE_DEFEATED) {
       return true;
