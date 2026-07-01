@@ -5,5 +5,6 @@
 
 int file_exists(const char *filename);
 float rand01();
+int getSign(int value);
 
 #endif

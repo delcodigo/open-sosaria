@@ -15,6 +15,10 @@ static void mondain_updateSprite(int spriteIndex) {
     return; 
   }
 
+  if (mondain.geometryIndex != 0) {
+    geometry_free(&mondain.geometry);
+  }
+
   float tx1 = (16.0f * spriteIndex) / (float) ultimaAssets.mondainSprites.width;
   float tx2 = (16.0f * spriteIndex + 16.0f) / (float) ultimaAssets.mondainSprites.width;
   geometry_setSprite(&mondain.geometry, 16, 16, tx1, 0, tx2, 1);
@@ -22,8 +26,8 @@ static void mondain_updateSprite(int spriteIndex) {
 }
 
 void mondain_init() {
-  mondain.position.x = 15;
-  mondain.position.y = 6;
+  mondain.px = 15;
+  mondain.py = 6;
   mondain.state = MONDAIN_STATE_IDLE;
   mondain.geometryIndex = 0;
   mondain.hp = 1000;
@@ -34,18 +38,18 @@ void mondain_init() {
 }
 
 static void mondain_updateFlee() {
-  int dx = (player.px - mondain.position.x > 0) ? -1 : (player.px - mondain.position.x < 0) ? 1 : 0;
-  int dy = (player.py - mondain.position.y > 0) ? -1 : (player.py - mondain.position.y < 0) ? 1 : 0;
+  int dx = -getSign(player.px - mondain.px);
+  int dy = -getSign(player.py - mondain.py);
 
-  if (sceneMondain_isValidPosition(mondain.position.x, mondain.position.y+dy) && dy != 0) {
+  if (sceneMondain_isValidPosition(mondain.px, mondain.py+dy) && dy != 0) {
     dx = 0;
-  } else if (sceneMondain_isValidPosition(mondain.position.x+dx, mondain.position.y)) {
+  } else if (sceneMondain_isValidPosition(mondain.px+dx, mondain.py)) {
     dy = 0;
   }
 
-  if (dx != 0 || dy != 0) {
-    mondain.position.x += dx;
-    mondain.position.y += dy;
+  if ((dx != 0 || dy != 0) && sceneMondain_isValidPosition(mondain.px+dx, mondain.py+dy)) {
+    mondain.px += dx;
+    mondain.py += dy;
     mondain_updateSprite(6);
   } else {
     mondain.hp += 10;
@@ -57,8 +61,8 @@ static void mondain_updateFlee() {
 }
 
 static void mondain_attack() {
-  int dx = player.px - mondain.position.x;
-  int dy = player.py - mondain.position.y;
+  int dx = player.px - mondain.px;
+  int dy = player.py - mondain.py;
   float distance = sqrtf(dx*dx + dy*dy);
   int attackType = 0;
 
@@ -69,18 +73,18 @@ static void mondain_attack() {
     uiConsole_queueMessage(ultimaStrings[1226]);
     attackType = 2;
   } else {
-    dx = (player.px - mondain.position.x > 0) ? 1 : (player.px - mondain.position.x < 0) ? -1 : 0;
-    dy = (player.py - mondain.position.y > 0) ? 1 : (player.py - mondain.position.y < 0) ? -1 : 0;
+    dx = getSign(player.px - mondain.px);
+    dy = getSign(player.py - mondain.py);
 
-    if (sceneMondain_isValidPosition(mondain.position.x, mondain.position.y+dy) && dy != 0) {
+    if (sceneMondain_isValidPosition(mondain.px, mondain.py+dy) && dy != 0) {
       dx = 0;
-    } else if (sceneMondain_isValidPosition(mondain.position.x+dx, mondain.position.y)) {
+    } else if (sceneMondain_isValidPosition(mondain.px+dx, mondain.py)) {
       dy = 0;
     }
 
-    if (dx != 0 || dy != 0) {
-      mondain.position.x += dx;
-      mondain.position.y += dy;
+    if ((dx != 0 || dy != 0) && sceneMondain_isValidPosition(mondain.px+dx, mondain.py+dy)) {
+      mondain.px += dx;
+      mondain.py += dy;
       mondain_updateSprite(1);
     }
   }
@@ -138,6 +142,16 @@ static void mondain_attack() {
   }
 }
 
+void mondain_transform() {
+  mondain.state = MONDAIN_STATE_TRANSFORMED;
+  mondain_updateSprite(6);
+}
+
+void mondain_defeat() {
+  mondain.state = MONDAIN_STATE_DEFEATED;
+  mondain_updateSprite(7);
+}
+
 void mondain_update() {
   if (mondain.state == MONDAIN_STATE_IDLE) {
     if (rand01() > 0.8f) {
@@ -155,9 +169,7 @@ void mondain_update() {
   }
 
   if (mondain.state == MONDAIN_STATE_DEFEATED && mondain.hp > 0) {
-    mondain.state = MONDAIN_STATE_TRANSFORMED;
-    geometry_free(&mondain.geometry);
-    mondain_updateSprite(6);
+    mondain_transform();
   }
 
   if (mondain.state == MONDAIN_STATE_DEFEATED) {
@@ -167,13 +179,13 @@ void mondain_update() {
   lightningBoltEffect_cast();
   if (mondain.state == MONDAIN_STATE_TRANSFORMED) {
     mondain_updateFlee();
+  } else {
+    mondain_attack();
   }
-
-  mondain_attack();
 }
 
 void mondain_render(float *viewMatrix) {
-  matrix4_setPosition(mondain.transformMatrix, mondain.position.x * 15, mondain.position.y * 15, 1);
+  matrix4_setPosition(mondain.transformMatrix, mondain.px * 15, mondain.py * 15, 1);
   geometry_render(&mondain.geometry, ultimaAssets.mondainSprites.textureId, mondain.transformMatrix, viewMatrix);
 }
 

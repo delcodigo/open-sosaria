@@ -26,5 +26,6 @@ bool vmExecuter_update(float deltaTime);
 void vmExecuter_createSceneTransition(float waitTime, Scene *nextScene);
 void vmExecuter_createWait(float waitTime);
 void vmExecuter_queueAndReplaceConsoleMessage(char *message1, char *message2, float waitTime);
+void vmExecuter_waitAndQueueConsoleMessage(char *message, float waitTime);
 
 #endif

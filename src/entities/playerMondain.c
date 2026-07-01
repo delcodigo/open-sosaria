@@ -1,13 +1,17 @@
+#include <math.h>
 #include "playerMondain.h"
 #include "engine/geometry.h"
 #include "engine/texture.h"
 #include "data/player.h"
+#include "data/bevery.h"
 #include "scenes/sceneDiskLoader.h"
 #include "scenes/sceneMondain.h"
 #include "maths/matrix4.h"
 #include "engine/input.h"
 #include "entities/ui/uiConsole.h"
+#include "entities/vmExecuter.h"
 #include "playerCommons.h"
+#include "utils.h"
 #include "mondain.h"
 
 static Geometry playerGeometry;
@@ -253,6 +257,68 @@ static bool playerMondain_updateGet() {
   return false;
 }
 
+bool playerMondain_updateAttack() {
+  if (input.a == 1) {
+    input.a = 2;
+
+    if (mondain.state == MONDAIN_STATE_IDLE) {
+      mondain.state = MONDAIN_STATE_ACTIVE;
+    }
+
+    uiConsole_replaceLastMessageFormat("%s%s", ultimaStrings[98], ultimaStrings[1128]);
+    uiConsole_queueMessageFormat("%s%s", ultimaStrings[1129], weaponNames[player.weapon]);
+
+    if (player.weapon == 4 || player.weapon == 8 || player.weapon == 9 || player.weapon == 10) {
+      uiConsole_queueMessage(ultimaStrings[1130]);
+      return true;
+    }
+
+    float range = 1.5f;
+    if (player.weapon == 7 || player.weapon == 12 || player.weapon > 13) {
+      range = 4;
+    }
+
+    int attackRoll = (int)((float)(player.strength + player.agility) / 2.0f * rand01() + player.weapon * 3.0f);
+    int defenseRoll = 50 + rand01() * 100.0f;
+    attackRoll = defenseRoll + 100;
+
+    if (defenseRoll > attackRoll && attackRoll < 70) {
+      uiConsole_queueMessage(ultimaStrings[1131]);
+      return true;
+    }
+
+    int dx = player.px - mondain.px;
+    int dy = player.py - mondain.py;
+    if (sqrt(dx*dx + dy*dy) > range) {
+      uiConsole_queueMessage(ultimaStrings[1132]);
+      return true;
+    }
+
+    int damage = (int)(rand01() * ((float)player.strength / 5.0f + player.weapon * 3.0f) + (float) player.strength / 5.0f);
+    damage = 200;
+    mondain.hp -= damage;
+
+    uiConsole_queueMessageFormat("%s%d", ultimaStrings[1133], damage);
+    lagTime = 1.5f;
+
+    if (mondain.hp > 500 || mondain.state == MONDAIN_STATE_DEFEATED) {
+      return true;
+    }
+
+    if (mondain.hp > 0) {
+      mondain_transform();
+    } else {
+      mondain_defeat();
+      uiConsole_queueMessage(ultimaStrings[1134]);
+      vmExecuter_waitAndQueueConsoleMessage(ultimaStrings[1135], 2.0f);
+    }
+
+    return true;
+  }
+
+  return false;
+}
+
 bool playerMondain_update(float deltaTime) {
   bool acted = false;
 
@@ -273,6 +339,7 @@ bool playerMondain_update(float deltaTime) {
         if (playerMondain_updateXit()) { acted = true; } else
         if (playerMondain_updateGet()) { acted = true; } else
         if (playerCommons_updateZtats()) { acted = true; } else
+        if (playerMondain_updateAttack()) { acted = true; } else
         if (playerCommons_updateWait()) { acted = true; } else
         if (playerMondain_updateMovement(deltaTime)) { acted = true; }
         break;

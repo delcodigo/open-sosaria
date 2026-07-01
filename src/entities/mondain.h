@@ -2,7 +2,6 @@
 #define OS_MONDAIN_H
 
 #include "engine/geometry.h"
-#include "maths/vector2.h"
 
 typedef enum {
   MONDAIN_STATE_IDLE,
@@ -12,7 +11,8 @@ typedef enum {
 } MONDAIN_STATE;
 
 typedef struct {
-  Vector2 position;
+  int px;
+  int py;
   Geometry geometry;
   int hp;
   MONDAIN_STATE state;
@@ -23,6 +23,8 @@ typedef struct {
 extern Mondain mondain;
 
 void mondain_init();
+void mondain_transform();
+void mondain_defeat();
 void mondain_update();
 void mondain_render(float *viewMatrix);
 void mondain_free();

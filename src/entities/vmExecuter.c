@@ -86,3 +86,13 @@ void vmExecuter_queueAndReplaceConsoleMessage(char *message1, char *message2, fl
   strcpy(instructions[2].consoleMessage.message, message2);
   vmExecuter_init(instructions, 3);
 }
+
+void vmExecuter_waitAndQueueConsoleMessage(char *message, float waitTime) {
+  VMInstruction *instructions = malloc(2 * sizeof(VMInstruction));
+  instructions[0].type = VM_INSTRUCTION_TYPE_WAIT;
+  instructions[0].wait.duration = waitTime;
+  instructions[1].type = VM_INSTRUCTION_TYPE_REPLACE_CONSOLE_MESSAGE;
+  memset(instructions[1].consoleMessage.message, 0, sizeof(instructions[1].consoleMessage.message));
+  strcpy(instructions[1].consoleMessage.message, message);
+  vmExecuter_init(instructions, 2);
+}

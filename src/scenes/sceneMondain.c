@@ -26,7 +26,7 @@ bool sceneMondain_isValidPosition(int x, int y) {
     return false;
   }
 
-  if (mondain.position.x == x && mondain.position.y == y) {
+  if (mondain.px == x && mondain.py == y) {
     return false;
   }
 
@@ -53,7 +53,9 @@ void sceneMondain_checkForGemTransform() {
     float tx1 = 80.0f / (float) ultimaAssets.mondainSprites.width;
     float tx2 = 96.0f / (float) ultimaAssets.mondainSprites.width;
     geometry_setSprite(&gemGeometry, 16, 16, tx1, 0, tx2, 1);
-    mondain.state = MONDAIN_STATE_ACTIVE;
+    if (mondain.state == MONDAIN_STATE_IDLE) {
+      mondain.state = MONDAIN_STATE_ACTIVE;
+    }
   }
 }
 
@@ -66,11 +68,11 @@ void sceneMondain_destroyGem() {
 }
 
 static void sceneMondain_init() {
-  uiConsole_queueMessageFormat("^T1%s", ultimaStrings[1255]);
+  /*uiConsole_queueMessageFormat("^T1%s", ultimaStrings[1255]);
   uiConsole_queueMessageFormat("^T1%s", ultimaStrings[1256]);
   uiConsole_queueMessageFormat("^T1%s", ultimaStrings[1257]);
   uiConsole_queueMessageFormat("^T1%s", "    ");
-  uiConsole_queueMessageFormat("^T1%s", ultimaStrings[1258]);
+  uiConsole_queueMessageFormat("^T1%s", ultimaStrings[1258]);*/
   uiConsole_queueMessage(ultimaStrings[98]);
 
   player.px = 5;
