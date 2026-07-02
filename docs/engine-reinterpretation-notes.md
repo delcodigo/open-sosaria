@@ -449,6 +449,83 @@ where `rank` is the attacking monster rank.
 - **Destroy**: Destroys a force field.
 - **Kill**: Instantly kills an enemy directly in front of the player.
 
+## Mondain Final Battle
+
+### Arena Layout
+
+- The fight takes place on a **19×11** tile grid (`mondainMap[19][11]`).
+- The outer border (x=0, x=17, y=0, y=9) is walled off automatically at scene init.
+- Player starts at **(5, 5)**, Mondain at **(15, 6)**, and the Gem of Immortality at **(14, 6)**.
+
+### Mondain's State Machine and HP
+
+- Mondain starts with **1000 HP** in **IDLE** state.
+- He has four states: **IDLE → ACTIVE → TRANSFORMED → DEFEATED**.
+
+**IDLE**
+- Mondain chants occasionally (~20% chance per player turn). No attacks, no lightning.
+- He becomes **ACTIVE** the moment the player performs any of:
+  - (A)ttack, (C)ast, or (G)et command
+  - Moving within **1.5 tiles** of the Gem of Immortality
+
+**ACTIVE**
+- Mondain attacks every player turn and lightning bolts fire each turn.
+- Attacks resolve by distance:
+  - Within **1.5 tiles**: melee strike. Damage = `⌊health/25 + rand01()×20⌋`. Resisted by `(strength+agility+stamina)/3 + armor×2` vs. a `rand01()×300` accuracy roll.
+  - Within **7 tiles** (50% chance): one of three random magic attacks:
+    - **Magic Missile** — damage `⌊health/500 + rand01()×100⌋`, fully resisted if both an agility check and an intelligence check pass.
+    - **Mind Blaster** — reduces all six player stats by **10%** (70% chance to land).
+    - **Psionic Shock** — damage `⌊rand01()×health/20⌋` (30% chance to land).
+  - Otherwise: moves one step toward the player.
+- When Mondain's HP drops **below 500** (checked in `mondain_receiveDamage` after any damage), he enters **TRANSFORMED** state.
+
+**TRANSFORMED (fleeing)**
+- Mondain transforms into a bat and flees from the player each turn. Lightning bolts still fire.
+- If cornered and unable to move, he regenerates **10 HP per turn**. Once his HP climbs back above **500**, he returns to **ACTIVE**.
+- Further damage below **0** triggers **DEFEATED** state.
+
+**DEFEATED**
+- No attacks and no lightning bolts.
+- Mondain regenerates **25 HP per turn**. When his HP turns positive again, he re-enters **TRANSFORMED** state and resumes fleeing — the full cycle begins again.
+- The gem is what grants him this immortality: as long as the gem is active, defeating him is only temporary.
+
+### The Gem of Immortality
+
+- Approaching within **1.5 tiles** of the gem changes its sprite (transforms it) and activates Mondain if he was IDLE.
+- The **(G)et** command can be used to destroy the gem while adjacent. Cost: **75% of current HP**. This is required to end the fight permanently.
+- Once the gem is destroyed (`gemPosition.x` is set to `-15`), it can no longer be interacted with.
+
+### Spellcasting in the Mondain Fight
+
+Rules that differ from dungeons and the overworld:
+
+- Non-Cleric players (type ≠ 2) have a **30% spell failure** chance per cast.
+- Mondain must be within **6 tiles**; casting from farther away fails.
+- A spell charge is always consumed even on failure (except PRAY, which has no charge cost).
+
+| Spell | Index | Effect in Mondain fight |
+|---|---|---|
+| PRAY | 0 | No effect |
+| OPEN | 1 | No effect |
+| UNLOCK | 2 | No effect |
+| PROJECTILE | 3 | Damages Mondain: `⌊rand01()×(wisdom+intelligence)⌋` |
+| STEAL | 4 | No effect |
+| LADDER DOWN | 5 | No effect |
+| LADDER UP | 6 | No effect |
+| BLINK | 7 | Teleports player to a random valid empty tile |
+| CREATE | 8 | Places a wall tile one step toward Mondain from the player |
+| DESTROY | 9 | Removes a player-created wall tile toward Mondain |
+| KILL | 10 | **Doubles Mondain's HP** (a trap — the opposite of its dungeon behavior) |
+
+> **KILL edge case**: If Mondain is in DEFEATED state with negative HP, casting KILL doubles the negative value (e.g. −200 → −400), extending the regeneration time rather than helping.
+
+### Weapon Restrictions and Combat
+
+- Weapons **ROPE & SPIKES** (index 4), **AMULET** (8), **WAND** (9), and **STAFF** (10) cannot be used against Mondain — they produce no attack.
+- Ranged weapons — **BOW & ARROWS** (index 7), **PISTOL** (12), **PHAZOR** (14), and **BLASTER** (15) — have a reach of **4 tiles**. All other valid weapons are melee-range only (**1.5 tiles**).
+- Attack hit check: `attackRoll = ⌊(strength+agility)/2 × rand01()⌋ + weapon_index×3` vs. `defenseRoll = 50 + rand01()×100`. Miss when `defenseRoll > attackRoll` and `attackRoll < 70`.
+- Damage on hit: `⌊rand01() × (strength/5 + weapon_index×3) + strength/5⌋`.
+
 ## Notes
 
 These findings are based on reinterpretation and observed behavior, and should be refined further as additional engine details are validated.
