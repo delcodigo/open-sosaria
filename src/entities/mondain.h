@@ -25,6 +25,7 @@ extern Mondain mondain;
 void mondain_init();
 void mondain_transform();
 void mondain_defeat();
+void mondain_receiveDamage(int damage);
 void mondain_update();
 void mondain_render(float *viewMatrix);
 void mondain_free();

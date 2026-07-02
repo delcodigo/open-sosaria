@@ -15,6 +15,7 @@
 #include "engine/texture.h"
 #include "utils.h"
 
+static Geometry wallGeometry;
 static Geometry gemGeometry;
 static Vector2 gemPosition = {0};
 static float transformMatrix[16];
@@ -67,12 +68,16 @@ void sceneMondain_destroyGem() {
   gemPosition.x = -15;
 }
 
+void sceneMondain_setWall(int x, int y, int wallIndex) {
+  mondainMap[x][y] = wallIndex;
+}
+
 static void sceneMondain_init() {
-  uiConsole_queueMessageFormat("^T1%s", ultimaStrings[1255]);
+  /*uiConsole_queueMessageFormat("^T1%s", ultimaStrings[1255]);
   uiConsole_queueMessageFormat("^T1%s", ultimaStrings[1256]);
   uiConsole_queueMessageFormat("^T1%s", ultimaStrings[1257]);
   uiConsole_queueMessageFormat("^T1%s", "    ");
-  uiConsole_queueMessageFormat("^T1%s", ultimaStrings[1258]);
+  uiConsole_queueMessageFormat("^T1%s", ultimaStrings[1258]);*/
   uiConsole_queueMessage(ultimaStrings[98]);
 
   player.px = 5;
@@ -99,6 +104,10 @@ static void sceneMondain_init() {
   float tx1 = 32.0f / (float) ultimaAssets.mondainSprites.width;
   float tx2 = 48.0f / (float) ultimaAssets.mondainSprites.width;
   geometry_setSprite(&gemGeometry, 16, 16, tx1, 0, tx2, 1);
+
+  tx1 = 48.0f / (float) ultimaAssets.mondainSprites.width;
+  tx2 = 64.0f / (float) ultimaAssets.mondainSprites.width;
+  geometry_setSprite(&wallGeometry, 16, 16, tx1, 0, tx2, 1);
 
   mondain_init();
   playerMondain_init();
@@ -148,6 +157,15 @@ static void sceneMondain_update(float deltaTime) {
   matrix4_setPosition(transformMatrix, gemPosition.x * 15.0f, gemPosition.y * 15.0f, 1);
   geometry_render(&gemGeometry, ultimaAssets.mondainSprites.textureId, transformMatrix, viewMatrix);
 
+  for (int x=0;x<19;x++) {
+    for (int y=0;y<11;y++) {
+      if (mondainMap[x][y] == 2) {
+        matrix4_setPosition(transformMatrix, x * 15.0f, y * 15.0f, 1);
+        geometry_render(&wallGeometry, ultimaAssets.mondainSprites.textureId, transformMatrix, viewMatrix);
+      }
+    }
+  }
+
   playerMondain_render(viewMatrix);
 
   uiConsole_update(deltaTime);
@@ -155,6 +173,7 @@ static void sceneMondain_update(float deltaTime) {
 
 static void sceneMondain_free() {
   geometry_free(&gemGeometry);
+  geometry_free(&wallGeometry);
   mondain_free();
   lightningBoltEffect_free();
   playerMondain_free();

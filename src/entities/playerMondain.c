@@ -260,6 +260,7 @@ static bool playerMondain_updateGet() {
 bool playerMondain_updateAttack() {
   if (input.a == 1) {
     input.a = 2;
+    lagTime = 0.75f;
 
     if (mondain.state == MONDAIN_STATE_IDLE) {
       mondain.state = MONDAIN_STATE_ACTIVE;
@@ -270,7 +271,6 @@ bool playerMondain_updateAttack() {
 
     if (player.weapon == 4 || player.weapon == 8 || player.weapon == 9 || player.weapon == 10) {
       uiConsole_queueMessage(ultimaStrings[1130]);
-      lagTime = 0.75f;
       return true;
     }
 
@@ -284,7 +284,6 @@ bool playerMondain_updateAttack() {
 
     if (defenseRoll > attackRoll && attackRoll < 70) {
       uiConsole_queueMessage(ultimaStrings[1131]);
-      lagTime = 0.75f;
       return true;
     }
 
@@ -292,26 +291,113 @@ bool playerMondain_updateAttack() {
     int dy = player.py - mondain.py;
     if (sqrt(dx*dx + dy*dy) > range) {
       uiConsole_queueMessage(ultimaStrings[1132]);
-      lagTime = 0.75f;
       return true;
     }
 
     int damage = (int)(rand01() * ((float)player.strength / 5.0f + player.weapon * 3.0f) + (float) player.strength / 5.0f);
-    mondain.hp -= damage;
-
     uiConsole_queueMessageFormat("%s%d", ultimaStrings[1133], damage);
+    mondain_receiveDamage(damage);
+
+    return true;
+  }
+
+  return false;
+}
+
+bool playerMondain_updateCast() {
+  if (input.c == 1) {
+    input.c = 2;
     lagTime = 0.75f;
 
-    if (mondain.hp > 500 || mondain.state == MONDAIN_STATE_DEFEATED) {
+    int px = 0;
+    int py = 0;
+
+    uiConsole_replaceLastMessageFormat("%s%s%s", ultimaStrings[98], ultimaStrings[1145], spellNames[player.spell]);
+    if (player.spell != 0 && player.spells[player.spell] < 1) {
+      uiConsole_queueMessage(ultimaStrings[1146]);
       return true;
     }
 
-    if (mondain.hp > 0) {
-      mondain_transform();
-    } else {
-      mondain_defeat();
-      uiConsole_queueMessage(ultimaStrings[1134]);
-      vmExecuter_waitAndQueueConsoleMessage(ultimaStrings[1135], 2.0f);
+    if (mondain.state == MONDAIN_STATE_IDLE) {
+      mondain.state = MONDAIN_STATE_ACTIVE;
+    }
+
+    if (rand01() < 0.3f && player.type != 2) {
+      uiConsole_queueMessage(ultimaStrings[1147]);
+      return true;
+    }
+
+    px = mondain.px - player.px;
+    py = mondain.py - player.py;
+    if (sqrtf(px*px + py*py) > 6) {
+      uiConsole_queueMessage(ultimaStrings[1148]);
+      return true;
+    }
+
+    player.spells[player.spell] -= 1;
+
+    switch (player.spell) {
+      default:
+        uiConsole_queueMessage(ultimaStrings[1149]);
+        break;
+      
+      case 1:
+      case 2:
+      case 4:
+      case 5:
+      case 6:
+        uiConsole_queueMessage(ultimaStrings[1150]);
+        break;
+
+      case 3:
+        int damage = (int)(rand01() * (player.wisdom + player.intelligence));
+        uiConsole_queueMessageFormat("%s%d", ultimaStrings[1151], damage);
+        mondain_receiveDamage(damage);
+        break;
+      
+      case 7:
+        do {
+          px = (int)(rand01() * 17 + 1);
+          py = (int)(rand01() * 9 + 1);
+        } while (!sceneMondain_isValidPosition(px, py));
+
+        player.px = px;
+        player.py = py;
+
+        uiConsole_queueMessage(ultimaStrings[1152]);
+        break;
+      
+      case 8:
+        px = getSign(mondain.px - player.px);
+        py = getSign(mondain.py - player.py);
+        if (!sceneMondain_isValidPosition(player.px + px, player.py + py)) {
+          uiConsole_queueMessage(ultimaStrings[1153]);
+          break;
+        }
+
+        sceneMondain_setWall(player.px + px, player.py + py, 2);
+        uiConsole_queueMessage(ultimaStrings[1154]);
+        break;
+      
+      case 9:
+        px = getSign(mondain.px - player.px);
+        py = getSign(mondain.py - player.py);
+        if (mondainMap[player.px + px][player.py + py] != 2) {
+          uiConsole_queueMessage(ultimaStrings[1155]);
+          break;
+        }
+
+        sceneMondain_setWall(player.px + px, player.py + py, 0);
+        uiConsole_queueMessage(ultimaStrings[1156]);
+        break;
+      
+      case 10:
+        uiConsole_queueMessage(ultimaStrings[1157]);
+        uiConsole_queueMessage(ultimaStrings[1158]);
+        uiConsole_queueMessage(ultimaStrings[1159]);
+        mondain.hp *= 2.0f;
+        lagTime = 2.0f;
+        break;
     }
 
     return true;
@@ -341,6 +427,7 @@ bool playerMondain_update(float deltaTime) {
         if (playerMondain_updateGet()) { acted = true; } else
         if (playerCommons_updateZtats()) { acted = true; } else
         if (playerMondain_updateAttack()) { acted = true; } else
+        if (playerMondain_updateCast()) { acted = true; } else
         if (playerCommons_updateWait()) { acted = true; } else
         if (playerMondain_updateMovement(deltaTime)) { acted = true; }
         break;

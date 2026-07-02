@@ -2,6 +2,7 @@
 #include "mondain.h"
 #include "entities/ui/uiConsole.h"
 #include "entities/lightningBoltEffect.h"
+#include "entities/vmExecuter.h"
 #include "data/player.h"
 #include "scenes/sceneDiskLoader.h"
 #include "scenes/sceneMondain.h"
@@ -139,6 +140,22 @@ static void mondain_attack() {
         }
         break;
     }
+  }
+}
+
+void mondain_receiveDamage(int damage) {
+  mondain.hp -= damage;
+  
+  if (mondain.hp > 500 || mondain.state == MONDAIN_STATE_DEFEATED) {
+    return;
+  }
+
+  if (mondain.hp > 0) {
+    mondain_transform();
+  } else {
+    mondain_defeat();
+    uiConsole_queueMessage(ultimaStrings[1134]);
+    vmExecuter_waitAndQueueConsoleMessage(ultimaStrings[1135], 2.0f);
   }
 }
 

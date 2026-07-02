@@ -380,10 +380,6 @@ static bool merchantTown_updateTransactSelectItem() {
         lastKey = 0;
         return false;
       } else {
-        if (lastKey == GLFW_KEY_M) {
-          lastKey = GLFW_KEY_P;
-        }
-
         for (int i=1;i<=10;i++) {
           if (spellNames[i][0] == (char) lastKey) {
             selectedSpellId = i;
