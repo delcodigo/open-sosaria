@@ -24,8 +24,9 @@ void uiConsole_replaceLastMessageFormat(const char *format, ...);
 void uiConsole_updateStats();
 void uiConsole_updateSpaceStats();
 void uiConsole_clearQueue();
+void uiConsole_clearConsole();
 void uiConsole_renderConsoleOnly();
-void uiConsole_update(float deltaTime);
+void uiConsole_update(float deltaTime, bool renderStats);
 void uiConsole_free();
 
 #endif

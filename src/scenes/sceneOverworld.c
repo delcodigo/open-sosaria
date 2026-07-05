@@ -166,7 +166,7 @@ static void sceneOverworld_update(float deltaTime) {
   worldMap_update(viewMatrix);
   vehicleOverworld_render(viewMatrix);
   playerOverworld_render();
-  uiConsole_update(deltaTime);
+  uiConsole_update(deltaTime, true);
 }
 
 static void sceneOverworld_free() {

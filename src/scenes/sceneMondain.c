@@ -1,5 +1,7 @@
 #include <stdbool.h>
 #include <math.h>
+#include <string.h>
+#include <stdio.h>
 #include "sceneMondain.h"
 #include "entities/ui/uiConsole.h"
 #include "entities/playerMondain.h"
@@ -14,11 +16,13 @@
 #include "engine/geometry.h"
 #include "engine/texture.h"
 #include "utils.h"
+#include "memory.h"
 
 static Geometry wallGeometry;
 static Geometry gemGeometry;
 static Vector2 gemPosition = {0};
 static float transformMatrix[16];
+static bool isVictory = false;
 
 int mondainMap[19][11] = {0};
 
@@ -86,6 +90,8 @@ static void sceneMondain_init() {
   gemPosition.x = 14;
   gemPosition.y = 6;
 
+  isVictory = false;
+
   lightningBoltEffect_init();
 
   for (int i=0;i<=18;i++) {
@@ -121,13 +127,75 @@ static void sceneMondain_handlePlayerDeath() {
   uiConsole_queueMessageFormat("^T1%s", ultimaStrings[1241]);
 }
 
+static bool sceneMondain_handleVictory() {
+  if (mondain.hp > 0 || sceneMondain_isGemActive()) {
+    return false;
+  }
+
+  char consoleMessage[40] = {0};
+
+  uiConsole_clearConsole();
+  uiConsole_queueMessageFormat("^T1%s%s", player.name, ultimaStrings[1136]);
+
+  VMInstruction *instructions = malloc(2 * sizeof(VMInstruction));
+  
+  memset(consoleMessage, 0, sizeof(consoleMessage));
+  snprintf(consoleMessage, 40, "^T1%.36s", ultimaStrings[1137]);
+  instructions[0].type = VM_INSTRUCTION_TYPE_ADD_CONSOLE_MESSAGE;
+  memset(instructions[0].consoleMessage.message, 0, sizeof(instructions[0].consoleMessage.message));
+  strcpy(instructions[0].consoleMessage.message, consoleMessage);
+
+  memset(consoleMessage, 0, sizeof(consoleMessage));
+  snprintf(consoleMessage, 40, "^T1%.36s", ultimaStrings[1138]);
+  instructions[1].type = VM_INSTRUCTION_TYPE_ADD_CONSOLE_MESSAGE;
+  memset(instructions[1].consoleMessage.message, 0, sizeof(instructions[1].consoleMessage.message));
+  strcpy(instructions[1].consoleMessage.message, consoleMessage);
+
+  instructions[2].type = VM_INSTRUCTION_TYPE_WAIT;
+  instructions[2].wait.duration = 2.0f;
+
+  instructions[3].type = VM_INSTRUCTION_TYPE_ADD_CONSOLE_MESSAGE;
+  memset(instructions[3].consoleMessage.message, 0, sizeof(instructions[3].consoleMessage.message));
+  strcpy(instructions[3].consoleMessage.message, "");
+
+  memset(consoleMessage, 0, sizeof(consoleMessage));
+  snprintf(consoleMessage, 40, "^T1%.36s", ultimaStrings[1139]);
+  instructions[4].type = VM_INSTRUCTION_TYPE_ADD_CONSOLE_MESSAGE;
+  memset(instructions[4].consoleMessage.message, 0, sizeof(instructions[4].consoleMessage.message));
+  strcpy(instructions[4].consoleMessage.message, consoleMessage);
+
+  memset(consoleMessage, 0, sizeof(consoleMessage));
+  snprintf(consoleMessage, 40, "^T1%.36s", ultimaStrings[1140]);
+  instructions[5].type = VM_INSTRUCTION_TYPE_ADD_CONSOLE_MESSAGE;
+  memset(instructions[5].consoleMessage.message, 0, sizeof(instructions[5].consoleMessage.message));
+  strcpy(instructions[5].consoleMessage.message, consoleMessage);
+
+  memset(consoleMessage, 0, sizeof(consoleMessage));
+  snprintf(consoleMessage, 40, "^T1%.36s", ultimaStrings[1141]);
+  instructions[6].type = VM_INSTRUCTION_TYPE_ADD_CONSOLE_MESSAGE;
+  memset(instructions[6].consoleMessage.message, 0, sizeof(instructions[6].consoleMessage.message));
+  strcpy(instructions[6].consoleMessage.message, consoleMessage);
+
+  memset(consoleMessage, 0, sizeof(consoleMessage));
+  snprintf(consoleMessage, 40, "^T1%.36s", ultimaStrings[1142]);
+  instructions[7].type = VM_INSTRUCTION_TYPE_ADD_CONSOLE_MESSAGE;
+  memset(instructions[7].consoleMessage.message, 0, sizeof(instructions[7].consoleMessage.message));
+  strcpy(instructions[7].consoleMessage.message, consoleMessage);
+
+  vmExecuter_init(instructions, 8);
+
+  isVictory = true;
+  
+  return true;
+}
+
 static void sceneMondain_update(float deltaTime) {
   if (lagTime > 0) {
     lagTime -= deltaTime;
     if (lagTime < 0) { lagTime = 0; }
   }
   
-  if (!queuedMessagesCount && lagTime <= 0 && !vmExecuter_update(deltaTime)) {
+  if (!queuedMessagesCount && lagTime <= 0 && !vmExecuter_update(deltaTime) && !isVictory) {
     if (ztatsActive){
       uiZtats_update(deltaTime);
       return;
@@ -135,11 +203,13 @@ static void sceneMondain_update(float deltaTime) {
 
     if (playerActed) {
       playerActed = false;
-      mondain_update();
-      if (player_isAlive()) {
-        uiConsole_addMessage(ultimaStrings[98]);
-      } else {
-        sceneMondain_handlePlayerDeath();
+      if (!sceneMondain_handleVictory()){
+        mondain_update();
+        if (player_isAlive()) {
+          uiConsole_addMessage(ultimaStrings[98]);
+        } else {
+          sceneMondain_handlePlayerDeath();
+        }
       }
     }
 
@@ -168,7 +238,7 @@ static void sceneMondain_update(float deltaTime) {
 
   playerMondain_render(viewMatrix);
 
-  uiConsole_update(deltaTime);
+  uiConsole_update(deltaTime, !isVictory);
 }
 
 static void sceneMondain_free() {

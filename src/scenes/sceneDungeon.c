@@ -294,7 +294,7 @@ static void sceneDungeon_update(float deltaTime) {
   float *viewMatrix = camera_getViewProjectionMatrix(&camera);
   dungeonRenderer_render(viewMatrix);
 
-  uiConsole_update(deltaTime);
+  uiConsole_update(deltaTime, true);
 }
 
 static void sceneDungeon_free() {

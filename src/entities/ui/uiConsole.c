@@ -214,6 +214,17 @@ void uiConsole_clearQueue() {
   }
 }
 
+void uiConsole_clearConsole() {
+  for (int i=0;i<4;i++) {
+    memset(consoleLines[i].line, ' ', sizeof(consoleLines[i].line));
+    consoleLines[i].line[39] = '\0';
+    consoleLines[i].isFlashing = false;
+    text_update(&consoleLines[i].text, consoleLines[i].line);
+  }
+
+  uiConsole_clearQueue();
+}
+
 void uiConsole_renderConsoleOnly() {
   int cx = camera_getX(&camera);
   int cy = camera_getY(&camera) + 160;
@@ -225,7 +236,7 @@ void uiConsole_renderConsoleOnly() {
   }
 }
 
-void uiConsole_update(float deltaTime) {
+void uiConsole_update(float deltaTime, bool renderStats) {
   if (queuedMessagesCount > 0) {
     timeToNextMessage -= deltaTime;
     if (timeToNextMessage <= 0) {
@@ -265,8 +276,11 @@ void uiConsole_update(float deltaTime) {
     }
     
     text_renderxyz(&consoleLines[i].text, cx, sy, 3);
-    text_renderxyz(&statsLabels[i], cx + 203, sy, 4);
-    text_renderxyz(&stats[i], cx + 238, sy, 4);
+
+    if (renderStats) {
+      text_renderxyz(&statsLabels[i], cx + 203, sy, 4);
+      text_renderxyz(&stats[i], cx + 238, sy, 4);
+    }
   }
 
   if (flashTime >= 0.15f) {

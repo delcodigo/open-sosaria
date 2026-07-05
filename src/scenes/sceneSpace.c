@@ -466,7 +466,7 @@ static void sceneSpace_update(float deltaTime) {
   if (darkDeath) {
     uiConsole_renderConsoleOnly();
   } else {
-    uiConsole_update(deltaTime);
+    uiConsole_update(deltaTime, true);
   }
 }
 

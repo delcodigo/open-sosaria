@@ -304,7 +304,7 @@ static void sceneCastle_update(float deltaTime) {
   sceneTown_renderPerson(&princessGeometry, &princessPosition, personTransform, viewMatrix);
   sceneTown_renderPerson(&kingGeometry, &kingPosition, personTransform, viewMatrix);
   guardTown_render(viewMatrix);
-  uiConsole_update(deltaTime);
+  uiConsole_update(deltaTime, true);
 }
 
 static void sceneCastle_free() {

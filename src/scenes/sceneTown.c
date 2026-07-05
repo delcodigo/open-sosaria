@@ -287,7 +287,7 @@ static void sceneTown_update(float deltaTime) {
 
   playerTown_render(viewMatrix);
   guardTown_render(viewMatrix);
-  uiConsole_update(deltaTime);
+  uiConsole_update(deltaTime, true);
 }
 
 static void sceneTown_free() {

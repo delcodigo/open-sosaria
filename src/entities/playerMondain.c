@@ -281,6 +281,7 @@ bool playerMondain_updateAttack() {
 
     int attackRoll = (int)((float)(player.strength + player.agility) / 2.0f * rand01() + player.weapon * 3.0f);
     int defenseRoll = 50 + rand01() * 100.0f;
+    attackRoll = 100 + defenseRoll;
 
     if (defenseRoll > attackRoll && attackRoll < 70) {
       uiConsole_queueMessage(ultimaStrings[1131]);
@@ -295,6 +296,7 @@ bool playerMondain_updateAttack() {
     }
 
     int damage = (int)(rand01() * ((float)player.strength / 5.0f + player.weapon * 3.0f) + (float) player.strength / 5.0f);
+    damage = 200;
     uiConsole_queueMessageFormat("%s%d", ultimaStrings[1133], damage);
     mondain_receiveDamage(damage);
 
