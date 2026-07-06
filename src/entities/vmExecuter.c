@@ -33,7 +33,7 @@ bool vmExecuter_update(float deltaTime) {
       currentInstructionIndex++;
       break;
     
-    case VM_INSTRUCTION_TYPE_ADD_CONSOLE_MESSAGE:
+    case VM_INSTRUCTION_TYPE_QUEUE_CONSOLE_MESSAGE:
       uiConsole_queueMessage(currentInstruction->consoleMessage.message);
       currentInstructionIndex++;
       break;
@@ -49,13 +49,19 @@ bool vmExecuter_update(float deltaTime) {
   }
 
   if (currentInstructionIndex >= vmInstructionCount) {
-    free(vmInstructions);
-    vmInstructions = NULL;
-    vmInstructionCount = 0;
-    currentInstructionIndex = 0;
+    vmExecuter_free();
   }
 
   return true;
+}
+
+void vmExecuter_free() {
+  if (vmInstructions == NULL) { return; }
+
+  free(vmInstructions);
+  vmInstructions = NULL;
+  vmInstructionCount = 0;
+  currentInstructionIndex = 0;
 }
 
 void vmExecuter_createSceneTransition(float waitTime, Scene *nextScene) {
@@ -76,7 +82,7 @@ void vmExecuter_createWait(float waitTime) {
 
 void vmExecuter_queueAndReplaceConsoleMessage(char *message1, char *message2, float waitTime) {
   VMInstruction *instructions = malloc(3 * sizeof(VMInstruction));
-  instructions[0].type = VM_INSTRUCTION_TYPE_ADD_CONSOLE_MESSAGE;
+  instructions[0].type = VM_INSTRUCTION_TYPE_QUEUE_CONSOLE_MESSAGE;
   memset(instructions[0].consoleMessage.message, 0, sizeof(instructions[0].consoleMessage.message));
   strcpy(instructions[0].consoleMessage.message, message1);
   instructions[1].type = VM_INSTRUCTION_TYPE_WAIT;
@@ -91,7 +97,7 @@ void vmExecuter_waitAndQueueConsoleMessage(char *message, float waitTime) {
   VMInstruction *instructions = malloc(2 * sizeof(VMInstruction));
   instructions[0].type = VM_INSTRUCTION_TYPE_WAIT;
   instructions[0].wait.duration = waitTime;
-  instructions[1].type = VM_INSTRUCTION_TYPE_ADD_CONSOLE_MESSAGE;
+  instructions[1].type = VM_INSTRUCTION_TYPE_QUEUE_CONSOLE_MESSAGE;
   memset(instructions[1].consoleMessage.message, 0, sizeof(instructions[1].consoleMessage.message));
   strcpy(instructions[1].consoleMessage.message, message);
   vmExecuter_init(instructions, 2);

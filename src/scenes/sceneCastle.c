@@ -315,6 +315,7 @@ static void sceneCastle_free() {
   geometry_free(&openedCellDoorGeometry);
   playerCastle_free();
   guardTown_free();
+  vmExecuter_free();
 }
 
 Scene sceneCastle = {

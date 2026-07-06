@@ -473,6 +473,7 @@ static void sceneSpace_update(float deltaTime) {
 static void sceneSpace_free() {
   playerSpace_free();
   space3D_free();
+  vmExecuter_free();
 
   for (int i=0;i<3;i++) {
     geometry_free(&playerShipGeometries[i]);

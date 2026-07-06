@@ -297,6 +297,7 @@ static void sceneTown_free() {
   geometry_free(&bardGeometry);
   playerTown_free();
   guardTown_free();
+  vmExecuter_free();
 }
 
 Scene sceneTown = {

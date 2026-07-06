@@ -17,7 +17,7 @@ static ConsoleLine consoleLines[4];
 static const unsigned char textureData[] = {0,0,0,255};
 static GLuint blackPanelTextureId;
 static float transformMatrix[16];
-static char queuedMessages[20][40] = { 0 };
+static char queuedMessages[20][45] = { 0 };
 int queuedMessagesCount = 0;
 static float timeToNextMessage = 0.0f;
 static bool dequeuing = false;
@@ -50,7 +50,7 @@ void uiConsole_init() {
 
   for (int i=0;i<4;i++) {
     memset(consoleLines[i].line, ' ', sizeof(consoleLines[i].line));
-    consoleLines[i].line[39] = '\0';
+    consoleLines[i].line[44] = '\0';
     consoleLines[i].isFlashing = false;
     text_create(&consoleLines[i].text, consoleLines[i].line);
   }
@@ -72,7 +72,7 @@ void uiConsole_queueMessage(const char *message) {
 }
 
 void uiConsole_queueMessageFormat(const char *format, ...) {
-  char message[40] = {0};
+  char message[45] = {0};
   va_list args;
   va_start(args, format);
   vsnprintf(message, sizeof(message), format, args);
@@ -125,14 +125,14 @@ void uiConsole_addMessage(const char *message) {
 
   int length = strlen(message);
   strncpy(consoleLines[3].line, message, sizeof(consoleLines[3].line));
-  consoleLines[3].line[length < 39 ? length : 39] = '\0';
+  consoleLines[3].line[length < 45 ? length : 44] = '\0';
   consoleLines[3].isFlashing = false;
   uiConsole_detectFlashing(3);
   text_update(&consoleLines[3].text, consoleLines[3].line);
 }
 
 void uiConsole_addMessageFormat(const char *format, ...) {
-  char message[40] = {0};
+  char message[45] = {0};
   va_list args;
   va_start(args, format);
   vsnprintf(message, sizeof(message), format, args);
@@ -142,13 +142,13 @@ void uiConsole_addMessageFormat(const char *format, ...) {
 
 void uiConsole_replaceLastMessage(const char *message) {
   strncpy(consoleLines[3].line, message, sizeof(consoleLines[3].line));
-  consoleLines[3].line[39] = '\0';
+  consoleLines[3].line[44] = '\0';
   uiConsole_detectFlashing(3);
   text_update(&consoleLines[3].text, consoleLines[3].line);
 }
 
 void uiConsole_replaceLastMessageFormat(const char *format, ...) {
-  char message[40] = {0};
+  char message[45] = {0};
   va_list args;
   va_start(args, format);
   vsnprintf(message, sizeof(message), format, args);
@@ -187,7 +187,7 @@ static void uiConsole_updateTypewriter(float deltaTime) {
     typewriterTime = 0;
     int length = strlen(queuedMessages[0]);
     if (typewriterIndex < length) {
-      char currentLine[30] = {0};
+      char currentLine[45] = {0};
       strncpy(currentLine, queuedMessages[0] + 3, typewriterIndex + 1);
       currentLine[typewriterIndex + 1] = '\0';
       if (typewriterIndex <= 3) {
@@ -217,7 +217,7 @@ void uiConsole_clearQueue() {
 void uiConsole_clearConsole() {
   for (int i=0;i<4;i++) {
     memset(consoleLines[i].line, ' ', sizeof(consoleLines[i].line));
-    consoleLines[i].line[39] = '\0';
+    consoleLines[i].line[44] = '\0';
     consoleLines[i].isFlashing = false;
     text_update(&consoleLines[i].text, consoleLines[i].line);
   }

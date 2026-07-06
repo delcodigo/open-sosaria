@@ -300,6 +300,7 @@ static void sceneDungeon_update(float deltaTime) {
 static void sceneDungeon_free() {
   dungeonRenderer_free();
   playerDungeon_free();
+  vmExecuter_free();
 }
 
 Scene sceneDungeon = {

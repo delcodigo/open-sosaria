@@ -8,7 +8,7 @@ extern int queuedMessagesCount;
 
 typedef struct {
   Text text;
-  char line[40];
+  char line[45];
   bool isFlashing;
   bool isTypewriter;
 } ConsoleLine;

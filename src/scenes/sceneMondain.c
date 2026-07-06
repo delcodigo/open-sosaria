@@ -132,53 +132,53 @@ static bool sceneMondain_handleVictory() {
     return false;
   }
 
-  char consoleMessage[40] = {0};
+  char consoleMessage[45] = {0};
 
   uiConsole_clearConsole();
   uiConsole_queueMessageFormat("^T1%s%s", player.name, ultimaStrings[1136]);
 
-  VMInstruction *instructions = malloc(2 * sizeof(VMInstruction));
+  VMInstruction *instructions = malloc(8 * sizeof(VMInstruction));
   
   memset(consoleMessage, 0, sizeof(consoleMessage));
-  snprintf(consoleMessage, 40, "^T1%.36s", ultimaStrings[1137]);
-  instructions[0].type = VM_INSTRUCTION_TYPE_ADD_CONSOLE_MESSAGE;
+  snprintf(consoleMessage, 45, "^T1%.40s", ultimaStrings[1137]);
+  instructions[0].type = VM_INSTRUCTION_TYPE_QUEUE_CONSOLE_MESSAGE;
   memset(instructions[0].consoleMessage.message, 0, sizeof(instructions[0].consoleMessage.message));
   strcpy(instructions[0].consoleMessage.message, consoleMessage);
 
   memset(consoleMessage, 0, sizeof(consoleMessage));
-  snprintf(consoleMessage, 40, "^T1%.36s", ultimaStrings[1138]);
-  instructions[1].type = VM_INSTRUCTION_TYPE_ADD_CONSOLE_MESSAGE;
+  snprintf(consoleMessage, 45, "^T1%.40s", ultimaStrings[1138]);
+  instructions[1].type = VM_INSTRUCTION_TYPE_QUEUE_CONSOLE_MESSAGE;
   memset(instructions[1].consoleMessage.message, 0, sizeof(instructions[1].consoleMessage.message));
   strcpy(instructions[1].consoleMessage.message, consoleMessage);
 
   instructions[2].type = VM_INSTRUCTION_TYPE_WAIT;
   instructions[2].wait.duration = 2.0f;
 
-  instructions[3].type = VM_INSTRUCTION_TYPE_ADD_CONSOLE_MESSAGE;
+  instructions[3].type = VM_INSTRUCTION_TYPE_QUEUE_CONSOLE_MESSAGE;
   memset(instructions[3].consoleMessage.message, 0, sizeof(instructions[3].consoleMessage.message));
   strcpy(instructions[3].consoleMessage.message, "");
 
   memset(consoleMessage, 0, sizeof(consoleMessage));
-  snprintf(consoleMessage, 40, "^T1%.36s", ultimaStrings[1139]);
-  instructions[4].type = VM_INSTRUCTION_TYPE_ADD_CONSOLE_MESSAGE;
+  snprintf(consoleMessage, 45, "^T1%.40s", ultimaStrings[1139]);
+  instructions[4].type = VM_INSTRUCTION_TYPE_QUEUE_CONSOLE_MESSAGE;
   memset(instructions[4].consoleMessage.message, 0, sizeof(instructions[4].consoleMessage.message));
   strcpy(instructions[4].consoleMessage.message, consoleMessage);
 
   memset(consoleMessage, 0, sizeof(consoleMessage));
-  snprintf(consoleMessage, 40, "^T1%.36s", ultimaStrings[1140]);
-  instructions[5].type = VM_INSTRUCTION_TYPE_ADD_CONSOLE_MESSAGE;
+  snprintf(consoleMessage, 45, "^T1%.40s", ultimaStrings[1140]);
+  instructions[5].type = VM_INSTRUCTION_TYPE_QUEUE_CONSOLE_MESSAGE;
   memset(instructions[5].consoleMessage.message, 0, sizeof(instructions[5].consoleMessage.message));
   strcpy(instructions[5].consoleMessage.message, consoleMessage);
 
   memset(consoleMessage, 0, sizeof(consoleMessage));
-  snprintf(consoleMessage, 40, "^T1%.36s", ultimaStrings[1141]);
-  instructions[6].type = VM_INSTRUCTION_TYPE_ADD_CONSOLE_MESSAGE;
+  snprintf(consoleMessage, 45, "^T1%.40s", ultimaStrings[1141]);
+  instructions[6].type = VM_INSTRUCTION_TYPE_QUEUE_CONSOLE_MESSAGE;
   memset(instructions[6].consoleMessage.message, 0, sizeof(instructions[6].consoleMessage.message));
   strcpy(instructions[6].consoleMessage.message, consoleMessage);
 
   memset(consoleMessage, 0, sizeof(consoleMessage));
-  snprintf(consoleMessage, 40, "^T1%.36s", ultimaStrings[1142]);
-  instructions[7].type = VM_INSTRUCTION_TYPE_ADD_CONSOLE_MESSAGE;
+  snprintf(consoleMessage, 45, "^T1%.40s", ultimaStrings[1142]);
+  instructions[7].type = VM_INSTRUCTION_TYPE_QUEUE_CONSOLE_MESSAGE;
   memset(instructions[7].consoleMessage.message, 0, sizeof(instructions[7].consoleMessage.message));
   strcpy(instructions[7].consoleMessage.message, consoleMessage);
 
@@ -247,6 +247,7 @@ static void sceneMondain_free() {
   mondain_free();
   lightningBoltEffect_free();
   playerMondain_free();
+  vmExecuter_free();
 }
 
 Scene sceneMondain = {

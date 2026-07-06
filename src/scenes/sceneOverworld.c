@@ -174,6 +174,7 @@ static void sceneOverworld_free() {
   playerOverworld_free();
   uiZtats_free();
   vehicleOverworld_free();
+  vmExecuter_free();
 }
 
 Scene sceneOverworld = {
