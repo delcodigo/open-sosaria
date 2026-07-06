@@ -79,12 +79,15 @@ On some MSYS2 setups, use `mingw32-make` if `make` is not available in PATH.
 ```
 
 
-## Current Implementation (v0.4.0)
+## Current Implementation (v0.5.0)
+
+**The game is now fully beatable end-to-end**, from character creation through the final confrontation with Mondain.
 
 The engine now includes:
 
+- **Mondain Final Battle:** The final boss encounter is complete. Players can travel through the Time Machine, confront Mondain, destroy the Gem of Immortality, and defeat him to win the game.
 - **Full Towns and Castles:** All towns and castles are fully implemented with feature parity to the original Apple II release.
-- **Overworld (Nearly Complete):** Overworld map, player movement, and collision are implemented. The only major feature still missing is the **Time Machine**.
+- **Overworld (Complete):** Overworld map, player movement, collision, and the Time Machine are all implemented.
 - **Dungeons (Feature Parity Achieved):** Full dungeon support is now complete. Players can enter dungeons, delve up to 10 levels deep, fight enemies, and complete quests by killing the required monster.
 - **Space Section:** Players can now launch into space, board and switch vessels at the space station, engage enemy crafts in first-person combat, and progress toward becoming a space ace.
 - **Disk Verification:** Validates that `program.dsk` and `player.dsk` exist and contain the required Apple II Ultima files with correct sizes.
@@ -96,9 +99,8 @@ The engine now includes:
 
 ## Next Steps
 
-- Complete the overworld by implementing the **Time Machine** mechanics.
-- Create the **Mondain Encounter** (final boss battle).
 - Continue refining game logic, sprite rendering, and Apple II game mechanics.
+- Polish and bugfixing pass now that the full game loop is playable.
 
 ## Research Notes
 

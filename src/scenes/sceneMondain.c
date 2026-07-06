@@ -2,6 +2,7 @@
 #include <math.h>
 #include <string.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include "sceneMondain.h"
 #include "entities/ui/uiConsole.h"
 #include "entities/playerMondain.h"
