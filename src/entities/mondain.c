@@ -1,4 +1,6 @@
 #include <math.h>
+#include <string.h>
+#include <stdlib.h>
 #include "mondain.h"
 #include "entities/ui/uiConsole.h"
 #include "entities/lightningBoltEffect.h"
@@ -155,7 +157,19 @@ void mondain_receiveDamage(int damage) {
   } else {
     mondain_defeat();
     uiConsole_queueMessage(ultimaStrings[1134]);
-    vmExecuter_waitAndQueueConsoleMessage(ultimaStrings[1135], 2.0f);
+
+    VMInstruction *instructions = malloc(3 * sizeof(VMInstruction));
+    instructions[0].type = VM_INSTRUCTION_TYPE_WAIT;
+    instructions[0].wait.duration = 2.0f;
+
+    instructions[1].type = VM_INSTRUCTION_TYPE_QUEUE_CONSOLE_MESSAGE;
+    memset(instructions[1].consoleMessage.message, 0, sizeof(instructions[1].consoleMessage.message));
+    strcpy(instructions[1].consoleMessage.message, ultimaStrings[1135]);
+
+    instructions[2].type = VM_INSTRUCTION_TYPE_WAIT;
+    instructions[2].wait.duration = 2.0f;
+
+    vmExecuter_init(instructions, 3);
   }
 }
 

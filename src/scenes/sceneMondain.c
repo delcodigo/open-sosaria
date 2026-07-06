@@ -77,11 +77,11 @@ void sceneMondain_setWall(int x, int y, int wallIndex) {
 }
 
 static void sceneMondain_init() {
-  /*uiConsole_queueMessageFormat("^T1%s", ultimaStrings[1255]);
+  uiConsole_queueMessageFormat("^T1%s", ultimaStrings[1255]);
   uiConsole_queueMessageFormat("^T1%s", ultimaStrings[1256]);
   uiConsole_queueMessageFormat("^T1%s", ultimaStrings[1257]);
   uiConsole_queueMessageFormat("^T1%s", "    ");
-  uiConsole_queueMessageFormat("^T1%s", ultimaStrings[1258]);*/
+  uiConsole_queueMessageFormat("^T1%s", ultimaStrings[1258]);
   uiConsole_queueMessage(ultimaStrings[98]);
 
   player.px = 5;
@@ -133,9 +133,10 @@ static bool sceneMondain_handleVictory() {
   }
 
   char consoleMessage[45] = {0};
+  int leftpad = 20 - (int)((float)(strlen(player.name) + 21) / 2.0f);
 
   uiConsole_clearConsole();
-  uiConsole_queueMessageFormat("^T1%s%s", player.name, ultimaStrings[1136]);
+  uiConsole_queueMessageFormat("^T1%*s%s%s", leftpad, "", player.name, ultimaStrings[1136]);
 
   VMInstruction *instructions = malloc(8 * sizeof(VMInstruction));
   

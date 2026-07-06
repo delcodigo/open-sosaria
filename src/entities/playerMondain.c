@@ -1,4 +1,6 @@
 #include <math.h>
+#include <string.h>
+#include <stdlib.h>
 #include "playerMondain.h"
 #include "engine/geometry.h"
 #include "engine/texture.h"
@@ -248,8 +250,18 @@ static bool playerMondain_updateGet() {
     player.health -= damage;
 
     uiConsole_queueMessageFormat("%s%d", ultimaStrings[1168], damage);
-    uiConsole_queueMessage(ultimaStrings[1169]);
     uiConsole_updateStats();
+    
+    VMInstruction *instructions = malloc(2 * sizeof(VMInstruction));
+
+    instructions[0].type = VM_INSTRUCTION_TYPE_QUEUE_CONSOLE_MESSAGE;
+    memset(instructions[0].consoleMessage.message, 0, sizeof(instructions[0].consoleMessage.message));
+    strcpy(instructions[0].consoleMessage.message, ultimaStrings[1169]);
+
+    instructions[1].type = VM_INSTRUCTION_TYPE_WAIT;
+    instructions[1].wait.duration = 2.0f;
+
+    vmExecuter_init(instructions, 2);
 
     return true;
   }
@@ -281,7 +293,6 @@ bool playerMondain_updateAttack() {
 
     int attackRoll = (int)((float)(player.strength + player.agility) / 2.0f * rand01() + player.weapon * 3.0f);
     int defenseRoll = 50 + rand01() * 100.0f;
-    attackRoll = 100 + defenseRoll;
 
     if (defenseRoll > attackRoll && attackRoll < 70) {
       uiConsole_queueMessage(ultimaStrings[1131]);
@@ -296,7 +307,6 @@ bool playerMondain_updateAttack() {
     }
 
     int damage = (int)(rand01() * ((float)player.strength / 5.0f + player.weapon * 3.0f) + (float) player.strength / 5.0f);
-    damage = 200;
     uiConsole_queueMessageFormat("%s%d", ultimaStrings[1133], damage);
     mondain_receiveDamage(damage);
 
