@@ -78,8 +78,9 @@ $(TARGET): $(OBJ)
 	@mkdir -p $(dir $@)
 	$(CC) $(OBJ) $(LDFLAGS) $(GUI_LDFLAGS) $(LDLIBS) $(STRIP_FLAGS) -o $@
 
-# Third-party source: relax warning promotion for glad only.
+# Third-party source: relax warning promotion for glad and miniaudio only.
 build/dependencies/glad.o: CFLAGS := $(filter-out -Werror -pedantic-errors,$(CFLAGS)) -Wno-error -Wno-pedantic
+build/dependencies/miniaudio.o: CFLAGS := $(filter-out -Werror -pedantic-errors,$(CFLAGS)) -Wno-error -Wno-pedantic
 
 build/%.o: src/%.c
 	@mkdir -p $(dir $@)

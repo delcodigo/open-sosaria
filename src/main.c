@@ -6,6 +6,7 @@
 #include "engine/engine.h"
 #include "engine/text.h"
 #include "engine/scene.h"
+#include "engine/audio.h"
 #include "memory.h"
 #include "scenes/sceneDiskLoader.h"
 #include "entities/ui/uiConsole.h"
@@ -23,6 +24,9 @@ int main(void)
     engine_cleanup();
     return EXIT_FAILURE;
   }
+
+  audio_init();
+  audio_playBell();
 
   scene_load(&sceneDiskLoader);
 
@@ -50,6 +54,7 @@ int main(void)
     currentScene.scene_free();
   }
 
+  audio_cleanup();
   uiConsole_free();
   engine_cleanup();
   sceneDiskLoader_freeTextures();
