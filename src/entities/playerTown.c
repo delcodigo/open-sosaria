@@ -3,6 +3,7 @@
 #include "playerTown.h"
 #include "engine/geometry.h"
 #include "engine/input.h"
+#include "engine/audio.h"
 #include "entities/ui/uiConsole.h"
 #include "scenes/sceneDiskLoader.h"
 #include "scenes/sceneOverworld.h"
@@ -16,6 +17,7 @@
 #include "vehicleOverworld.h"
 #include "vmExecuter.h"
 #include "config.h"
+#include "utils.h"
 
 static Geometry playerTownGeometry;
 static float transformMatrix[16];
@@ -104,6 +106,7 @@ bool playerTown_updateMovement(float deltaTime) {
 
     if (playerTown_isSolid(player.px + moveX, player.py + moveY)) {
       uiConsole_addMessage(ultimaStrings[341]);
+      audio_playAlert(1);
       keyRepeatDelay = 0.3f;
       return true;
     }
@@ -209,6 +212,7 @@ static bool playerTown_updateDrop() {
         uiConsole_queueMessage(ultimaStrings[370]);
         playerState = PLAYER_STATE_IDLE;
         dropStep = DROP_STEP_START;
+        audio_playAlert(1);
         return true;
       }
     } else if (lastKey == GLFW_KEY_ENTER && itemToDrop[0] != '\0') {
@@ -217,6 +221,7 @@ static bool playerTown_updateDrop() {
         uiConsole_queueMessageFormat("%s%d", ultimaStrings[371], value);
         playerState = PLAYER_STATE_IDLE;
         dropStep = DROP_STEP_START;
+        audio_playAlert(1);
         return true;
       }
 
@@ -260,8 +265,10 @@ static bool playerTown_updateDrop() {
 
         if (selectedWeaponId == -1) {
           uiConsole_queueMessageFormat("%s%s", itemToDrop, ultimaStrings[376]);
+          audio_playAlert(1);
         } else if (player.weapons[selectedWeaponId] < 1) {
           uiConsole_queueMessageFormat("%s%s", ultimaStrings[377], weaponNames[selectedWeaponId + 1]);
+          audio_playAlert(1);
         } else {
           player.weapons[selectedWeaponId]--;
           if (player.weapons[selectedWeaponId] == 0) {
@@ -290,6 +297,7 @@ static bool playerTown_updateDrop() {
       
       if (selectedArmorId == -1) {
         uiConsole_queueMessageFormat("%c%s", lastKey, ultimaStrings[380]);
+        audio_playAlert(1);
       } else if (player.armors[selectedArmorId] < 1) {
         uiConsole_queueMessage(ultimaStrings[381]);
         uiConsole_queueMessage(armorNames[selectedArmorId + 1]);
@@ -330,6 +338,7 @@ static bool playerTown_updateDrop() {
         uiConsole_queueMessage(ultimaStrings[367]);
         playerState = PLAYER_STATE_IDLE;
         dropStep = DROP_STEP_START;
+        audio_playAlert(1);
         return true;
       }
     }
@@ -408,6 +417,62 @@ bool playerTown_updateAttack() {
   return false;
 }
 
+bool playerTown_updateSteal() {
+  if (input.s == 1) {
+    input.s = 2;
+
+    uiConsole_queueMessage(ultimaStrings[408]);
+    int storeId = 0;
+
+    if (player.px > 3 && player.px < 9 && player.py == 17) {
+      storeId = 1;
+    } else if (player.px > 11 && player.px < 16 && player.py == 17) {
+      storeId = 2;
+    } else if (player.px > 12 && player.px < 17 && player.py == 26) {
+      storeId = 3;
+    }
+
+    if (storeId == 0) {
+      uiConsole_queueMessage(ultimaStrings[409]);
+      return true;
+    }
+
+    if (rand01() > 0.85f || enemyEncounter.monsterId > 0 || (rand01() > 0.7f && player.type != 4)) {
+      uiConsole_queueMessage(ultimaStrings[410]);
+      audio_playAlert(4);
+      enemyEncounter.monsterId = 1;
+      return true;
+    }
+
+    float rnd = rand01();
+    if (storeId == 1) {
+      int armorId = (int)(rnd * rnd * 5 + 1);
+      uiConsole_queueMessageFormat("%s%s", ultimaStrings[411], armorNames[armorId]);
+      player.armors[armorId - 1] += 1;
+      return true;
+    }
+
+    if (storeId == 2) {
+      int weaponId = (int)(rnd * rnd * rnd * 15 + 1);
+      uiConsole_queueMessageFormat("%s%s", ultimaStrings[412], weaponNames[weaponId]);
+      player.weapons[weaponId - 1] += 1;
+      return true;
+    }
+
+    if (storeId == 3) {
+      int food = (int)(rnd * 30 + 1);
+      uiConsole_queueMessageFormat("%s%d%s", ultimaStrings[413], food, ultimaStrings[414]);
+      player.food += food;
+      return true;
+    }
+
+    uiConsole_queueMessage(ultimaStrings[415]);
+    return true;
+  }
+
+  return false;
+}
+
 bool playerTown_update(float deltaTime) {
   bool acted = false;
   
@@ -424,6 +489,7 @@ bool playerTown_update(float deltaTime) {
         if (merchantTown_updateTransact()) { acted = true; } else
         if (playerTown_updateDrop()) { acted = true; } else
         if (playerTown_updateAttack()) { acted = true; } else
+        if (playerTown_updateSteal()) { acted = true; } else 
         if (playerTown_updateMovement(deltaTime)) { acted = true; }
         break;
       case PLAYER_STATE_READY_TYPE:

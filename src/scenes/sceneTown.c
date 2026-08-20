@@ -3,6 +3,7 @@
 #include "sceneOverworld.h"
 #include "data/player.h"
 #include "engine/geometry.h"
+#include "engine/audio.h"
 #include "maths/matrix4.h"
 #include "maths/vector2.h"
 #include "entities/ui/uiConsole.h"
@@ -153,6 +154,7 @@ void sceneTown_attackAt(int x, int y) {
 
   int damage = (int)(((player.strength + player.weapon) / 2.0f) * rand01() + 1);
   uiConsole_queueMessageFormat("%s%d", ultimaStrings[353], damage);
+  audio_playAlert(3);
 
   if (targetType == TOWN_ENTITY_TYPE_BARD) {
     bardPosition.x = -1;

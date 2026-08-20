@@ -4,6 +4,7 @@
 #include "entities/ui/uiConsole.h"
 #include "data/player.h"
 #include "engine/geometry.h"
+#include "engine/audio.h"
 #include "scenes/sceneDiskLoader.h"
 #include "scenes/sceneOverworld.h"
 #include "scenes/sceneTown.h"
@@ -66,6 +67,7 @@ void guardTown_update(GuardTown *guard) {
 
   if (distance < 2) {
     uiConsole_queueMessage(ultimaStrings[593]);
+    audio_playAlert(2);
     if (rand01() * player.strength + player.armor * 4 > 30 || rand01() > 0.75f) {
       uiConsole_queueMessage(ultimaStrings[594]);
       lagTime += 0.1f;

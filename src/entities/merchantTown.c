@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "engine/engine.h"
+#include "engine/audio.h"
 #include "merchantTown.h"
 #include "data/player.h"
 #include "data/bevery.h"
@@ -51,6 +52,7 @@ static bool merchantTown_updateTransactStart() {
     if (!foundMerchant) {
       uiConsole_replaceLastMessageFormat("%.14s%.15s", ultimaStrings[98], ultimaStrings[416]);
       uiConsole_queueMessage(ultimaStrings[417]);
+      audio_playAlert(1);
       return true;
     }
 
@@ -105,6 +107,10 @@ static bool merchantTown_updateTransactSelectTransaction() {
       uiConsole_queueMessage(ultimaStrings[434]);
       uiConsole_queueMessage(ultimaStrings[435]);
       merchantType = MERCHANT_TYPE_FOOD;
+    } else {
+      uiConsole_queueMessage(ultimaStrings[436]);
+      audio_playAlert(1);
+      return false;
     }
 
     memset(selectedWeaponName, 0, sizeof(selectedWeaponName));
@@ -318,6 +324,7 @@ static bool merchantTown_updateTransactSelectItem() {
 
     if ((keyNumber > 2 && keyNumber < 5 && wx == 0 && wy == 0) || (player.time < 3000 && keyNumber > 4 && keyNumber < 7)) {
       uiConsole_queueMessage(ultimaStrings[577]);
+      audio_playAlert(1);
       merchantTown_endTransact();
       return true;
     }
@@ -404,6 +411,7 @@ static bool merchantTown_updateTransactSelectItem() {
 
     if (player.type != 3 && selectedSpellId > 6) {
       uiConsole_queueMessage(ultimaStrings[496]);
+      audio_playAlert(1);
       merchantTown_endTransact();
       return true;
     }
@@ -445,6 +453,7 @@ static bool merchantTown_updateTransactSelectItem() {
 
       if (player_getEncumbrance() > 0) {
         uiConsole_queueMessage(ultimaStrings[556]);
+        audio_playAlert(1);
         merchantTown_endTransact();
         return true;
       }
@@ -567,6 +576,7 @@ static bool merchantTown_updateDrinkAtPub() {
     if (wenchRadius <= 1.5f) {
       uiConsole_queueMessageFormat("^T1%s", player.name);
       uiConsole_queueMessageFormat("^T1%s", ultimaStrings[543]);
+      audio_playAlert(2);
       
       player.gold = 0;
       player.wisdom -= 1;
@@ -622,6 +632,7 @@ static bool merchantTown_updateDrinkAtPub() {
       uiConsole_queueMessageFormat("^T1%s", ultimaStrings[524]);
       break;
     case 10:
+      audio_playAlert(3);
       for (int i=0;i<17;i++) {
         uiConsole_queueMessageFormat("^T1%s", ultimaStrings[525 + i]);
       }

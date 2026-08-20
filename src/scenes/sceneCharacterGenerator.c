@@ -4,6 +4,7 @@
 #include "sceneCharacterGenerator.h"
 #include "engine/text.h"
 #include "engine/input.h"
+#include "engine/audio.h"
 #include "entities/ui/uiCursor.h"
 #include "data/player.h"
 #include "data/saveAndLoad.h"
@@ -134,6 +135,7 @@ static void sceneCharacterGenerator_submitStatValue(const char *value) {
     statTextfield.text[0] = '\0';
     statTextfield.cursorPosition = 0;
     statTextfield.isDirty = true;
+    audio_playAlert(3);
     return;
   }
 
