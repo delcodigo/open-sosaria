@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include "sceneDungeon.h"
 #include "sceneOverworld.h"
+#include "engine/audio.h"
 #include "entities/ui/uiztats.h"
 #include "entities/ui/uiConsole.h"
 #include "entities/dungeonRenderer.h"
@@ -196,6 +197,7 @@ static void sceneDungeon_enemyAttack(int monster) {
   }
   int damage = (int)(player.dungeonDepth + player.dungeonDepth * monster * player.dungeonDepth * rand01() + player.dungeonDepth);
   uiConsole_queueMessageFormat("%s%d", ultimaStrings[993], damage);
+  audio_playAlert(2);
   player.health -= damage;
   uiConsole_updateStats();
 }

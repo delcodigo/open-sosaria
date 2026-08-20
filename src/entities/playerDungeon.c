@@ -7,6 +7,7 @@
 #include "data/bevery.h"
 #include "data/enemy.h"
 #include "engine/input.h"
+#include "engine/audio.h"
 #include "scenes/sceneDiskLoader.h"
 #include "scenes/sceneDungeon.h"
 #include "scenes/sceneOverworld.h"
@@ -57,6 +58,7 @@ static bool playerDungeon_updateMovement() {
 
     if (sceneDungeon_isSolid(player.px + player.dx, player.py + player.dy)) {
       uiConsole_addMessage(ultimaStrings[860]);
+      audio_playAlert(1);
       return false;
     }
 
@@ -70,8 +72,10 @@ static bool playerDungeon_updateMovement() {
         player.weapons[3]--;
         uiConsole_queueMessage(ultimaStrings[862]);
         uiConsole_queueMessage(ultimaStrings[863]);
+        audio_playAlert(2);
       } else {
         uiConsole_queueMessage(ultimaStrings[864]);
+        audio_playAlert(2);
         player.health -= (int)(rand01() * player.dungeonDepth * 10 + player.dungeonDepth);
         uiConsole_queueMessageFormat("%s%d", ultimaStrings[934], player.dungeonDepth + 1);
         player.dungeonDepth++;
@@ -166,11 +170,13 @@ static bool playerDungeon_updateKlimb() {
     int tile = dungeonMap[player.px][player.py];
     if (tile != 7 && tile != 8 && tile != 9) {
       uiConsole_queueMessage(ultimaStrings[926]);
+      audio_playAlert(1);
       return true;
     }
 
     if (player.dy == 0 && tile != 9) {
       uiConsole_queueMessage(ultimaStrings[927]);
+      audio_playAlert(1);
       return true;
     }
 
@@ -286,6 +292,7 @@ static bool playerDungeon_updateUnlock() {
       uiConsole_queueMessage(ultimaStrings[975]);
       player.health -= player.dungeonDepth;
       uiConsole_updateStats();
+      audio_playAlert(2);
       return true;
     }
 
@@ -339,6 +346,7 @@ static void playerDungeon_onEnemyDestroyed(int enemy) {
       player.quests[questIndex * 2 + 1] = -player.quests[questIndex * 2 + 1];
       uiConsole_queueMessage(ultimaStrings[915]);
       vmExecuter_createWait(2.0);
+      audio_playAlert(2);
     }
   }
 
@@ -350,12 +358,14 @@ static void playerDungeon_onEnemyDestroyed(int enemy) {
 
 static void playerDungeon_applyDamage(int enemy, int damage) {
   uiConsole_queueMessageFormat("%s%d", ultimaStrings[875], damage);
+  audio_playAlert(3);
     
   monsters[monstersIndex + enemy][3] -= damage;
   if (monsters[monstersIndex + enemy][3] < 0) {
     monsters[monstersIndex + enemy][0] = 1;
     uiConsole_queueMessageFormat("%s%s", enemyDefinitions[monstersIndex + enemy].name, ultimaStrings[876]);
     dungeonMap[monsters[monstersIndex + enemy][1]][monsters[monstersIndex + enemy][2]] -= enemy * 100;
+    audio_playAlert(3);
 
     playerDungeon_onEnemyDestroyed(enemy);
   }
@@ -446,6 +456,7 @@ static bool playerDungeon_updateCast() {
           player.gold += gold;
           uiConsole_queueMessageFormat("%s%d%s", ultimaStrings[916], gold, ultimaStrings[917]);
           uiConsole_updateStats();
+          audio_playAlert(3);
         } else {
           uiConsole_queueMessage(ultimaStrings[887]);
         }
