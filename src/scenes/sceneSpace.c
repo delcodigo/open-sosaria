@@ -3,6 +3,7 @@
 #include <string.h>
 #include "sceneSpace.h"
 #include "engine/geometry.h"
+#include "engine/audio.h"
 #include "entities/playerCommons.h"
 #include "entities/ui/uiConsole.h"
 #include "sceneDiskLoader.h"
@@ -242,6 +243,7 @@ static void sceneSpace_crashDeath() {
 
 void sceneSpace_crunchCollision() {
   uiConsole_addMessage(ultimaStrings[1044]);
+  audio_playAlert(2);
   player.dx = (player.dx > 0) ? -1 : (player.dx < 0) ? 1 : 0;
   player.dy = (player.dy > 0) ? -1 : (player.dy < 0) ? 1 : 0;
   player.shield -= (int)(player.shield / 4.0f + 5);

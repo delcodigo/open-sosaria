@@ -4,6 +4,7 @@
 #include "data/bevery.h"
 #include "engine/engine.h"
 #include "engine/input.h"
+#include "engine/audio.h"
 #include "playerCommons.h"
 #include "entities/ui/uiConsole.h"
 #include "space3D.h"
@@ -243,6 +244,7 @@ static bool playerSpace_updateNoFuelDrift() {
 
     uiConsole_replaceLastMessageFormat("%s%s", ultimaStrings[98], ultimaStrings[1046]);
     uiConsole_queueMessage(ultimaStrings[1047]);
+    audio_playAlert(1);
 
     return true;
   }
@@ -442,6 +444,9 @@ static bool playerSpace_updateFire() {
 
     if (player.spaceLevel > 19 && player.spaceLevel < 23) {
       uiConsole_queueMessage(ultimaStrings[1027]);
+      audio_playAlert(3);
+    } else {
+      audio_playAlert(3);
     }
 
     return true;

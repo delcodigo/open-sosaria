@@ -4,6 +4,7 @@
 #include "space3D.h"
 #include "engine/geometry.h"
 #include "engine/texture.h"
+#include "engine/audio.h"
 #include "maths/matrix4.h"
 #include "maths/vector2.h"
 #include "entities/playerSpace.h"
@@ -214,6 +215,7 @@ static void space3D_updateEnemyCraft(float deltaTime) {
 
         uiConsole_queueMessage(ultimaStrings[1011]);
         uiConsole_queueMessage(ultimaStrings[98]);
+        audio_playAlert(2);
 
         player.shield -= 321;
         if (player.shield <= 0) { 
