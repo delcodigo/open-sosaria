@@ -3,6 +3,7 @@
 #include <string.h>
 #include "engine/geometry.h"
 #include "engine/camera.h"
+#include "engine/audio.h"
 #include "data/enemy.h"
 #include "maths/matrix4.h"
 #include "sceneOverworld.h"
@@ -57,6 +58,7 @@ static void sceneOverworld_resolveEncounter() {
 
   uiConsole_queueMessageFormat("^1%.26s^0", ultimaStrings[252]);
   uiConsole_queueMessageFormat("^1%.8s %d %s%s^0", ultimaStrings[253], enemyEncounter.number, enemyDefinitions[enemyEncounter.monsterId].name, enemyEncounter.number > 1 ? "s" : ""  );
+  audio_playAlert(2);
 
   int hits = 0;
   for (int i=1;i<=enemyEncounter.number;i++) {

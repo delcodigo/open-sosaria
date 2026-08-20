@@ -2,6 +2,7 @@
 #include <string.h>
 #include <ctype.h>
 #include "engine/engine.h"
+#include "engine/audio.h"
 #include "playerCommons.h"
 #include "engine/input.h"
 #include "data/player.h"
@@ -34,6 +35,7 @@ bool playerCommons_updateWait() {
     waitingTime = 0.0f;
     char waitCommand[30] = {0};
     snprintf(waitCommand, sizeof(waitCommand), "%.14s%.15s", ultimaStrings[98], ultimaStrings[99]);
+    audio_playAlert(1);
     uiConsole_replaceLastMessage(waitCommand);
     keyRepeatDelay = 0.3f;
     return true;
@@ -145,6 +147,7 @@ static bool playerCommons_readyWeaponEquip() {
       if (i > 0 && player.weapons[i - 1] < 1) {
         snprintf(weaponCommand, sizeof(weaponCommand), "%.16s%.14s", ultimaStrings[207], weaponNames[i]);
         uiConsole_addMessage(weaponCommand);
+        audio_playAlert(1);
         return true;
       }
 
@@ -156,6 +159,7 @@ static bool playerCommons_readyWeaponEquip() {
   }
 
   snprintf(weaponCommand, sizeof(weaponCommand), "%.2s%.15s", selectedWeapon, ultimaStrings[206]);
+  audio_playAlert(1);
   uiConsole_addMessage(weaponCommand);
   memset(selectedWeapon, 0, sizeof(selectedWeapon));
   return true;
@@ -174,6 +178,7 @@ static bool playerCommons_readyArmorEquip() {
       if (armorNames[i][0] == armorChar[0]) {
         if (player.armors[i - 1] < 1 && i > 0) {
           uiConsole_addMessageFormat("%.15s%.15s", ultimaStrings[212], armorNames[i]);
+          audio_playAlert(1);
           return true;
         }
 
@@ -185,6 +190,7 @@ static bool playerCommons_readyArmorEquip() {
     }
 
     uiConsole_addMessageFormat("%.1s%.15s", armorChar, ultimaStrings[211]);
+    audio_playAlert(1);
     return false;
   }
 

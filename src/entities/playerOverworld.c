@@ -8,6 +8,7 @@
 #include "engine/geometry.h"
 #include "engine/camera.h"
 #include "engine/input.h"
+#include "engine/audio.h"
 #include "data/saveAndLoad.h"
 #include "data/bevery.h"
 #include "data/enemy.h"
@@ -129,18 +130,22 @@ bool playerOverworld_updateMovement(float deltaTime) {
       if (tile == 0 && (player.vehicle < 3 || player.vehicle > 5)) {
         uiConsole_addMessage(ultimaStrings[122]);
         keyRepeatDelay = 0.3f;
+        audio_playAlert(1);
         return true;
       } else if (tile == 3) {
         uiConsole_addMessage(ultimaStrings[123]);
         keyRepeatDelay = 0.3f;
+        audio_playAlert(1);
         return true;
       } else if (tile == 2 && player.vehicle == 5) {
         uiConsole_addMessage(ultimaStrings[124]);
         keyRepeatDelay = 0.3f;
+        audio_playAlert(1);
         return true;
       } else if (tile > 0 && (player.vehicle == 3 || player.vehicle == 4)) {
         uiConsole_addMessageFormat("%.14s%.15s", vehicleNames[player.vehicle], ultimaStrings[125]);
         keyRepeatDelay = 0.3f;
+        audio_playAlert(1);
         return true;
       }
     }
@@ -274,6 +279,7 @@ static void playerOverworld_checkIfEnemiesDead() {
     player.gold += goldEarned;
 
     uiConsole_queueMessageFormat("%.15s+%d", ultimaStrings[134], goldEarned);
+    audio_playAlert(3);
 
     if (enemyEncounter.number <= 0) {
       enemyEncounter.monsterId = -1;
@@ -317,6 +323,7 @@ static bool playerOverworld_updateAttack() {
 
     if (player.weapon > 7 && player.weapon < 12) {
       uiConsole_queueMessageFormat("%.10s%.19s", weaponNames[player.weapon], ultimaStrings[135]);
+      audio_playAlert(1);
       return true;
     }
 
@@ -325,6 +332,7 @@ static bool playerOverworld_updateAttack() {
     if (attack > defense || attack > 20) {
       int damage = (int)((player.strength + player.weapon) * rand01()) + 1;
       uiConsole_queueMessageFormat("%.5s%.10s%d", ultimaStrings[131], ultimaStrings[132], damage);
+      audio_playAlert(3);
 
       enemyEncounter.hp -= damage;
 
@@ -399,6 +407,7 @@ static bool playerOverwolrd_updateCast() {
           }
 
           uiConsole_queueMessageFormat("%.10s%.10s%d", ultimaStrings[155], ultimaStrings[156], damage);
+          audio_playAlert(3);
 
           enemyEncounter.hp -= damage;
           playerOverworld_checkIfEnemiesDead();
@@ -419,6 +428,7 @@ static bool playerOverwolrd_updateCast() {
       default:
         uiConsole_queueMessage(ultimaStrings[160]);
         uiConsole_queueMessage(ultimaStrings[161]);
+        audio_playAlert(1);
         break;
     }
       
@@ -446,12 +456,14 @@ static bool playerOverworld_updateBoard() {
     if (player.vehicle != 0) {
       uiConsole_addMessage(ultimaStrings[136]);
       uiConsole_addMessage(ultimaStrings[137]);
+      audio_playAlert(1);
       return true;
     }
 
     int vehicleTile = vehiclesMap[player.ty][player.tx];
     if (vehicleTile == 0 || vehicleTile > 7) {
       uiConsole_addMessage(ultimaStrings[138]);
+      audio_playAlert(1);
       return true;
     }
 
@@ -531,6 +543,7 @@ static bool playerOverworld_updateExit() {
 
     if (player.vehicle == 0) {
       uiConsole_addMessage(ultimaStrings[233]);
+      audio_playAlert(1);
       return true;
     }
 
@@ -590,6 +603,7 @@ static bool playerOverworld_updateFiring() {
     enemyEncounter.hp -= damage;
 
     uiConsole_queueMessageFormat("%.18s%d", ultimaStrings[172], damage);
+    audio_playAlert(3);
 
     playerOverworld_checkIfEnemiesDead();
 
@@ -610,6 +624,7 @@ static void playerOverworld_enterSignpost() {
   if (player.quests[world * 2 + tileType] > 0 && tileType == 0) {
     player.quests[world * 2 + tileType] = -1;
     uiConsole_queueMessageFormat("^T2%.27s", ultimaStrings[271]);
+    audio_playAlert(2);
   }
 
   int postNumber = world * 2 + tileType + 1;
@@ -700,6 +715,7 @@ static bool playerOverworld_updateEnter() {
     if (tile < 4 || tile > 7) {
       uiConsole_replaceLastMessageFormat("%.10s%.10s", ultimaStrings[98], ultimaStrings[163]);
       uiConsole_addMessage(ultimaStrings[164]);
+      audio_playAlert(1);
       return true;
     }
 
