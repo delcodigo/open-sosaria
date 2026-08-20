@@ -7,6 +7,7 @@
 #include "data/player.h"
 #include "engine/geometry.h"
 #include "engine/camera.h"
+#include "engine/audio.h"
 #include "entities/guardTown.h"
 #include "entities/ui/uiConsole.h"
 #include "entities/vmExecuter.h"
@@ -132,6 +133,7 @@ static void sceneCastle_updateJester() {
 
   if (rand01() * 50 < player.wisdom) {
     uiConsole_addMessage(ultimaStrings[823]);
+    audio_playAlert(2);
   }
 }
 
@@ -219,6 +221,7 @@ void sceneCastle_attackAt(int x, int y) {
 
   int damage = (int)(((player.strength + player.weapon) / 2.0f) * rand01() + 1);
   uiConsole_queueMessageFormat("%s%d", ultimaStrings[658], damage);
+  audio_playAlert(3);
 
   if (targetType == TOWN_ENTITY_TYPE_JESTER) {
     jesterPosition.x = -1;
@@ -227,6 +230,7 @@ void sceneCastle_attackAt(int x, int y) {
     castleKey = (int)(rand01() * 2 + 1);
     uiConsole_queueMessage(ultimaStrings[659]);
     uiConsole_queueMessage(ultimaStrings[660]);
+    audio_playAlert(3);
   } else if (targetType == TOWN_ENTITY_TYPE_PRINCESS) {
     princessPosition.x = -1;
     princessPosition.y = -1;
@@ -237,6 +241,7 @@ void sceneCastle_attackAt(int x, int y) {
     kingPosition.y = -1;
     player.experience += 10000;
     uiConsole_queueMessage(ultimaStrings[659]);
+    audio_playAlert(3);
   } else if (targetType == TOWN_ENTITY_TYPE_GUARD) {
     guardTowns[targetIndex].hp -= damage;
     if (guardTowns[targetIndex].hp <= 0) {

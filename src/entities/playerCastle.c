@@ -4,6 +4,7 @@
 #include "playerCastle.h"
 #include "engine/geometry.h"
 #include "engine/input.h"
+#include "engine/audio.h"
 #include "playerTown.h"
 #include "playerCommons.h"
 #include "data/player.h"
@@ -73,14 +74,16 @@ static bool playerCastle_updateDrop() {
         uiConsole_queueMessage(ultimaStrings[370]);
         playerState = PLAYER_STATE_IDLE;
         dropStep = DROP_STEP_START;
+        audio_playAlert(1);
         return true;
       }
     } else if (lastKey == GLFW_KEY_ENTER && itemToDrop[0] != '\0') {
       int value = atoi(itemToDrop);
       if (value > player.gold) {
-        uiConsole_queueMessageFormat("%s%d", ultimaStrings[371], value);
+        uiConsole_queueMessage(ultimaStrings[679]);
         playerState = PLAYER_STATE_IDLE;
         dropStep = DROP_STEP_START;
+        audio_playAlert(1);
         return true;
       }
 
@@ -341,6 +344,7 @@ static bool playerCastle_updateSteal() {
     if (rand01() > 0.8f || enemyEncounter.monsterId > 0 || (rand01() > 0.8f && player.type != 4)) {
       uiConsole_queueMessage(ultimaStrings[738]);
       enemyEncounter.monsterId = 1;
+      audio_playAlert(2);
       return true;
     }
 
@@ -455,6 +459,7 @@ static bool playerCastle_updateTransact() {
     if (value * 10 > player.gold) {
       uiConsole_queueMessage(ultimaStrings[787]);
       playerState = PLAYER_STATE_IDLE;
+      audio_playAlert(1);
       return true;
     }
 
@@ -537,6 +542,7 @@ static bool playerCastle_updateTransact() {
 
     if (player.px < 32 || player.py > 7) {
       uiConsole_queueMessage(ultimaStrings[746]);
+      audio_playAlert(1);
       return true;
     }
 
@@ -566,6 +572,7 @@ static bool playerCastle_updateUnlock() {
       if (castleKey != 1) {
         uiConsole_queueMessage(ultimaStrings[793]);
         uiConsole_queueMessage(ultimaStrings[794]);
+        audio_playAlert(1);
         return true;
       }
 
