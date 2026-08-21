@@ -427,6 +427,7 @@ static bool playerSpace_updateFire() {
     uiConsole_replaceLastMessageFormat("%s%s", ultimaStrings[98], ultimaStrings[1024]);
 
     space3D_drawPlayerAttack();
+    audio_playFire();
 
     player.fuel -= 10;
     

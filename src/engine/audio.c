@@ -13,6 +13,11 @@
 #define OS_ENGINE_CLICK_RATE_BASE 12.2
 #define OS_ENGINE_CLICK_RATE_PER_SPEED 1.9
 
+#define OS_FIRE_CLOCK_HZ 1020484.0
+#define OS_FIRE_NOISE_CLICK_COUNT 256
+#define OS_FIRE_TONE_STEP_COUNT 255
+#define OS_FIRE_AMPLITUDE 0.3
+
 #define OS_AUDIO_BANK_PATH "audio.bin"
 #define OS_AUDIO_BANK_MAGIC "OSAB"
 #define OS_AUDIO_CLIP_NAME_SIZE 32
@@ -28,6 +33,11 @@ static ma_sound engineHumSound;
 static int engineHumActive = 0;
 static double engineHumSpeedModifier = 1.0;
 static double engineHumTimer = 0.0;
+
+static float *firePCM = NULL;
+static ma_uint32 fireFrameCount = 0;
+static ma_audio_buffer_ref fireBufferRef;
+static ma_sound fireSound;
 
 static unsigned char *bankData = NULL;
 static ma_uint32 bankClipCount = 0;
@@ -127,6 +137,50 @@ static int audio_initClipSound(const char *name, ma_audio_buffer_ref *outRef, ma
   return 1;
 }
 
+static void audio_generateFireBuffer(ma_uint32 sampleRate) {
+  int totalClicks = OS_FIRE_NOISE_CLICK_COUNT + OS_FIRE_TONE_STEP_COUNT;
+  double *clickDurations = (double*) malloc(sizeof(double) * totalClicks);
+  int clickIndex = 0;
+  double totalDurationSeconds = 0.0;
+
+  for (int i = 0; i < OS_FIRE_NOISE_CLICK_COUNT; i++) {
+    int delay = 1 + (rand() % 127);
+    double seconds = (17.0 + 5.0 * delay) / OS_FIRE_CLOCK_HZ;
+    clickDurations[clickIndex++] = seconds;
+    totalDurationSeconds += seconds;
+  }
+
+  for (int period = 1; period <= OS_FIRE_TONE_STEP_COUNT; period++) {
+    double seconds = (5.0 * period + 14.0) / OS_FIRE_CLOCK_HZ;
+    clickDurations[clickIndex++] = seconds;
+    totalDurationSeconds += seconds;
+  }
+
+  fireFrameCount = (ma_uint32)(sampleRate * totalDurationSeconds) + 1;
+  firePCM = (float*) malloc(sizeof(float) * fireFrameCount);
+
+  double hardwareTime = 0.0;
+  float polarity = (float) OS_FIRE_AMPLITUDE;
+  ma_uint32 outputIndex = 0;
+
+  for (int i = 0; i < totalClicks; i++) {
+    double targetTime = hardwareTime + clickDurations[i];
+    while (outputIndex < fireFrameCount && (double) outputIndex / (double) sampleRate < targetTime) {
+      firePCM[outputIndex] = polarity;
+      outputIndex++;
+    }
+    hardwareTime = targetTime;
+    polarity = -polarity;
+  }
+
+  while (outputIndex < fireFrameCount) {
+    firePCM[outputIndex] = 0.0f;
+    outputIndex++;
+  }
+
+  free(clickDurations);
+}
+
 int audio_init() {
   if (ma_engine_init(NULL, &engine) != MA_SUCCESS) {
     fprintf(stderr, "Failed to initialize audio engine\n");
@@ -181,6 +235,38 @@ int audio_init() {
   }
   ma_sound_set_looping(&alertSound, MA_TRUE);
 
+  audio_generateFireBuffer(ma_engine_get_sample_rate(&engine));
+
+  if (ma_audio_buffer_ref_init(ma_format_f32, 1, firePCM, fireFrameCount, &fireBufferRef) != MA_SUCCESS) {
+    fprintf(stderr, "Failed to reference fire buffer\n");
+    free(firePCM);
+    ma_sound_uninit(&alertSound);
+    ma_audio_buffer_ref_uninit(&alertClipRef);
+    free(bankData);
+    ma_sound_uninit(&engineHumSound);
+    ma_audio_buffer_ref_uninit(&engineClickRef);
+    ma_sound_uninit(&bellSound);
+    ma_waveform_uninit(&bellWaveform);
+    ma_engine_uninit(&engine);
+    return 0;
+  }
+  fireBufferRef.sampleRate = ma_engine_get_sample_rate(&engine); /* Not set by ma_audio_buffer_ref_init in this miniaudio version. */
+
+  if (ma_sound_init_from_data_source(&engine, &fireBufferRef, 0, NULL, &fireSound) != MA_SUCCESS) {
+    fprintf(stderr, "Failed to initialize fire sound\n");
+    ma_audio_buffer_ref_uninit(&fireBufferRef);
+    free(firePCM);
+    ma_sound_uninit(&alertSound);
+    ma_audio_buffer_ref_uninit(&alertClipRef);
+    free(bankData);
+    ma_sound_uninit(&engineHumSound);
+    ma_audio_buffer_ref_uninit(&engineClickRef);
+    ma_sound_uninit(&bellSound);
+    ma_waveform_uninit(&bellWaveform);
+    ma_engine_uninit(&engine);
+    return 0;
+  }
+
   initialized = 1;
   return 1;
 }
@@ -216,6 +302,16 @@ void audio_playAlert(int repeatCount) {
   ma_sound_seek_to_pcm_frame(&alertSound, 0);
   ma_sound_set_stop_time_in_pcm_frames(&alertSound, startFrame + totalFrames);
   ma_sound_start(&alertSound);
+}
+
+void audio_playFire() {
+  if (!initialized) {
+    return;
+  }
+
+  ma_sound_stop(&fireSound);
+  ma_sound_seek_to_pcm_frame(&fireSound, 0);
+  ma_sound_start(&fireSound);
 }
 
 void audio_startEngineHum() {
@@ -277,6 +373,10 @@ void audio_cleanup() {
   ma_audio_buffer_ref_uninit(&engineClickRef);
   ma_sound_uninit(&alertSound);
   ma_audio_buffer_ref_uninit(&alertClipRef);
+  ma_sound_uninit(&fireSound);
+  ma_audio_buffer_ref_uninit(&fireBufferRef);
+  free(firePCM);
+  firePCM = NULL;
   free(bankData);
   bankData = NULL;
   ma_engine_uninit(&engine);
