@@ -252,6 +252,9 @@ void space3D_drawPlayerAttack() {
 }
 
 void space3D_update(float deltaTime) {
+  audio_setEngineHumSpeed(starsSpeedModifier);
+  audio_updateEngineHum(deltaTime);
+
   if (enemyCraftAttacked > 0) {
     space3D_clearEnemyAttackLines(deltaTime);
     return;
@@ -295,6 +298,7 @@ void space3D_update(float deltaTime) {
 }
 
 void space3D_free() {
+  audio_stopEngineHum();
   texture_free(screenTexture);
   geometry_free(&screenGeometry);
 }

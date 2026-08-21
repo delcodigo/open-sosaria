@@ -8,6 +8,11 @@
 #define OS_BELL_AMPLITUDE 0.4
 #define OS_BELL_DURATION_SECONDS 0.1
 
+#define OS_ENGINE_CLICK_BASE_FREQUENCY 255.0
+#define OS_ENGINE_CLICK_FREQUENCY_PER_SPEED 81.0
+#define OS_ENGINE_CLICK_RATE_BASE 12.2
+#define OS_ENGINE_CLICK_RATE_PER_SPEED 1.9
+
 #define OS_AUDIO_BANK_PATH "audio.bin"
 #define OS_AUDIO_BANK_MAGIC "OSAB"
 #define OS_AUDIO_CLIP_NAME_SIZE 32
@@ -17,6 +22,12 @@
 static ma_engine engine;
 static ma_waveform bellWaveform;
 static ma_sound bellSound;
+
+static ma_audio_buffer_ref engineClickRef;
+static ma_sound engineHumSound;
+static int engineHumActive = 0;
+static double engineHumSpeedModifier = 1.0;
+static double engineHumTimer = 0.0;
 
 static unsigned char *bankData = NULL;
 static ma_uint32 bankClipCount = 0;
@@ -151,8 +162,18 @@ int audio_init() {
     return 0;
   }
 
+  if (!audio_initClipSound("star-click", &engineClickRef, &engineHumSound, NULL)) {
+    free(bankData);
+    ma_sound_uninit(&bellSound);
+    ma_waveform_uninit(&bellWaveform);
+    ma_engine_uninit(&engine);
+    return 0;
+  }
+
   if (!audio_initClipSound("alert", &alertClipRef, &alertSound, &alertClipDurationSeconds)) {
     free(bankData);
+    ma_sound_uninit(&engineHumSound);
+    ma_audio_buffer_ref_uninit(&engineClickRef);
     ma_sound_uninit(&bellSound);
     ma_waveform_uninit(&bellWaveform);
     ma_engine_uninit(&engine);
@@ -197,6 +218,54 @@ void audio_playAlert(int repeatCount) {
   ma_sound_start(&alertSound);
 }
 
+void audio_startEngineHum() {
+  if (!initialized) {
+    return;
+  }
+
+  engineHumActive = 1;
+  engineHumTimer = 0.0;
+}
+
+void audio_setEngineHumSpeed(float speedModifier) {
+  if (!initialized) {
+    return;
+  }
+
+  engineHumSpeedModifier = speedModifier;
+
+  double targetFrequency = OS_ENGINE_CLICK_BASE_FREQUENCY + (speedModifier - 1.0) * OS_ENGINE_CLICK_FREQUENCY_PER_SPEED;
+  ma_sound_set_pitch(&engineHumSound, (float)(targetFrequency / OS_ENGINE_CLICK_BASE_FREQUENCY));
+}
+
+void audio_updateEngineHum(float deltaTime) {
+  if (!initialized || !engineHumActive) {
+    return;
+  }
+
+  double clicksPerSecond = OS_ENGINE_CLICK_RATE_BASE + (engineHumSpeedModifier - 1.0) * OS_ENGINE_CLICK_RATE_PER_SPEED;
+  double interval = 1.0 / clicksPerSecond;
+
+  engineHumTimer -= (double) deltaTime;
+  if (engineHumTimer > 0.0) {
+    return;
+  }
+  engineHumTimer = interval;
+
+  ma_sound_stop(&engineHumSound);
+  ma_sound_seek_to_pcm_frame(&engineHumSound, 0);
+  ma_sound_start(&engineHumSound);
+}
+
+void audio_stopEngineHum() {
+  if (!initialized) {
+    return;
+  }
+
+  engineHumActive = 0;
+  ma_sound_stop(&engineHumSound);
+}
+
 void audio_cleanup() {
   if (!initialized) {
     return;
@@ -204,6 +273,8 @@ void audio_cleanup() {
 
   ma_sound_uninit(&bellSound);
   ma_waveform_uninit(&bellWaveform);
+  ma_sound_uninit(&engineHumSound);
+  ma_audio_buffer_ref_uninit(&engineClickRef);
   ma_sound_uninit(&alertSound);
   ma_audio_buffer_ref_uninit(&alertClipRef);
   free(bankData);

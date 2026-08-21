@@ -321,9 +321,12 @@ static bool playerSpace_updateViewChange() {
       int zx = spaceMap[player.px][player.py] + 32767;
       starsSpeedModifier = zz > 1 ? zz < 10 ? zz : 9 : 1;
       enemyCrafts = sceneSpace_getBase4Digit(7, zx);
+      audio_setEngineHumSpeed(starsSpeedModifier);
+      audio_startEngineHum();
     } else {
       isFirstPersonView = false;
       playerState = PLAYER_STATE_IDLE;
+      audio_stopEngineHum();
     }
 
     return true;
