@@ -4,6 +4,7 @@
 #include "playerMondain.h"
 #include "engine/geometry.h"
 #include "engine/texture.h"
+#include "engine/audio.h"
 #include "data/player.h"
 #include "data/bevery.h"
 #include "scenes/sceneDiskLoader.h"
@@ -58,6 +59,7 @@ static bool playerMondain_updateMovement(float deltaTime) {
 
     if (!sceneMondain_isValidPosition(player.px + dx, player.py + dy)) {
       uiConsole_queueMessage(ultimaStrings[1126]);
+      audio_playAlert(2);
       int damage = (int)((float)player.health / 10.0f);
       player.health -= damage;
       keyRepeatDelay = 0.3f;
@@ -172,6 +174,7 @@ static bool playerMondain_updateSaving() {
 
     uiConsole_replaceLastMessageFormat("%s%s", ultimaStrings[98], ultimaStrings[1182]);
     uiConsole_queueMessage(ultimaStrings[1183]);
+    audio_playAlert(1);
 
     return true;
   }
@@ -261,6 +264,7 @@ static bool playerMondain_updateGet() {
     instructions[1].type = VM_INSTRUCTION_TYPE_WAIT;
     instructions[1].wait.duration = 2.0f;
 
+    audio_playAlert(3);
     vmExecuter_init(instructions, 2);
 
     return true;
@@ -283,6 +287,7 @@ bool playerMondain_updateAttack() {
 
     if (player.weapon == 4 || player.weapon == 8 || player.weapon == 9 || player.weapon == 10) {
       uiConsole_queueMessage(ultimaStrings[1130]);
+      audio_playAlert(1);
       return true;
     }
 
@@ -308,6 +313,7 @@ bool playerMondain_updateAttack() {
 
     int damage = (int)(rand01() * ((float)player.strength / 5.0f + player.weapon * 3.0f) + (float) player.strength / 5.0f);
     uiConsole_queueMessageFormat("%s%d", ultimaStrings[1133], damage);
+    audio_playAlert(3);
     mondain_receiveDamage(damage);
 
     return true;
@@ -327,6 +333,7 @@ bool playerMondain_updateCast() {
     uiConsole_replaceLastMessageFormat("%s%s%s", ultimaStrings[98], ultimaStrings[1145], spellNames[player.spell]);
     if (player.spell != 0 && player.spells[player.spell] < 1) {
       uiConsole_queueMessage(ultimaStrings[1146]);
+      audio_playAlert(1);
       return true;
     }
 
@@ -365,6 +372,7 @@ bool playerMondain_updateCast() {
         int damage = (int)(rand01() * (player.wisdom + player.intelligence));
         uiConsole_queueMessageFormat("%s%d", ultimaStrings[1151], damage);
         mondain_receiveDamage(damage);
+        audio_playAlert(3);
         break;
       
       case 7:

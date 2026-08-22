@@ -2,6 +2,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include "mondain.h"
+#include "engine/audio.h"
 #include "entities/ui/uiConsole.h"
 #include "entities/lightningBoltEffect.h"
 #include "entities/vmExecuter.h"
@@ -104,6 +105,7 @@ static void mondain_attack() {
     player.health -= damage;
     
     uiConsole_queueMessageFormat("%s%d", ultimaStrings[1228], damage);
+    audio_playAlert(2);
     uiConsole_updateStats();
   } else if (attackType == 2) {
     int magicType = (int)(rand01() * 3 + 1);
@@ -114,6 +116,7 @@ static void mondain_attack() {
           int damage = (int)((float)player.health / 500.0f + rand01() * 100.0f);
           player.health -= damage;
           uiConsole_queueMessageFormat("%s%d", ultimaStrings[1230], damage);
+          audio_playAlert(2);
           uiConsole_updateStats();
         } else {
           uiConsole_queueMessage(ultimaStrings[1231]);
@@ -123,6 +126,7 @@ static void mondain_attack() {
         uiConsole_queueMessage(ultimaStrings[1232]);
         if (rand01() > 0.7f) {
           uiConsole_queueMessage(ultimaStrings[1233]);
+          audio_playAlert(2);
           for (int i=1;i<=6;i++) {
             *((&player.health)+i) = (int)(*((&player.health)+i) * 0.9f);
           }
@@ -137,6 +141,7 @@ static void mondain_attack() {
           player.health -= damage;
           uiConsole_queueMessageFormat("%s%d", ultimaStrings[1237], damage);
           uiConsole_updateStats();
+          audio_playAlert(2);
         } else {
           uiConsole_queueMessage(ultimaStrings[1236]);
         }
@@ -157,6 +162,7 @@ void mondain_receiveDamage(int damage) {
   } else {
     mondain_defeat();
     uiConsole_queueMessage(ultimaStrings[1134]);
+    audio_playAlert(3);
 
     VMInstruction *instructions = malloc(3 * sizeof(VMInstruction));
     instructions[0].type = VM_INSTRUCTION_TYPE_WAIT;
