@@ -79,12 +79,14 @@ On some MSYS2 setups, use `mingw32-make` if `make` is not available in PATH.
 ```
 
 
-## Current Implementation (v0.5.0)
+## Current Implementation (v0.6.0)
 
-**The game is now fully beatable end-to-end**, from character creation through the final confrontation with Mondain.
+**The game is now fully beatable end-to-end**, from character creation through the final confrontation with Mondain
 
 The engine now includes:
 
+- **Full Audio:** Every scene (overworld, towns, castles, dungeons, space, and the Mondain encounter) now has sound, reproducing the Apple II's single-speaker click-based audio design: a UI bell, a hit/alert cue, the space starfield engine hum, the hyperjump sweep, and the weapon-fire effect. Several of these are synthesized directly from disassembled 6502 delay-loop timing rather than sampled.
+- **Steal Option in Towns:** Players can now attempt to steal from town shops.
 - **Mondain Final Battle:** The final boss encounter is complete. Players can travel through the Time Machine, confront Mondain, destroy the Gem of Immortality, and defeat him to win the game.
 - **Full Towns and Castles:** All towns and castles are fully implemented with feature parity to the original Apple II release.
 - **Overworld (Complete):** Overworld map, player movement, collision, and the Time Machine are all implemented.
@@ -100,7 +102,6 @@ The engine now includes:
 ## Next Steps
 
 - Continue refining game logic, sprite rendering, and Apple II game mechanics.
-- Polish and bugfixing pass now that the full game loop is playable.
 
 ## Research Notes
 
